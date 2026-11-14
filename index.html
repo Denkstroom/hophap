@@ -330,9 +330,11 @@ nav.tabs .in{display:flex;width:100%;max-width:560px}
 .qchip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--fg)}
 .qchip.pressed{background:var(--press)}
 .ook{margin-top:8px}
+.warn-note{background:var(--warn-bg);color:var(--fg)}
 .foot-row{flex-wrap:nowrap}
 .foot-row .btn-main{flex:1}
 .foot-row .btn-ghost{width:52px;padding:0;font-size:1.3rem}
+.wat{margin:0;padding:0 0 0 1.1em;display:flex;flex-direction:column;gap:4px}
 .gate-logo{width:64px;height:64px}
 .gate-logo svg.doo{width:46px;height:46px}
 .gate{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
@@ -641,9 +643,9 @@ const R = [
 
 // Apparaten en allergieën voor de vragenlijst
 const APS={oven:"Oven",magnetron:"Magnetron",multicooker:"Multicooker / rijstkoker",slowcooker:"Slowcooker",fornuis:"Fornuis / kookplaat"};
-const ALG={gluten:"Gluten",melk:"Melk / lactose",ei:"Ei",noten:"Noten",pinda:"Pinda",soja:"Soja",selderij:"Selderij",vis:"Vis",schaaldieren:"Schaaldieren"};
+const ALG={gluten:"Gluten",melk:"Melk / lactose",ei:"Ei",noten:"Noten",pinda:"Pinda",soja:"Soja",selderij:"Selderij",paprika:"Paprika",vis:"Vis",schaaldieren:"Schaaldieren"};
 // Namen in een zin ("bevat gluten, melk"). Vlees en vis komen uit "Wat eet je?"
-const TN={gluten:"gluten",melk:"melk",ei:"ei",noten:"noten",pinda:"pinda",soja:"soja",selderij:"selderij",vis:"vis",schaaldieren:"schaaldieren",vlees:"vlees"};
+const TN={gluten:"gluten",melk:"melk",ei:"ei",noten:"noten",pinda:"pinda",soja:"soja",selderij:"selderij",paprika:"paprika",vis:"vis",schaaldieren:"schaaldieren",vlees:"vlees"};
 // Wat zit waarin, per product uit de gerechten hierboven (vooraf bedacht, geen AI)
 const TAG={"rundergehakt":["vlees"],"geraspte kaas":["melk"],"volkoren penne":["gluten"],"speltpenne":["gluten"],"volkoren orzo":["gluten"],"kipfiletblokjes":["vlees"],"feta":["melk"],"kipdijfilet":["vlees"],
  "volkoren couscous":["gluten"],"rundergehaktballetjes":["vlees","gluten"],"bouillonblokje":["selderij"],"filodeeg":["gluten"],"hamblokjes":["vlees"],"eieren":["ei"],
@@ -653,14 +655,16 @@ const TAG={"rundergehakt":["vlees"],"geraspte kaas":["melk"],"volkoren penne":["
  "nootjes":["noten","pinda"],"mueslirepen met noten":["gluten","noten"],"skyr":["melk"],"mini-zakjes chips":[],"babybel":["melk"],"hagelslag":["melk"],
  "zalmfilets":["vis"],"kabeljauwfilets":["vis"],"tonijn (op water)":["vis"],"vissticks":["vis","gluten"],"gnocchi":["gluten"],
  "havermout":["gluten"],"volkoren spaghetti":["gluten"],"vermicelli":["gluten"],"ketjap manis":["soja","gluten"],"pindakaas (100% pinda)":["pinda"],
- "satésaus (pindasaus)":["pinda","soja"],"tempeh":["soja"],"kletskoeken":["gluten","melk"],"zachte geitenkaas":["melk"],"serranoham":["vlees"],"hamlappen":["vlees"],"kipfilet":["vlees"],"mihoen":[],"rode currypasta":["schaaldieren"],"koolvisfilet":["vis"],"pijnboompitten":["noten"],"roggebrood":["gluten"],"volkoren speltmeel":["gluten"],"kant-en-klare pannenkoekjes":["gluten","melk","ei"],"volkoren brood":["gluten"],"croissant":["gluten","melk"],"vanille-ijs":["melk"],"appelflappen (diepvries)":["gluten"],"edamame (diepvries)":["soja"],"bakpoeder":[],"cacaopoeder (ongezoet)":[],
- "kokosmelk light":[],"papadums":[],"boemboe dahl tarka":[],"melk":["melk"],"Griekse yoghurt (0%)":["melk"]};
+ "satésaus (pindasaus)":["pinda","soja","paprika"],"tempeh":["soja"],"kletskoeken":["gluten","melk"],"zachte geitenkaas":["melk"],"serranoham":["vlees"],"hamlappen":["vlees"],"kipfilet":["vlees"],"mihoen":[],"rode currypasta":["schaaldieren","paprika"],"koolvisfilet":["vis"],"pijnboompitten":["noten"],"roggebrood":["gluten"],"volkoren speltmeel":["gluten"],"kant-en-klare pannenkoekjes":["gluten","melk","ei"],"volkoren brood":["gluten"],"croissant":["gluten","melk"],"vanille-ijs":["melk"],"appelflappen (diepvries)":["gluten"],"edamame (diepvries)":["soja"],"bakpoeder":[],"cacaopoeder (ongezoet)":[],
+ "kokosmelk light":[],"papadums":[],"boemboe dahl tarka":["paprika"],"melk":["melk"],"Griekse yoghurt (0%)":["melk"]};
 // Voor eigen gerechten: herkennen aan woorden in de productnaam
 const KW={gluten:["pasta","penne","spaghetti","macaroni","tagliatelle","orzo","spelt","brood","wrap","pita","meel","couscous","bladerdeeg","filo","crouton","bulgur","tortilla","gnocchi"],
  melk:["kaas","kwark","melk","room","boter","yoghurt","feta","mozzarella","parmez"],ei:["ei"],noten:["noot","noten","cashew","amandel","pecan","hazelno"],
  pinda:["pinda"],soja:["soja","tofu","tempeh"],selderij:["selderij","bouillon"],
  vlees:["kip","gehakt","rund","spek","ham","worst","varken","lams","biefstuk","carpaccio","schnitzel","kalkoen"],
- vis:["vis","zalm","tonijn","kabeljauw","makreel","haring","koolvis","pangasius","ansjovis"],schaaldieren:["garnaal","garnalen","scampi","mossel","krab","kreeft"]};
+ vis:["vis","zalm","tonijn","kabeljauw","makreel","haring","koolvis","pangasius","ansjovis"],schaaldieren:["garnaal","garnalen","scampi","mossel","krab","kreeft"],
+ // paprika = ook chili en paprikapoeder (zelfde plantenfamilie); zit vaak in kruidenmixen en sauzen
+ paprika:["paprika","rode peper","chili","sambal","taco","burrito","baharat","wokgroente"]};
 // Vervangers: [nieuw product, waar zit het zelf in]. Je krijgt alleen vervangers die bij jou passen.
 const SUB={"rundergehakt":[["vegagehakt",["soja"]],["linzen (blik)",[]]],"geraspte kaas":[["vegan geraspte kaas",[]]],"volkoren penne":[["glutenvrije penne",[]]],"speltpenne":[["glutenvrije penne",[]]],"volkoren orzo":[["quinoa (glutenvrij)",[]]],
  "kipfiletblokjes":[["vegakipstukjes",["soja","gluten"]],["kikkererwten (blik)",[]]],"kipdijfilet":[["vegakipstukjes",["soja","gluten"]],["extra blik kikkererwten",[]]],
@@ -682,11 +686,17 @@ const SUB={"rundergehakt":[["vegagehakt",["soja"]],["linzen (blik)",[]]],"gerasp
  "gnocchi":[["glutenvrije gnocchi",[]]],"havermout":[["glutenvrije havermout",[]]],
  "melk":[["havermelk",["gluten"]],["sojamelk",["soja"]]],
  "volkoren spaghetti":[["glutenvrije spaghetti",[]]],"vermicelli":[["extra rijst",[]]],"ketjap manis":[["kokos-aminos (sojavrij, check het pak)",[]]],
- "pindakaas (100% pinda)":[["amandelpasta",["noten"]],["zonnebloempitpasta",[]]],"satésaus (pindasaus)":[["saus van zonnebloempitpasta, limoen en water",[]]],
+ "pindakaas (100% pinda)":[["amandelpasta",["noten"]],["zonnebloempitpasta",[]]],"satésaus (pindasaus)":[["saus van zonnebloempitpasta, limoen en water",[]],["pindasaus zonder sambal: pindakaas, ketjap en water",["pinda","soja","gluten"]]],
  "tempeh":[["gekookte eitjes extra",["ei"]],["kikkererwten (blik)",[]]],"kletskoeken":[["rijstwafels",[]]],"zachte geitenkaas":[["hummus",[]]],
  "serranoham":[["walnoten",["noten"]],["extra vijg",[]]],
- "roggebrood":[["glutenvrij brood",[]]],"volkoren speltmeel":[["glutenvrije bakmix",[]]],"koolvisfilet":[["kipfilet",["vlees"]],["tofu",["soja"]]],"garnalen":[["kipreepjes",["vlees"]],["tofu",["soja"]]],
- "rode currypasta":[["currypasta zonder garnalenpasta (check het pak)",[]]],"pijnboompitten":[["pompoenpitten",[]]],"volkoren brood":[["glutenvrij brood",[]]],"croissant":[["glutenvrij broodje",[]]],"vanille-ijs":[["sorbetijs",[]]],
+ "roggebrood":[["glutenvrij brood",[]]],
+ "rode paprika":[["courgette",[]],["wortel in reepjes",[]]],"rode puntpaprika's":[["courgette",[]],["wortel in reepjes",[]]],
+ "Mexicaanse roerbakmix (paprika/ui)":[["ui en courgette (zelf snijden)",[]],["roerbakgroente zonder paprika (check het pak)",[]]],
+ "rode peper":[["verse gember",[]],["extra zwarte peper",[]]],"sambal oelek":[["verse gember",[]],["extra zwarte peper",[]]],
+ "tacokruiden":[["komijn, oregano en knoflookpoeder (zelf mengen)",[]]],"burritokruiden":[["komijn, oregano en knoflookpoeder (zelf mengen)",[]]],
+ "baharat (7-kruidenmix)":[["komijn, kaneel en koriander (zelf mengen)",[]]],"boemboe dahl tarka":[["kerriepoeder zonder chili en komijn",[]]],
+ "wokgroente (voorgesneden)":[["wokgroente zonder paprika (check het pak)",[]],["broccoli en sperziebonen",[]]],"volkoren speltmeel":[["glutenvrije bakmix",[]]],"koolvisfilet":[["kipfilet",["vlees"]],["tofu",["soja"]]],"garnalen":[["kipreepjes",["vlees"]],["tofu",["soja"]]],
+ "rode currypasta":[["currypasta zonder garnalenpasta (check het pak)",["paprika"]],["kerriepasta zonder chili (check het pak)",[]]],"pijnboompitten":[["pompoenpitten",[]]],"volkoren brood":[["glutenvrij brood",[]]],"croissant":[["glutenvrij broodje",[]]],"vanille-ijs":[["sorbetijs",[]]],
  "kant-en-klare pannenkoekjes":[["rijstwafels",[]]],"appelflappen (diepvries)":[["warme appel uit de oven",[]]],"edamame (diepvries)":[["snoepgroente met hummus",[]]],
  "kipfilet":[["vegakipstukjes",["soja","gluten"]],["tempeh",["soja"]]],"hamlappen":[["vegakipstukjes",["soja","gluten"]],["tempeh",["soja"]]],"Griekse yoghurt (0%)":[["sojayoghurt",["soja"]],["kokosyoghurt",[]]]};
 
@@ -911,6 +921,8 @@ const effName=name=>choiceOf(name)||name;
 const lcOf=name=>{const c=choiceOf(name); return c?(LC[name]||[]).find(o=>o.naam===c):null;};
 const effQty=(q,name)=>{const o=lcOf(name); return o&&o.x!==1?scaleQ(q,o.x):q;};
 const openWarn=name=>conflicts(name).length&&!S.subs[name.toLowerCase()]; // nog niks gekozen
+// Paprika zit ook vaak in de kruiden uit je kast (paprikapoeder, chilivlokken). Die zijn optioneel: geen ⚠ op de kaart, wel een tip in het recept.
+const kastPaprika=r=>restr().has("paprika")&&/paprika|chili|sambal|cayenne/i.test(r.k||"");
 function cardWarn(r){const t=new Set(); for(const [,nm] of r.i) if(openWarn(nm)) conflicts(nm).forEach(x=>t.add(TN[x])); return [...t];}
 
 // Hoeveelheden meeschalen met het aantal personen
@@ -1352,7 +1364,7 @@ function buildList(){
   }
   for(const id of Object.keys(S.picks)){ // bijzondere kruiden, als voorraad
     const kk=((byId[id]||{}).k||"").toLowerCase(); if(!kk) continue;
-    for(const [naam,re] of KRUID) if(re.test(kk)){const k=naam.toLowerCase(); items[k]=items[k]||{k,name:naam,qc:{"":1},afd:6,stock:true,warn:null};}
+    for(const [naam,re] of KRUID) if(re.test(kk)&&!(restr().has("paprika")&&/paprika|chili/i.test(naam))){const k=naam.toLowerCase(); items[k]=items[k]||{k,name:naam,qc:{"":1},afd:6,stock:true,warn:null};}
   }
   for(const it of Object.values(items)){
     it.qs=qtyText(it.stock?Object.fromEntries(Object.keys(it.qc).map(q=>[q,1])):it.qc);
@@ -1442,7 +1454,7 @@ function drawSheet(){
   const kop=`<div class="sheet-head">${tile(r)}<div><h2>${esc(r.t)}${r.f?flabel:""}</h2><p class="muted small">${CATS[r.cat]} · ${esc(v.m)}</p>${cardTags(r,cardWarn(r),cardLc(r))}</div></div>`;
   const recept=`${r.i.length?`<div class="stack tight"><h3>Boodschappen</h3>${voor?`<p class="muted small">${voor}</p>`:""}
       <ul class="ing">${r.i.map(([q,nm])=>ingRow(q,nm,f)).join("")}</ul>
-      ${r.k?`<p class="kruiden">🌿 Uit je kruidenkast: ${esc(r.k)}</p>`:""}</div>`:""}
+      ${r.k?`<p class="kruiden">🌿 Uit je kruidenkast: ${esc(r.k)}</p>`:""}${kastPaprika(r)?`<p class="note warn-note">⚠ Let op: laat paprikapoeder, chilivlokken en sambal uit je kruidenkast weg. Neem zwarte peper, komijn of gember.</p>`:""}</div>`:""}
     <div class="stack tight"><h3>Zo doe je het</h3><ol>${v.s.map(x=>`<li>${esc(fill(x,r))}</li>`).join("")}</ol></div>
     ${r.i.map(([,nm])=>lcOf(nm)).filter(o=>o&&o.tip).map(o=>`<p class="note"><b>Low carb:</b> ${esc(o.tip)}</p>`).join("")}
     ${r.n?`<p class="note">${esc(r.n)}</p>`:""}`;
@@ -1482,7 +1494,7 @@ function drawSetup(){
   const rb=(val,label)=>`<label class="opt"><input type="radio" name="por" data-por="${val}" ${d.por===val?"checked":""}><span>${label}</span></label>`;
   const rr=(val,label,sub)=>`<label class="opt"><input type="radio" name="rest" data-rest="${val}" ${(d.rest!==0?1:0)===val?"checked":""}><span>${label}<br><span class="muted small">${sub}</span></span></label>`;
   const body=[
-   `${SU.auto?`<h1>Hoi, welkom bij HopHap!</h1><p>Drie korte vragen voor je je eten kunt plannen. Je kunt alles later nog aanpassen.</p>`:`<h1>Mijn instellingen</h1>`}
+   `${SU.auto?`<h1>Hoi, welkom bij HopHap!</h1>${isIOS()&&isApp()?"":`<ul class="wat">      <li><b>Kies</b> wat je wilt eten, op eetkaarten.</li>      <li><b>Je week</b> vult zich vanzelf, restjes worden je lunch.</li>      <li><b>Je boodschappenlijst</b> maakt zichzelf.</li>      <li>Snel, gezond en lekker. Met fuck-it dagen erbij.</li></ul>`}<p>Drie korte vragen voor je je eten kunt plannen. Je kunt alles later nog aanpassen.</p>`:`<h1>Mijn instellingen</h1>`}
     <div class="stack tight"><h2>Welke apparaten heb je?</h2><div class="opt-grid">${Object.entries(APS).map(([k,l])=>cb("ap",k,l)).join("")}</div>
     <p class="muted small">De recepten passen zich aan. Heb je geen oven? Dan krijg je bijvoorbeeld de pan- of slowcookerversie.</p></div>`,
    `<div class="stack tight"><h2>Wat eet je?</h2><div class="opt-grid">${cb("eat","vlees","Vlees")}${cb("eat","vis","Vis")}</div>
@@ -1565,6 +1577,11 @@ function openGate(){
   el.innerHTML=`<div class="setup-in stack" role="dialog" aria-modal="true" aria-label="Zet HopHap op je beginscherm" tabindex="-1">
     <span class="logo gate-logo" aria-hidden="true">${doodle("konijn")}</span>
     <h1>Hoi, welkom bij HopHap!</h1>
+    <ul class="wat">
+      <li><b>Kies</b> wat je wilt eten, op eetkaarten.</li>
+      <li><b>Je week</b> vult zich vanzelf, restjes worden je lunch.</li>
+      <li><b>Je boodschappenlijst</b> maakt zichzelf.</li>
+      <li>Snel, gezond en lekker. Met fuck-it dagen erbij.</li></ul>
     <p>Zet HopHap eerst op je beginscherm. Dan werkt hij als een echte app, ook zonder internet, en blijft je planning bewaard.</p>
     <ol class="gate">${stap(1,ic("share"),"Tik onderin op <b>Deel</b> (het vierkantje met de pijl omhoog). Zie je die niet? Tik dan eerst op <b>···</b>.")}
       ${stap(2,ic("plus"),"Kies <b>Zet op beginscherm</b> en tik op <b>Voeg toe</b>.")}
