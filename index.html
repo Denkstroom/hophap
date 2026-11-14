@@ -217,6 +217,7 @@ label.btn{cursor:pointer}
 .card-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;text-align:left;background:none;border:0;padding:0}
 .card-title{font-weight:800;font-size:1.125rem;line-height:1.25}
 .add{flex:none;width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line-strong);background:transparent;color:var(--fg);display:grid;place-items:center;font-weight:800}
+.add.min{width:36px;height:36px;margin-right:-8px;font-size:1.2rem;color:var(--muted)}
 .add.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .addcard{width:100%;min-height:64px;border:1.5px dashed var(--line-strong);border-radius:var(--r);background:transparent;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px}
 .bigopt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--surface);border:1.5px solid var(--line-strong);border-radius:var(--r);padding:14px;min-height:72px}
@@ -329,6 +330,9 @@ nav.tabs .in{display:flex;width:100%;max-width:560px}
 .qchip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--fg)}
 .qchip.pressed{background:var(--press)}
 .ook{margin-top:8px}
+.foot-row{flex-wrap:nowrap}
+.foot-row .btn-main{flex:1}
+.foot-row .btn-ghost{width:52px;padding:0;font-size:1.3rem}
 .gate-logo{width:64px;height:64px}
 .gate-logo svg.doo{width:46px;height:46px}
 .gate{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
@@ -923,15 +927,19 @@ const sn=r=>SHORT[r.id]||r.t;
 // Voorraad: gaat lang mee. Eén keer afvinken = blijft van je lijst, tot je zegt dat het op is.
 const STOCK=new Set(["walnoten","nootjes","mueslirepen met noten","mini-zakjes chips","rijstcrackers","hagelslag","ras el hanout","bouillonblokje","rozijnen","volkoren couscous","risottorijst","volkoren penne","speltpenne","volkoren orzo","Parmezaanse kaas","havermout","zilvervliesrijst","honing","olijven","ketjap manis","sambal oelek","gele linzen","pindakaas (100% pinda)","vermicelli","baharat (7-kruidenmix)","papadums","kletskoeken","gedroogde vijgen","bakpoeder","volkoren speltmeel","cacaopoeder (ongezoet)","bosvruchten (diepvries)","edamame (diepvries)","vanille-ijs","appelflappen (diepvries)","rode currypasta","kappertjes","pijnboompitten"]);
 // Hoeveelheden optellen: 3 + 1 + 2 eieren = 6, 200 g + 150 g kwark = 350 g. De rest (½, handje, 3 el) los erachter.
+// Meervoud voor verpakkingen: 2 × "1 bakje" = "2 bakjes". Onbekend woord? Dan blijft het zo (g, ml, el, ...).
+const MV={bakje:"bakjes",zakje:"zakjes",blik:"blikken",blikje:"blikjes","klein blik":"kleine blikken",pak:"pakken",zak:"zakken",pot:"potten",potje:"potjes",
+  bol:"bollen",rol:"rollen",stuk:"stuks",doos:"dozen",netje:"netjes",fles:"flessen",plantje:"plantjes",bak:"bakken",multipak:"multipakken"};
+const meervoud=u=>MV[u]||u;
 function qtyText(qc){
   const sum={},approx={},rest=[];
   for(const [q,c] of Object.entries(qc)){
     if(!q){ if(c>1) rest.push(c+"×"); continue; }
-    const m=q.match(/^(±\s*)?(\d+|½)\s*(g|ml|pak|plakjes)?$/);
+    const m=q.match(/^(±\s*)?(\d+|½)\s*(.*)$/);
     if(m){const u=m[3]||""; sum[u]=(sum[u]||0)+(m[2]==="½"?0.5:Number(m[2]))*c; if(m[1]) approx[u]=1;}
     else rest.push((c>1?nr(c)+"× ":"")+q);
   }
-  return [...Object.keys(sum).map(u=>(approx[u]?"± ":"")+nr(sum[u])+(u?" "+u:"")),...rest];
+  return [...Object.keys(sum).map(u=>(approx[u]?"± ":"")+nr(sum[u])+(u?" "+(sum[u]>1?meervoud(u):u):"")),...rest];
 }
 
 // Tik-feedback die blijft hangen, ook als het scherm opnieuw wordt opgebouwd
@@ -1152,7 +1160,7 @@ function card(r){
       <span class="muted small">${esc(v.m)}</span>
       ${cardTags(r,w,lc)}
     </button>
-    ${`<button class="add ${n?"on":""}" data-add="${r.id}" aria-label="${esc(r.t)} op lijst zetten">${n?n+"×":ic("plus")}</button>`}
+    ${n?`<button class="add min" data-min="${r.id}" aria-label="${esc(r.t)}: één minder">−</button>`:""}${`<button class="add ${n?"on":""}" data-add="${r.id}" aria-label="${esc(r.t)} op lijst zetten">${n?n+"×":ic("plus")}</button>`}
   </div>`;
 }
 
@@ -1454,10 +1462,10 @@ function drawSheet(){
       ${ctx.p2?`<details class="done-box"><summary>Recept bekijken</summary><div class="stack">${recept}</div></details>`:`<div class="stack sheet-recept">${recept}</div>`}`);
     return;
   }
-  sheetWrap(r.t,`${kop}${recept}
+  sheetWrap(r.t,`${kop}${n>1?`<p class="note">Je hebt dit ${n}× gekozen. Hieronder staat het recept voor één keer; je boodschappenlijst rekent al met ${n}×.</p>`:""}${recept}
     <div class="row small-links">${r.own?`<button class="link" data-edit="${r.id}">Bewerken</button><button class="link" data-del="${r.id}">Verwijderen</button>`
         :`<button class="link" data-copy="${r.id}">Kopiëren en aanpassen</button><button class="link" data-hide="${r.id}">Verbergen</button>`}</div>`,
-    `<button class="btn btn-main btn-wide" data-add="${r.id}" data-close="1">${n?"Nog een keer op mijn lijst ("+n+"×)":"Op mijn lijst"}</button>`);
+    `<div class="row foot-row">${n?`<button class="btn btn-ghost" data-min="${r.id}" aria-label="Eén minder op mijn lijst">−</button>`:""}<button class="btn btn-main" data-add="${r.id}">${n?"Nog een keer ("+n+"× gekozen)":"Op mijn lijst"}</button></div>`);
 }
 function closeSheet(){$("#sheet-root").innerHTML="";SH=null;FORM=null;}
 
