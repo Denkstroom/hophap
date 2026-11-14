@@ -329,6 +329,14 @@ nav.tabs .in{display:flex;width:100%;max-width:560px}
 .qchip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--fg)}
 .qchip.pressed{background:var(--press)}
 .ook{margin-top:8px}
+.gate-logo{width:64px;height:64px}
+.gate-logo svg.doo{width:46px;height:46px}
+.gate{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.gate-stap{display:flex;gap:12px;align-items:center;background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.gate-nr{flex:none;width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-weight:800}
+.gate-ic{flex:none;width:36px;height:36px;border-radius:var(--r-s);background:var(--accent-soft);color:var(--accent);display:grid;place-items:center}
+.gate-ic svg{width:22px;height:22px}
+.gate-ic svg.doo{width:26px;height:26px}
 .week-acts .btn svg.i{width:16px;height:16px}
 .keuzes{background:var(--surface);border-radius:var(--r);padding:12px}
 .sheet-recept{border-top:1px solid var(--line);padding-top:16px}
@@ -792,7 +800,8 @@ const doodle=e=>`<svg class="doo" viewBox="0 0 32 32" aria-hidden="true">${DOOD[
 const tile=r=>`<span class="tile cat-${r.cat}" aria-hidden="true">${doodle(r.pic||PIC[r.id]||CATPIC[r.cat])}</span>`;
 
 // Icoontjes (Lucide, ISC-licentie) zitten in de app zelf: werkt ook met slecht bereik
-const IC={trash:'<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+const IC={share:'<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="m16 6-4-4-4 4"/><path d="M12 2v13"/>',
+ trash:'<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
  alert:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
  swap:'<path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>',
  snow:'<path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7"/><path d="M9 4l3 2 3-2M9 20l3-2 3 2"/>',
@@ -1539,6 +1548,22 @@ const SITE=!window.claude;
 const isApp=()=>{try{return matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;}catch(e){return false;}};
 const isIOS=()=>/iPhone|iPad|iPod/.test(navigator.userAgent||"")||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 let HINT=false; try{HINT=SITE&&!isApp()&&!localStorage.getItem("hophap-hint");}catch(e){}
+// iPhone/iPad in Safari: een app op het beginscherm krijgt een eigen, aparte opslag. Wat je in Safari invult, ziet die niet.
+// Daarom eerst "zet me op je beginscherm", nog vóór de vragenlijst. (Android en computer delen de opslag wel: daar niet nodig.)
+const needGate=()=>{try{return SITE&&isIOS()&&!isApp()&&!localStorage.getItem("hophap-safari");}catch(e){return false;}};
+function openGate(){
+  const el=$("#setup"); el.hidden=false;
+  const stap=(n,icoon,tekst)=>`<li class="gate-stap"><span class="gate-nr">${n}</span><span class="gate-ic">${icoon}</span><span>${tekst}</span></li>`;
+  el.innerHTML=`<div class="setup-in stack" role="dialog" aria-modal="true" aria-label="Zet HopHap op je beginscherm" tabindex="-1">
+    <span class="logo gate-logo" aria-hidden="true">${doodle("konijn")}</span>
+    <h1>Hoi, welkom bij HopHap!</h1>
+    <p>Zet HopHap eerst op je beginscherm. Dan werkt hij als een echte app, ook zonder internet, en blijft je planning bewaard.</p>
+    <ol class="gate">${stap(1,ic("share"),"Tik onderin op <b>Deel</b> (het vierkantje met de pijl omhoog). Zie je die niet? Tik dan eerst op <b>···</b>.")}
+      ${stap(2,ic("plus"),"Kies <b>Zet op beginscherm</b> en tik op <b>Voeg toe</b>.")}
+      ${stap(3,doodle("konijn"),"Open HopHap vanaf je beginscherm. Daar beginnen we.")}</ol>
+    <button class="link" data-gate="safari">Liever in Safari gebruiken</button></div>`;
+  el.firstElementChild.focus({preventScroll:true});
+}
 function hintHTML(){
   if(!HINT) return "";
   return `<div class="hint-card" role="note"><b>Zet HopHap op je beginscherm</b>
@@ -1606,7 +1631,7 @@ function render(){
 document.addEventListener("click",e=>{
   if(TS>=0&&e.target.closest("#tour")&&!e.target.closest(".tour-wolk")){ tourNext("klaar"); return; }
   if(e.target.closest("#toast-undo")){const u=toast.undo; $("#toast").hidden=true; toast.undo=null; if(u) u(); return;}
-  const el=e.target.closest("[data-tab],[data-add],[data-min],[data-open],[data-filter],[data-slot],[data-set],[data-close],[data-more],[data-sub],[data-unsub],[data-own],[data-copy],[data-edit],[data-del],[data-hide],[data-unhide],[data-setup],[data-sun],[data-backup],[data-about],[data-hint],[data-lc],[data-unlc],[data-qf],[data-tour],[data-weg]");
+  const el=e.target.closest("[data-tab],[data-add],[data-min],[data-open],[data-filter],[data-slot],[data-set],[data-close],[data-more],[data-sub],[data-unsub],[data-own],[data-copy],[data-edit],[data-del],[data-hide],[data-unhide],[data-setup],[data-sun],[data-backup],[data-about],[data-hint],[data-lc],[data-unlc],[data-qf],[data-tour],[data-weg],[data-gate]");
   if(!el){ if(e.target.id==="sb") closeSheet(); return; }
   const d=el.dataset;
   if(d.sun!==undefined){
@@ -1624,6 +1649,7 @@ document.addEventListener("click",e=>{
   else if(d.slot){const [s,iso]=d.slot.split("|");tapSlot(s,iso);}
   else if(d.set){const [s,iso,id]=d.set.split("|");setSlot(s,iso,id);}
   else if(d.more){SH.more=SH.more===d.more?null:d.more;drawSheet(); const k=$("#keuzes"); if(k&&k.scrollIntoView) k.scrollIntoView({block:"nearest"});}
+  else if(d.gate){ try{localStorage.setItem("hophap-safari","1");}catch(e){} openSetup(true); }
   else if(d.weg){ if(SH&&SH.ctx) removeSlot(SH.ctx.slot,SH.ctx.iso); }
   else if(d.qf){ if(d.qf==="uit") QON.clear(); else QON.has(d.qf)?QON.delete(d.qf):QON.add(d.qf); render(); }
   else if(d.tour){ d.tour==="opnieuw"?(closeSetup(),startTour()):tourNext(d.tour); }
@@ -1662,7 +1688,7 @@ document.addEventListener("keydown",e=>{ if(e.key!=="Escape") return; if(TS>=0) 
 // nieuwe dag terwijl de app openstaat? weekoverzicht bijwerken
 document.addEventListener("visibilitychange",()=>{ if(!document.hidden&&!FORM) render(); });
 render();
-if(!S.setup) openSetup(true); // eerste keer: korte vragenlijst
+if(!S.setup){ if(needGate()) openGate(); else openSetup(true); } // eerste keer: beginscherm (iPhone in Safari), dan de vragenlijst
 else if(!S.tour) setTimeout(startTour,300); // uitleg nog niet afgemaakt: nu alsnog
 
 </script>
