@@ -1803,12 +1803,14 @@ async function deel(id){
   const blob=DEEL.blob!==undefined&&DEEL.id===id?DEEL.blob:await DEEL.p;
   if(blob){
     const file=new File([blob],"hophap-"+r.id+".png",{type:"image/png"});
-    try{ if(navigator.canShare&&navigator.canShare({files:[file]})){ await navigator.share({files:[file],text:tekst}); return; } }
+    try{ if(navigator.canShare&&navigator.canShare({files:[file]})){ await navigator.share({files:[file],text:tekst}); toast("Gelukt! Bewaard of gedeeld."); return; } }
     catch(e){ if(e&&e.name==="AbortError") return; }
-    // Delen kan hier niet? Laat het plaatje zien: ingedrukt houden om te bewaren of te delen.
-    SH=null;
-    sheetWrap("Deelkaart",`<h2>Deel dit recept</h2><img class="deel-img" src="${URL.createObjectURL(blob)}" alt="Deelkaart: ${esc(r.t)}">
-      <p class="muted small">Houd het plaatje ingedrukt om het te bewaren of te delen. Zet de link erbij, dan kunnen ze er meteen op tikken: <b>${APPURL}</b></p>`);
+    // Delen kan hier niet? Laat het plaatje zien, met een knop om het te bewaren.
+    SH=null; const u=URL.createObjectURL(blob);
+    sheetWrap("Deelkaart",`<h2>Deel dit recept</h2><img class="deel-img" src="${u}" alt="Deelkaart: ${esc(r.t)}">
+      <p class="muted small">Sla het gerecht op als afbeelding en deel het waar je wilt. Zet de link erbij, dan kunnen ze er meteen op tikken: <b>${APPURL}</b></p>`,
+      `<a class="btn btn-main" style="width:100%" href="${u}" download="hophap-${r.id}.png" data-bewaard="1">Sla gerecht op als afbeelding</a>`);
+    const a=$("[data-bewaard]"); if(a) a.addEventListener("click",()=>setTimeout(()=>toast("Je gerecht is opgeslagen als afbeelding!"),300));
     return;
   }
   try{ if(navigator.share){ await navigator.share({title:r.t,text:tekst}); return; } }catch(e){ return; }
