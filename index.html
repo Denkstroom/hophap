@@ -1747,6 +1747,8 @@ async function deelkaart(r){
   else { x.fillStyle=verloop; x.fillRect(0,0,W,H); }
   const wrap=(t,max)=>{const w=String(t).split(" "),l=[];let s="";for(const v of w){const n=s?s+" "+v:v; if(x.measureText(n).width>max&&s){l.push(s);s=v;}else s=n;} if(s) l.push(s); return l;};
   const font=(wt,px)=>{x.font=`${wt} ${px}px ${F}`;};
+  // tekst precies in het midden van een knopje/label: meet de echte letterhoogte (Baloo heeft veel ruimte boven de letters)
+  const midText=(t,X,cy)=>{const b=x.textBaseline; x.textBaseline="alphabetic"; const m=x.measureText(t); x.fillText(t,X,cy+(m.actualBoundingBoxAscent-m.actualBoundingBoxDescent)/2); x.textBaseline=b;};
   // kop: tegel in het midden, titel (gesplitst bij 'met'), tijden als pilletjes
   let y=64; const T=168;
   x.fillStyle=dk?verloop:"#16142e"; x.beginPath(); x.arc(W/2,y+T/2,T/2,0,Math.PI*2); x.fill();
@@ -1757,7 +1759,7 @@ async function deelkaart(r){
   if(klein){ y+=6; font(600,40); x.fillStyle=K.sub; for(const l of wrap(klein,W-2*P)){ x.fillText(l,W/2,y); y+=48; } }
   const v=ver(r)||r, pills=String(v.m||"").split(" · ").filter(Boolean);
   font(700,30); const pw=pills.map(p=>x.measureText(p).width+44); let px=W/2-(pw.reduce((s,w)=>s+w,0)+(pills.length-1)*14)/2; y+=20;
-  pills.forEach((p,i)=>{ x.fillStyle=K.pill; rr(px,y,pw[i],50,25); x.fill(); x.fillStyle=K.ink; x.fillText(p,px+pw[i]/2,y+8); px+=pw[i]+14; });
+  pills.forEach((p,i)=>{ x.fillStyle=K.pill; rr(px,y,pw[i],50,25); x.fill(); x.fillStyle=K.ink; midText(p,px+pw[i]/2,y+25); px+=pw[i]+14; });
   y+=50+30;
   // voet: duidelijke uitnodiging, met de link als knop
   const footH=210, panelBot=H-P-footH+24;
@@ -1767,8 +1769,10 @@ async function deelkaart(r){
   const panelW=W-2*P, inner=panelW-2*44;
   function body(s,draw){
     let yy=y+40; const X0=P+44; x.textAlign="left";
-    font(800,38*s); if(draw){x.fillStyle=K.h2; x.fillText("Boodschappen",X0,yy);} const bw=x.measureText("Boodschappen ").width;
-    font(500,28*s); if(draw){x.fillStyle=K.ink; x.globalAlpha=.7; x.fillText(voor,X0+bw,yy+8*s); x.globalAlpha=1;} yy+=50*s;
+    // kop en 'voor 2 porties' op dezelfde onderlijn
+    font(800,38*s); const bw=x.measureText("Boodschappen ").width, bl=yy+x.measureText("B").actualBoundingBoxDescent; // onderkant van de B (tekst staat op "top") = de onderlijn
+    if(draw){ const b=x.textBaseline; x.textBaseline="alphabetic"; x.fillStyle=K.h2; x.fillText("Boodschappen",X0,bl);
+      font(500,28*s); x.fillStyle=K.ink; x.globalAlpha=.7; x.fillText(voor,X0+bw,bl); x.globalAlpha=1; x.textBaseline=b; } yy+=50*s;
     const colW=(inner-30)/2, half=Math.ceil(ing.length/2); let yA=yy, yB=yy;
     ing.forEach(([q,n],i)=>{ const col=i<half?0:1, X=X0+col*(colW+30); let Y=col?yB:yA;
       font(800,30*s); const qw=x.measureText(q+" ").width; font(500,30*s); const ls=wrap(n,colW-qw);
@@ -1787,9 +1791,9 @@ async function deelkaart(r){
   x.textAlign="center"; let fy=H-P-footH+60;
   const L=46; font(700,32); const tl="Recept uit HopHap, de gratis eetplanner", tw=x.measureText(tl).width, lx=W/2-(tw+L+14)/2;
   x.fillStyle=grad(lx,fy,lx+L,fy+L,[[0,"#cef0ff"],[0.4,"#95b6ff"],[0.7,"#c4beff"],[1,"#dfb8ff"]]); rr(lx,fy,L,L,14); x.fill(); if(logoIm) x.drawImage(logoIm,lx+5,fy+5,L-10,L-10);
-  x.fillStyle=K.ink; x.textAlign="left"; x.fillText(tl,lx+L+14,fy+6); x.textAlign="center"; fy+=L+20;
+  x.fillStyle=K.ink; x.textAlign="left"; midText(tl,lx+L+14,fy+L/2); x.textAlign="center"; fy+=L+20;
   font(800,34); const cta="Zelf je week plannen? → denkstroom.github.io/hophap", cw=x.measureText(cta).width+64;
-  x.fillStyle=K.cta; rr(W/2-cw/2,fy,cw,72,36); x.fill(); x.fillStyle=K.ctaInk; x.fillText(cta,W/2,fy+16);
+  x.fillStyle=K.cta; rr(W/2-cw/2,fy,cw,72,36); x.fill(); x.fillStyle=K.ctaInk; midText(cta,W/2,fy+36);
   return await new Promise(res=>c.toBlob(b=>res(b),"image/png"));
 }
 async function deel(id){
