@@ -1260,12 +1260,12 @@ function ontdooiHTML(){
   const m=isoOf(dayAt(1)), l=vzOf(S.lunch[m]), a=vzOf(S.plan[m]);
   const nm=[l,a].filter(Boolean).map(e=>sn(byId[e.id]).toLowerCase());
   if(!nm.length) return "";
-  return `<li class="vz-strip" role="note">${ic("snow")}<span>Leg vanavond je <b>${esc(nm.join(" en je "))}</b> in de koelkast. ${nm.length>1?"Die eet je":"Dat eet je"} morgen${l&&!a?" als lunch":""}.</span></li>`;
+  return `<li class="vz-strip" role="note">${ic("snow")}<span>Leg je <b>${esc(nm.join(" en je "))}</b> in je koelkast voor morgen.</span></li>`;
 }
 function vzVraagHTML(){
   const id=vzVraagId(); if(!id) return "";
   return `<div class="hint-card vz-vraag" role="note"><b class="vz-kop">${ic("snow")}Restje ${esc(sn(byId[id]).toLowerCase())} over?</b>
-    <p class="small">Je at vandaag iets anders als lunch. Ingevroren? Dan plant HopHap het later voor je in.</p>
+    <p class="small">Je at je restje niet op! Heb je het ingevroren? Dan plant HopHap het later voor je in.</p>
     <div class="small-acts"><button class="btn btn-main btn-sm" data-vz="ja">Ja, in de vriezer</button><button class="btn btn-soft btn-sm" data-vz="nee">Nee, het is op</button></div></div>`;
 }
 const uitCell=`<span class="tile uit" aria-hidden="true">${ic("deur")}</span><span class="t muted">niet thuis</span>`;
@@ -1317,7 +1317,7 @@ function choicesHTML(slot,iso,kind){
   const vzOpt=e=>{const n=vzLeft(e); return `<button class="mini" data-set="${slot}|${iso}|v:${e.k}">${tile(byId[e.id])}<span>${esc(sn(byId[e.id]))}<small class="${n<=5?"oud":""}">nog ${n} ${n===1?"dag":"dagen"} goed</small></span></button>`;};
   const vzSec=kind==="puf"
     ?(()=>{const l=vzs.filter(e=>VPAN.has(e.id)); return l.length&&ap.fornuis?`<div class="stack tight"><h3 class="vz-kop">${ic("snow")}Direct uit de vriezer</h3><p class="muted small">Bevroren in een pannetje, 20 minuten op laag vuur. Ontdooien hoeft niet.</p><div class="mini-grid">${l.map(vzOpt).join("")}</div></div>`:"";})()
-    :vzs.length?`<div class="stack tight"><h3 class="vz-kop">${ic("snow")}Uit je vriezer <span class="muted small">oudste eerst</span></h3><div class="mini-grid">${vzs.map(vzOpt).join("")}</div></div>`:"";
+    :vzs.length?`<div class="stack tight"><h3 class="vz-kop">${ic("snow")}Uit je vriezer</h3><div class="mini-grid">${vzs.map(vzOpt).join("")}</div></div>`:"";
   return (kind==="puf"?"":vzSec)+choicesInner(slot,iso,kind)+(kind==="puf"?vzSec:"");
 }
 function choicesInner(slot,iso,kind){
