@@ -1155,8 +1155,11 @@ function lunchOf(iso){
   return {}; // leeg: zelf kiezen (lunch halen is een fuck-it-kaart)
 }
 // Kies een gerecht voor een vakje. Staat het al op een andere dag? Dan ruilen ze. Is het "op"? Dan komt het nog een keer op je lijst.
+// Lunch halen en Lekker bestellen: geen boodschappen nodig, dus die kun je zo vaak kiezen als je wilt (nooit ruilen met een andere dag).
+const vrij=id=>!!(byId[id]&&byId[id].f&&!(byId[id].i||[]).length);
 function choose(map,iso,id){
   const old=map[iso];
+  if(vrij(id)){ if(strip(old)!==id&&left(map,id)<=0){ S.picks[id]=(S.picks[id]||0)+1; S.fav[id]=(S.fav[id]||0)+1; } map[iso]=id; return; }
   const counted=map===S.plan?isDinner(id):isLunchPick(id);
   if(counted&&left(map,id)<=0&&strip(old)!==id){
     const t=isoOf(dayAt(0));
@@ -1170,7 +1173,7 @@ function choose(map,iso,id){
 function noPuf(iso,fid){
   // de fuck-it telt mee als gerecht van je lijst: staat hij al op een andere dag, dan verhuist hij; anders komt hij er één keer bij
   const t=isoOf(dayAt(0)), other=Object.keys(S.plan).find(k=>k>=t&&k!==iso&&S.plan[k]===fid);
-  if(other) delete S.plan[other]; else if(left(S.plan,fid)<=0){ S.picks[fid]=(S.picks[fid]||0)+1; S.fav[fid]=(S.fav[fid]||0)+1; }
+  if(other&&!vrij(fid)) delete S.plan[other]; else if(left(S.plan,fid)<=0){ S.picks[fid]=(S.picks[fid]||0)+1; S.fav[fid]=(S.fav[fid]||0)+1; }
   let carry=S.plan[iso]; S.plan[iso]=fid; let k=iso;
   for(let n=0;n<14&&isAvond(carry);n++){
     k=isoShift(k,1); const v=S.plan[k];
@@ -1333,9 +1336,11 @@ function choicesInner(slot,iso,kind){
   const L=lunchOf(iso), prev=S.plan[isoShift(iso,-1)], curId=L.r&&!L.p2?L.r.id:null;
   if(kind==="puf") return `<div class="stack tight"><h3>Weinig energie?</h3><div class="mini-grid">${fk.filter(x=>x.id!==curId).map(o=>opt(o)).join("")}</div></div>`;
   const opts=Object.keys(S.picks).filter(x=>isLunchPick(x)&&x!==curId&&avail(byId[x])).map(x=>byId[x]);
+  // Lunch halen kan altijd, ook als hij niet (of al ergens anders) op je lijst staat
+  if(curId!=="l-kantine"&&!opts.some(o=>o.id==="l-kantine")&&byId["l-kantine"]) opts.push(byId["l-kantine"]);
   return `<div class="stack tight"><h3>${L.r?"Toch iets anders?":"Wat wil je eten?"}</h3>
     ${th||rest()&&isAvond(prev)&&!L.p2||opts.length?`<div class="mini-grid">${th}${rest()&&isAvond(prev)&&!L.p2?opt(byId[prev],"Restjes: "+sn(byId[prev]),"p2"):""}${opts.map(o=>opt(o)).join("")}</div>`:""}
-    ${opts.length?"":`<p class="muted small">Salade of wrap? Zet hem op je lijst bij <button class="link" data-tab="kaarten" data-cat="lunch">Gerechten</button>.</p>`}
+    ${opts.some(o=>o.id!=="l-kantine")?"":`<p class="muted small">Salade of wrap? Zet hem op je lijst bij <button class="link" data-tab="kaarten" data-cat="lunch">Gerechten</button>.</p>`}
     ${L.p2?`<p class="muted small">Restjes over? Eet ze een avond later of vries ze in.</p>`:""}</div>`;
 }
 // Schuifscherm van onderen. Kruisje rechtsboven (altijd zichtbaar); foot = vaste balk onderin voor de hoofdactie.
