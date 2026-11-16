@@ -178,6 +178,8 @@ label.btn{cursor:pointer}
 :root[data-theme="dark"]{--nw-bg:#ffe07a}
 .card,.kz-rij{position:relative}
 .nw-st{position:absolute;top:-10px;left:-6px;z-index:2;background:var(--nw-bg);color:var(--nw-tx);font-weight:800;font-size:.74rem;line-height:1;padding:5px 10px;border-radius:9px;transform:rotate(-7deg);box-shadow:0 2px 0 rgba(0,0,0,.28);pointer-events:none}
+.hrow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.hrow .kop-btn{margin-left:0;flex:none}
 .park-strip{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;border-radius:var(--r-m);padding:10px 14px;background:var(--accent-soft);color:var(--fg);font-size:var(--fs-s);line-height:1.35;min-height:56px}
 .park-strip .tile{width:36px;height:36px}
 .park-strip>span:nth-child(2){flex:1}
@@ -1063,7 +1065,7 @@ function qtyText(qc){
 // Tik-feedback die blijft hangen, ook als het scherm opnieuw wordt opgebouwd
 const P={sel:null,until:0,t:null};
 function pressSel(el){
-  for(const k of ["tab","add","min","open","filter","slot","set","close","more","sub","unsub","own","copy","edit","del","hide","unhide","setup","sun","lc","unlc","qf","weg"]) if(el.dataset[k]!==undefined) return `[data-${k}="${CSS.escape(el.dataset[k])}"]`;
+  for(const k of ["tab","add","min","open","filter","slot","set","close","kz","kzr","kzopen","kzf","park","tips","haal","bestel","thuis","hart","deel","rv","nieuwtour","wnieuw","sub","unsub","own","copy","edit","del","hide","unhide","setup","sun","lc","unlc","qf","weg"]) if(el.dataset[k]!==undefined) return `[data-${k}="${CSS.escape(el.dataset[k])}"]`;
   if(el.id) return "#"+CSS.escape(el.id);
   const b=el.querySelector&&el.querySelector("[data-buy]"); if(b) return `label.check:has([data-buy="${CSS.escape(b.dataset.buy)}"])`;
   return null;
@@ -1258,7 +1260,7 @@ function lunchOf(iso){
   return {}; // leeg: zelf kiezen (lunch halen is een fuck-it-kaart)
 }
 // Kies een gerecht voor een vakje. Staat het al op een andere dag? Dan ruilen ze. Is het "op"? Dan komt het nog een keer op je lijst.
-// Lunch halen en Lekker bestellen: geen boodschappen nodig, dus die kun je zo vaak kiezen als je wilt (nooit ruilen met een andere dag).
+// Gerechten zonder boodschappen (bv. een eigen gerecht zonder ingrediënten), dus die kun je zo vaak kiezen als je wilt (nooit ruilen met een andere dag).
 const vrij=id=>!!(byId[id]&&byId[id].f&&!(byId[id].i||[]).length);
 function choose(map,iso,id){
   const old=map[iso];
@@ -1392,14 +1394,13 @@ function cardTags(r,w,lc){
 const flabel='<span class="fl">fuck-it</span>';
 // label "nieuw": 14 dagen na r.nieuw verdwijnt het vanzelf
 const isNieuw=r=>!!(r&&r.nieuw&&dagenTussen(r.nieuw,isoOf(dayAt(0)))<14);
-const nlabel=r=>""; // (oud: label in de titel)
 const nsticker=r=>isNieuw(r)?'<span class="nw-st" aria-label="nieuw">nieuw</span>':"";
 function card(r){
   const n=S.picks[r.id]||0, v=ver(r)||r, w=cardWarn(r), lc=cardLc(r);
   return `<div class="card">${nsticker(r)}
     ${tile(r)}
     <button class="card-body" data-open="${r.id}">
-      <span class="card-title">${esc(r.t)}${S.hart[r.id]?`<span class="hartje" aria-label="favoriet">${ic("hart")}</span>`:""}${r.f?flabel:""}${nlabel(r)}</span>
+      <span class="card-title">${esc(r.t)}${S.hart[r.id]?`<span class="hartje" aria-label="favoriet">${ic("hart")}</span>`:""}${r.f?flabel:""}</span>
       <span class="muted small">${esc(v.m)}</span>
       ${cardTags(r,w,lc)}
     </button>
@@ -1483,42 +1484,10 @@ function tapSlot(slot,iso){
   else { const L=lunchOf(iso); if(L.r) return openSheet(L.r.id,{slot,iso,p2:!!L.p2,vz:L.vz||null}); }
   openSlot(slot,iso);
 }
-function choicesHTML(slot,iso,kind){
-  const vzs=vzFree(), ap=U().ap;
-  const vzOpt=e=>{const n=vzLeft(e); return `<button class="mini" data-set="${slot}|${iso}|v:${e.k}">${tile(byId[e.id])}<span>${esc(sn(byId[e.id]))}<small class="${n<=5?"oud":""}">nog ${n} ${n===1?"dag":"dagen"} goed</small></span></button>`;};
-  const vzSec=kind==="puf"
-    ?(()=>{const l=vzs.filter(e=>VPAN.has(e.id)); return l.length&&ap.fornuis?`<div class="stack tight"><h3 class="vz-kop">${ic("snow")}Direct uit de vriezer</h3><p class="muted small">Bevroren in een pannetje, 20 minuten op laag vuur. Ontdooien hoeft niet.</p><div class="mini-grid">${l.map(vzOpt).join("")}</div></div>`:"";})()
-    :vzs.length?`<div class="stack tight"><h3 class="vz-kop">${ic("snow")}Uit je vriezer</h3><div class="mini-grid">${vzs.map(vzOpt).join("")}</div></div>`:"";
-  return (kind==="puf"?"":vzSec)+choicesInner(slot,iso,kind)+(kind==="puf"?vzSec:"");
-}
 // Alle gerechten van een soort, in dezelfde volgorde als bij Gerechten: hartjes eerst, de rest elke twee weken gehusseld
 function alleVan(cat){
   const per=Math.floor(Date.now()/864e5/14), mix=id=>{let h=(per*2654435761)>>>0; for(const c of id) h=Math.imul(h^c.charCodeAt(0),16777619)>>>0; return h;};
   return allR().filter(r=>r.cat===cat&&avail(r)).map(r=>[r,S.hart[r.id]?0:1,r.f?1:0,mix(r.id)]).sort((a,b)=>a[1]-b[1]||a[2]-b[2]||a[3]-b[3]).map(x=>x[0]);
-}
-function choicesInner(slot,iso,kind){
-  const opt=(o,label,val)=>`<button class="mini" data-set="${slot}|${iso}|${val||o.id}">${tile(o)}<span>${esc(label||sn(o))}</span></button>`;
-  const fk=allR().filter(x=>x.cat===(slot==="a"?"avond":"lunch")&&x.f&&avail(x));
-  // "Niet thuis" is gewoon een keuze voor dit vakje, net als een gerecht (niet als je al niet thuis bent)
-  const th=(slot==="a"?S.plan[iso]:S.lunch[iso])==="uit"?"":`<button class="mini" data-thuis="${slot}|${iso}"><span class="tile uit" aria-hidden="true">${ic("deur")}</span><span>Niet thuis</span></button>`;
-  if(slot==="a"){
-    const id=S.plan[iso], r=byId[id];
-    if(kind==="puf") return `<div class="stack tight"><h3>Weinig energie?</h3>${isAvond(id)?`<p class="muted small">Kies er een. ${esc(sn(r))} schuift dan een dag door.</p>`:""}
-      <div class="mini-grid">${fk.filter(x=>x.id!==id).map(o=>opt(o)).join("")}</div></div>`;
-    const opts=Object.keys(S.picks).filter(x=>isDinner(x)&&x!==id&&avail(byId[x])).map(x=>byId[x]);
-    const rest=alleVan("avond").filter(o=>!S.picks[o.id]&&o.id!==id&&!o.f);
-    return `<div class="stack tight"><h3>${r?"Wisselen met":"Wat wil je eten?"}</h3>
-      <div class="mini-grid">${th}${opts.map(o=>opt(o)).join("")}</div>
-      ${opts.length?`<h3 class="kies-kop">Alle avondgerechten</h3>`:""}<div class="mini-grid">${rest.map(o=>opt(o)).join("")}</div></div>`;
-  }
-  const L=lunchOf(iso), prev=S.plan[isoShift(iso,-1)], curId=L.r&&!L.p2?L.r.id:null;
-  if(kind==="puf") return `<div class="stack tight"><h3>Weinig energie?</h3><div class="mini-grid">${fk.filter(x=>x.id!==curId).map(o=>opt(o)).join("")}</div></div>`;
-  const opts=Object.keys(S.picks).filter(x=>isLunchPick(x)&&x!==curId&&avail(byId[x])).map(x=>byId[x]);
-  const meer=alleVan("lunch").filter(o=>!S.picks[o.id]&&o.id!==curId&&!opts.some(x=>x.id===o.id));
-  return `<div class="stack tight"><h3>${L.r?"Toch iets anders?":"Wat wil je eten?"}</h3>
-    <div class="mini-grid">${th}${rest()&&isAvond(prev)&&!L.p2?opt(byId[prev],"Restjes: "+sn(byId[prev]),"p2"):""}${opts.map(o=>opt(o)).join("")}</div>
-    <h3 class="kies-kop">Alle lunchgerechten</h3><div class="mini-grid">${meer.map(o=>opt(o)).join("")}</div>
-    ${L.p2?`<p class="muted small">Restjes over? Eet ze een avond later of vries ze in.</p>`:""}</div>`;
 }
 // Schuifscherm van onderen. Kruisje rechtsboven (altijd zichtbaar); foot = vaste balk onderin voor de hoofdactie.
 function sheetWrap(label,inner,foot,tools){
@@ -1571,7 +1540,7 @@ function openSlot(slot,iso,view){
   let body;
   if(view==="vz") body=vzs.map(e=>{const n=vzLeft(e);return `<div class="kz-rij kz-2"><span class="kz-info">${tile(byId[e.id])}<span><b>${esc(sn(byId[e.id]))}</b><small class="${n<=5?"oud":""}">nog ${n} ${n===1?"dag":"dagen"} goed</small></span></span><button class="kz-kies" data-set="${slot}|${iso}|v:${e.k}">Kies</button></div>`;}).join("");
   else { const l=kzLijst(slot,iso,view);
-    body=l.length?l.map(o=>{const v=ver(o)||o;return `<div class="kz-rij kz-2">${nsticker(o)}<button class="kz-info" data-kzr="${o.id}" aria-label="${esc(o.t)}: recept bekijken">${tile(o)}<span><b>${esc(o.t)}${S.hart[o.id]?`<span class="hartje" aria-label="favoriet">${ic("hart")}</span>`:""}${nlabel(o)}</b><small>${(()=>{const m=slot==="a"?S.plan:S.lunch, k=Object.keys(m).sort().find(x=>x>=isoOf(dayAt(0))&&x!==iso&&strip(m[x])===o.id); return k?`staat nu op ${dagNaam(k)}, schuift hierheen · `:view==="huis"&&S.park[o.id]?"nog geen dag · ":"";})()}${esc(v.m)} · <u>recept</u></small></span></button><button class="kz-kies" data-set="${slot}|${iso}|${o.id}" aria-label="${esc(o.t)} kiezen voor ${dagNaam(iso)}">Kies</button></div>`;}).join("")
+    body=l.length?l.map(o=>{const v=ver(o)||o;return `<div class="kz-rij kz-2">${nsticker(o)}<button class="kz-info" data-kzr="${o.id}" aria-label="${esc(o.t)}: recept bekijken">${tile(o)}<span><b>${esc(o.t)}${S.hart[o.id]?`<span class="hartje" aria-label="favoriet">${ic("hart")}</span>`:""}</b><small>${(()=>{const m=slot==="a"?S.plan:S.lunch, k=Object.keys(m).sort().find(x=>x>=isoOf(dayAt(0))&&x!==iso&&strip(m[x])===o.id); return k?`staat nu op ${dagNaam(k)}, schuift hierheen · `:view==="huis"&&S.park[o.id]?"nog geen dag · ":"";})()}${esc(v.m)} · <u>recept</u></small></span></button><button class="kz-kies" data-set="${slot}|${iso}|${o.id}" aria-label="${esc(o.t)} kiezen voor ${dagNaam(iso)}">Kies</button></div>`;}).join("")
       :`<p class="muted">${view==="huis"?`Je hebt nog niks gekozen. Probeer <button class="link" data-kz="nieuw">iets nieuws</button>.`:view==="nieuw"&&KQ.size?`Niks gevonden met dit filter. <button class="link" data-kzf="uit">${KQ.size>1?"Filters uit":"Filter uit"}</button>`:"Hier is niks te kiezen."}</p>`; }
   if(view==="puf"){ // geen boodschappen: lunch halen of bestellen, met tips om het toch voedzamer te maken
     const hb=slot==="l"?(S.lunch[iso]==="haal"?"":`<div class="kz-rij kz-2"><button class="kz-info" data-tips="haal" aria-label="Lunch halen: tips bekijken"><span class="kz-ic k4" aria-hidden="true">${ic("tas")}</span><span><b>Lunch halen</b><small>geen boodschappen nodig · <u>tips</u></small></span></button><button class="kz-kies" data-haal="${iso}">Kies</button></div>`)
@@ -1580,7 +1549,7 @@ function openSlot(slot,iso,view){
   }
   const filt=view==="nieuw"?`<div class="qf" role="group" aria-label="Filter">${Object.keys(QF).map(q=>`<button class="qchip" data-kzf="${q}" aria-pressed="${KQ.has(q)}">${QF[q][0]}</button>`).join("")}</div>`:"";
   sheetWrap(dayTitle(iso),`<button class="kz-terug" data-kz="">‹ Terug</button>
-    <div>${kop}<h2>${t}</h2><p class="muted small">${sub}</p></div>${filt}<div class="stack tight kz-vast">${body}</div>`);
+    <div>${kop}<h2>${t}</h2><p class="muted small">${sub}</p></div>${filt}<div class="stack tight">${body}</div>`);
 }
 
 // Tabblad Kaarten
@@ -1612,7 +1581,7 @@ function renderKaarten(){
   const hid=allR().filter(r=>r.cat===S.filter&&S.hidden[r.id]);
   $("#v-kaarten").innerHTML=`
     <button class="terug" data-tab="vandaag">${ic("calendar")}Terug naar je week</button>
-    <h1>Gerechten</h1>
+    <div class="hrow"><h1>Gerechten</h1><button class="kop-btn" data-own="menu">${ic("plus")}Eigen gerecht</button></div>
     <p class="muted">${S.filter==="avond"||S.filter==="lunch"?"Tik op <b>+</b> en HopHap zet het in je week. Vaker tikken = vaker eten.":"Tik op <b>+</b> en het komt op je boodschappenlijst. Vaker tikken = meer in huis."}</p>
     <div class="chips" role="group" aria-label="Soort">
       ${Object.entries(CATS).map(([k,v])=>`<button class="chip" data-filter="${k}" aria-pressed="${S.filter===k}"><span class="dot cat-${k}"></span>${v}</button>`).join("")}
@@ -1768,7 +1737,7 @@ function renderLijst(items){
 }
 
 // Recept (schuift van onderen in beeld)
-// SH = open recept · ctx = vanuit de week (dag + lunch/avond) · more = welke keuzes zijn opengeklapt
+// SH = open recept · ctx = vanuit de week (dag + lunch/avond, of kies:true vanuit het keuzescherm)
 let SH=null;
 function ingRow(q,name,f){
   const c=conflicts(name), k=name.toLowerCase(), v=S.subs[k], lo=lcOf(name);
@@ -1789,9 +1758,9 @@ function lcRow(q,name,f,qq){
   return `<li class="ing-lc"><span>${qq} ${esc(name)} <span class="tag-lc">${ic("swap")} kan low carb</span></span>
     <span class="subs">${opts.map(o=>`<button class="subbtn lc" data-lc="${esc(k)}|${esc(o.naam)}">→ ${esc(o.naam)}</button>`).join("")}<button class="subbtn plain" data-lc="${esc(k)}|=">gewoon laten</button></span></li>`;
 }
-function openSheet(id,ctx){SH={id,ctx:ctx||null,more:null};drawSheet();maakDeel(id);}
+function openSheet(id,ctx){SH={id,ctx:ctx||null};drawSheet();maakDeel(id);}
 function drawSheet(){
-  const {id,ctx,more}=SH, r=byId[id]; if(!r){closeSheet();return;}
+  const {id,ctx}=SH, r=byId[id]; if(!r){closeSheet();return;}
   const v=ver(r)||r, f=fac(r), n=S.picks[id]||0;
   const voor=r.cat==="avond"&&!r.f?`Voor ${por()} ${por()>1?"personen":"persoon"}${rest()?", plus lunch voor morgen":""}`:por()>1?`Voor ${por()} personen`:"";
   const kop=`<div class="sheet-head">${tile(r)}<div><h2>${esc(r.t)}${r.f?flabel:""}</h2><p class="muted small">${CATS[r.cat]} · ${esc(v.m)}</p>${cardTags(r,cardWarn(r),cardLc(r))}</div></div>`;
@@ -2124,7 +2093,7 @@ function render(){
 document.addEventListener("click",e=>{
   if(TS>=0&&e.target.closest("#tour")&&!e.target.closest(".tour-wolk")){ tourNext("klaar"); return; }
   if(e.target.closest("#toast-undo")){const u=toast.undo; $("#toast").hidden=true; toast.undo=null; if(u) u(); return;}
-  const el=e.target.closest("[data-park],[data-tips],[data-bestel],[data-haal],[data-rv],[data-wnieuw],[data-nieuwtour],[data-tab],[data-kzf],[data-kz],[data-kzr],[data-kzopen],[data-hart],[data-thuis],[data-vz],[data-deel],[data-add],[data-min],[data-open],[data-filter],[data-slot],[data-set],[data-close],[data-more],[data-sub],[data-unsub],[data-own],[data-copy],[data-edit],[data-del],[data-hide],[data-unhide],[data-setup],[data-sun],[data-backup],[data-about],[data-hint],[data-lc],[data-unlc],[data-qf],[data-tour],[data-weg],[data-gate]");
+  const el=e.target.closest("[data-park],[data-tips],[data-bestel],[data-haal],[data-rv],[data-wnieuw],[data-nieuwtour],[data-tab],[data-kzf],[data-kz],[data-kzr],[data-kzopen],[data-hart],[data-thuis],[data-vz],[data-deel],[data-add],[data-min],[data-open],[data-filter],[data-slot],[data-set],[data-close],[data-sub],[data-unsub],[data-own],[data-copy],[data-edit],[data-del],[data-hide],[data-unhide],[data-setup],[data-sun],[data-backup],[data-about],[data-hint],[data-lc],[data-unlc],[data-qf],[data-tour],[data-weg],[data-gate]");
   if(!el){ if(e.target.id==="sb") closeSheet(); return; }
   const d=el.dataset;
   if(d.sun!==undefined){
@@ -2141,7 +2110,6 @@ document.addEventListener("click",e=>{
   else if(d.filter){S.filter=d.filter;save();render();}
   else if(d.slot){const [s,iso]=d.slot.split("|");tapSlot(s,iso);}
   else if(d.set){const [s,iso,id]=d.set.split("|");setSlot(s,iso,id);}
-  else if(d.more){SH.more=SH.more===d.more?null:d.more;drawSheet(); const k=$("#keuzes"); if(k&&k.scrollIntoView) k.scrollIntoView({block:"nearest"});}
   else if(d.gate){ try{localStorage.setItem("hophap-safari","1");}catch(e){} openSetup(true); }
   else if(d.thuis){ const [s,iso]=d.thuis.split("|"); nietThuis(s,iso); }
   else if(d.vz){ const y=isoOf(dayAt(-1)), id=vzVraagId(); S.vq[y]=1;
