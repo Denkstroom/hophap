@@ -132,14 +132,20 @@ button.pressed{transform:scale(.94)}
 .btn-main.pressed,.add.on.pressed,.chip[aria-pressed="true"].pressed{filter:brightness(.78);box-shadow:0 0 0 4px var(--press)}
 .btn-soft.pressed,.btn-ghost.pressed,.toggle.pressed,.add.pressed:not(.on),.chip.pressed:not([aria-pressed="true"]),.link.pressed{background:var(--press);box-shadow:0 0 0 3px var(--ring)}
 .card:has(.card-body.pressed),.mini.pressed,label.check.pressed{background:var(--press);box-shadow:0 0 0 2px var(--ring)}
-.slot.pressed{background:var(--press);box-shadow:0 0 0 3px var(--ring)}
-.card-body.pressed,.mini.pressed,.slot.pressed{transform:scale(.98)}
+/* week-vakje: het rondje reageert, niet het onzichtbare vlak eromheen (tikvlak blijft groot) */
+.slot.pressed{background:none;box-shadow:none}
+.slot.pressed .tile{scale:.9;box-shadow:0 0 0 4px var(--ring)}
+.slot.pressed .tile.empty{border-color:var(--accent);background:var(--press)}
+.slot:focus-visible{outline:none}
+.slot:focus-visible .tile{outline:3px solid var(--accent);outline-offset:3px}
+.card-body.pressed,.mini.pressed{transform:scale(.98)}
 .tab.pressed{background:var(--press)}
 .subbtn.pressed,.icon-btn.pressed,.addcard.pressed,.bigopt.pressed{background:var(--press)}
 @media (prefers-reduced-motion:reduce){
   button,label.check,.card{transition:none}
   button.pressed,.card-body.pressed,.mini.pressed{transform:none}
   .slot .tile{transform:none}
+  .slot.pressed .tile{scale:none}
 }
 
 /* ---------- 4. Knoppen en links ---------- */
@@ -202,7 +208,7 @@ label.btn{cursor:pointer}
 .slot .tile svg.doo{width:66%;height:66%}
 .slot .tile svg.i{width:18px;height:18px}
 .tile.uit{background:var(--uit-bg);color:var(--uit-fg);box-shadow:none;transform:none}
-.slot .tile.empty{border:2px dashed var(--muted);background:transparent;color:var(--muted);box-shadow:none;transform:none}
+.slot .tile.empty{border:2px dashed var(--muted);background:transparent;color:var(--muted);box-shadow:none;transform:none;border-radius:50%;padding:0} /* altijd een rondje (.empty is ook de naam van het lege-tekstvak) */
 /* labels op de magneet: fuck-it en restjes */
 .slot .lbl{position:absolute;top:36px;left:50%;transform:translateX(-50%) rotate(-4deg);font-size:.66rem;font-weight:800;line-height:1;padding:3px 7px;border-radius:8px;color:var(--lbl-tx);white-space:nowrap;box-shadow:0 1.5px 0 rgba(0,0,0,.18)}
 .slot .lbl.fk{background:var(--fk)}
