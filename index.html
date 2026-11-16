@@ -939,9 +939,9 @@ function icons(){document.querySelectorAll("i[data-lucide]").forEach(el=>{el.out
 //   hidden verborgen kaarten                  own    eigen gerechten   setup  antwoorden vragenlijst
 const KEY="eetkaarten-v1";
 const VERSIE="1.2"; // ophogen bij elke update die online gaat
-const OBJ=["picks","bought","stock","plan","lunch","used","fav","subs","hidden","lc","vries","vq","hart"]; // vries = je vriezer, vq = vriezervraag al gesteld
+const OBJ=["picks","bought","stock","plan","lunch","used","fav","subs","hidden","lc","vries","vq","hart","park"]; // vries = je vriezer, vq = vriezervraag al gesteld
 const parseOwn=v=>{try{const a=typeof v==="string"?JSON.parse(v):v; return Array.isArray(a)?a:[];}catch(e){return [];}};
-const FRESH=()=>({hart:{},vries:{},vq:{},picks:{},bought:{},stock:{},plan:{},lunch:{},used:{},fav:{},subs:{},hidden:{},lc:{},own:[],setup:null,filter:"ontbijt",tab:"vandaag"});
+const FRESH=()=>({park:{},hart:{},vries:{},vq:{},picks:{},bought:{},stock:{},plan:{},lunch:{},used:{},fav:{},subs:{},hidden:{},lc:{},own:[],setup:null,filter:"ontbijt",tab:"vandaag"});
 // START: verander je deze code, dan begint iedereen één keer opnieuw (alsof het de eerste keer is).
 // De oude gegevens worden eerst bewaard: op dit apparaat onder KEY+"-voor-"+START, in je account in het document "hophap-voor-"+START.
 const START="opnieuw-2026-11-14g";
@@ -1088,7 +1088,7 @@ document.addEventListener("pointerup",()=>{
 });
 
 // Opslaan: pas naar je account schrijven als de opgeslagen versie binnen is (anders overschrijft een oude versie je lijst)
-const keep=()=>({hart:S.hart,vries:S.vries,vq:S.vq,picks:S.picks,bought:S.bought,stock:S.stock,plan:S.plan,lunch:S.lunch,used:S.used,fav:S.fav,subs:S.subs,hidden:S.hidden,lc:S.lc,
+const keep=()=>({park:S.park,hart:S.hart,vries:S.vries,vq:S.vq,picks:S.picks,bought:S.bought,stock:S.stock,plan:S.plan,lunch:S.lunch,used:S.used,fav:S.fav,subs:S.subs,hidden:S.hidden,lc:S.lc,
   own:JSON.stringify(S.own),setup:S.setup||null,qv:S.qv||0,filter:S.filter,start:START,tour:S.tour||0});
 let REF=null, synced=false, lastSent="", writing=false, again=false, wt=null;
 function save(){
@@ -1175,7 +1175,7 @@ const left=(map,id)=>(S.picks[id]||0)-(S.used[id]||0)-slotCount(map,id);
 function roundRobin(ok,map){
   // eerst zelf koken (verse boodschappen), fuck-its later in de week (dan is de puf vaak op)
   const ids=Object.keys(S.picks).sort((x,y)=>(byId[x]&&byId[x].f?1:0)-(byId[y]&&byId[y].f?1:0));
-  const rest={}; for(const id of ids) if(ok(id)){const n=left(map,id); if(n>0) rest[id]=n;}
+  const rest={}; for(const id of ids) if(ok(id)){const n=left(map,id)-(S.park[id]||0); if(n>0) rest[id]=n;} // geparkeerd = in huis, maar niet vanzelf inplannen
   const q=[]; let more=true; while(more){more=false; for(const id in rest) if(rest[id]>0){q.push(id);rest[id]--;more=true;}} return q;
 }
 // oude dagen opruimen + gerechten die niet meer op je lijst staan eruit halen
@@ -1204,6 +1204,7 @@ function normalizePlan(){
     for(const k of Object.keys(S.plan)) if(S.plan[k]==="f-bestel") S.plan[k]="bestel";
     for(const m of [S.picks,S.used,S.fav,S.hart,S.hidden]) delete m["f-bestel"];
   }
+  for(const id of Object.keys(S.park)){ const max=Math.max(0,(S.picks[id]||0)-(S.used[id]||0)); if(!byId[id]||max<=0) delete S.park[id]; else if(S.park[id]>max) S.park[id]=max; }
   // vriezer: na 30 dagen eruit (tenzij al ingepland); oude vragen opruimen
   const inPlan=new Set([...Object.values(S.plan),...Object.values(S.lunch)].filter(isVz).map(v=>v.slice(2)));
   for(const k of Object.keys(S.vries)) if(!inPlan.has(k)&&(vzLeft(S.vries[k])<0||!byId[S.vries[k].id])) delete S.vries[k];
@@ -1257,6 +1258,7 @@ function lunchOf(iso){
 const vrij=id=>!!(byId[id]&&byId[id].f&&!(byId[id].i||[]).length);
 function choose(map,iso,id){
   const old=map[iso];
+  if(S.park[id]&&strip(old)!==id){ S.park[id]--; if(!S.park[id]) delete S.park[id]; } // geparkeerd gerecht krijgt weer een dag
   if(vrij(id)){ if(strip(old)!==id&&left(map,id)<=0){ S.picks[id]=(S.picks[id]||0)+1; S.fav[id]=(S.fav[id]||0)+1; } map[iso]=id; return; }
   const counted=map===S.plan?isDinner(id):isLunchPick(id);
   if(counted&&left(map,id)<=0&&strip(old)!==id){
@@ -1282,14 +1284,24 @@ function noPuf(iso,fid){
 }
 // Weghalen uit je week: het vakje wordt leeg en het gerecht gaat één keer van je lijst (anders komt het terug).
 // Lunch krijgt "x" (bewust leeg), zodat er ook geen restjes verschijnen. Ongedaan maken kan via de melding.
+// Zijn alle boodschappen van dit gerecht al afgevinkt? (voorraad zoals kruiden telt niet mee)
+function inHuis(id){
+  const r=byId[id]; if(!r||!r.i.length) return false;
+  const items=buildList();
+  return r.i.every(([q,orig])=>{ const lo=lcOf(orig); if(lo&&lo.x===0) return true;
+    const it=items.find(x=>x.k===effName(orig).toLowerCase()); return !it||it.stock||isDone(it); });
+}
 function removeSlot(slot,iso){
-  const before=JSON.stringify({plan:S.plan,lunch:S.lunch,picks:S.picks});
+  const before=JSON.stringify({plan:S.plan,lunch:S.lunch,picks:S.picks,park:S.park});
   const id=slot==="a"?S.plan[iso]:strip(S.lunch[iso]);
   const counted=slot==="a"?isDinner(id):isLunchPick(id);
-  if(counted){ const n=(S.picks[id]||0)-1; if(n>0) S.picks[id]=n; else delete S.picks[id]; }
+  // Boodschappen al gehaald? Dan blijft het gerecht bij "Al in huis" (niet vanzelf ingepland). Anders gaat het van je lijst.
+  const bewaar=counted&&inHuis(id);
+  if(bewaar) S.park[id]=(S.park[id]||0)+1;
+  else if(counted){ const n=(S.picks[id]||0)-1; if(n>0) S.picks[id]=n; else delete S.picks[id]; }
   if(slot==="a") delete S.plan[iso]; else S.lunch[iso]="x";
   save(); closeSheet(); render();
-  toast("Weggehaald uit je week",()=>{ const b=JSON.parse(before); S.plan=b.plan; S.lunch=b.lunch; S.picks=b.picks; save(); render(); });
+  toast(bewaar?"Weggehaald. Staat nog bij Al in huis.":"Weggehaald uit je week",()=>{ const b=JSON.parse(before); S.plan=b.plan; S.lunch=b.lunch; S.picks=b.picks; S.park=b.park||{}; save(); render(); });
 }
 // Niet thuis: het vakje krijgt "uit". Stond er avondeten? Dat schuift een dag door (je hebt de boodschappen al).
 function zetAvond(iso,val){
@@ -1544,7 +1556,7 @@ function openSlot(slot,iso,view){
   let body;
   if(view==="vz") body=vzs.map(e=>{const n=vzLeft(e);return `<div class="kz-rij kz-2"><span class="kz-info">${tile(byId[e.id])}<span><b>${esc(sn(byId[e.id]))}</b><small class="${n<=5?"oud":""}">nog ${n} ${n===1?"dag":"dagen"} goed</small></span></span><button class="kz-kies" data-set="${slot}|${iso}|v:${e.k}">Kies</button></div>`;}).join("");
   else { const l=kzLijst(slot,iso,view);
-    body=l.length?l.map(o=>{const v=ver(o)||o;return `<div class="kz-rij kz-2">${nsticker(o)}<button class="kz-info" data-kzr="${o.id}" aria-label="${esc(o.t)}: recept bekijken">${tile(o)}<span><b>${esc(o.t)}${S.hart[o.id]?`<span class="hartje" aria-label="favoriet">${ic("hart")}</span>`:""}${nlabel(o)}</b><small>${(()=>{const m=slot==="a"?S.plan:S.lunch, k=Object.keys(m).sort().find(x=>x>=isoOf(dayAt(0))&&x!==iso&&strip(m[x])===o.id); return k?`staat nu op ${dagNaam(k)}, schuift hierheen · `:"";})()}${esc(v.m)} · <u>recept</u></small></span></button><button class="kz-kies" data-set="${slot}|${iso}|${o.id}" aria-label="${esc(o.t)} kiezen voor ${dagNaam(iso)}">Kies</button></div>`;}).join("")
+    body=l.length?l.map(o=>{const v=ver(o)||o;return `<div class="kz-rij kz-2">${nsticker(o)}<button class="kz-info" data-kzr="${o.id}" aria-label="${esc(o.t)}: recept bekijken">${tile(o)}<span><b>${esc(o.t)}${S.hart[o.id]?`<span class="hartje" aria-label="favoriet">${ic("hart")}</span>`:""}${nlabel(o)}</b><small>${(()=>{const m=slot==="a"?S.plan:S.lunch, k=Object.keys(m).sort().find(x=>x>=isoOf(dayAt(0))&&x!==iso&&strip(m[x])===o.id); return k?`staat nu op ${dagNaam(k)}, schuift hierheen · `:view==="huis"&&S.park[o.id]?"nog geen dag · ":"";})()}${esc(v.m)} · <u>recept</u></small></span></button><button class="kz-kies" data-set="${slot}|${iso}|${o.id}" aria-label="${esc(o.t)} kiezen voor ${dagNaam(iso)}">Kies</button></div>`;}).join("")
       :`<p class="muted">${view==="huis"?`Je hebt nog niks gekozen. Probeer <button class="link" data-kz="nieuw">iets nieuws</button>.`:view==="nieuw"&&KQ.size?`Niks gevonden met dit filter. <button class="link" data-kzf="uit">${KQ.size>1?"Filters uit":"Filter uit"}</button>`:"Hier is niks te kiezen."}</p>`; }
   if(view==="puf"){ // geen boodschappen: lunch halen of bestellen, met tips om het toch voedzamer te maken
     const hb=slot==="l"?(S.lunch[iso]==="haal"?"":`<div class="kz-rij kz-2"><button class="kz-info" data-tips="haal" aria-label="Lunch halen: tips bekijken"><span class="kz-ic k4" aria-hidden="true">${ic("tas")}</span><span><b>Lunch halen</b><small>geen boodschappen nodig · <u>tips</u></small></span></button><button class="kz-kies" data-haal="${iso}">Kies</button></div>`)
