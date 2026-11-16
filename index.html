@@ -178,6 +178,10 @@ label.btn{cursor:pointer}
 :root[data-theme="dark"]{--nw-bg:#ffe07a}
 .card,.kz-rij{position:relative}
 .nw-st{position:absolute;top:-10px;left:-6px;z-index:2;background:var(--nw-bg);color:var(--nw-tx);font-weight:800;font-size:.74rem;line-height:1;padding:5px 10px;border-radius:9px;transform:rotate(-7deg);box-shadow:0 2px 0 rgba(0,0,0,.28);pointer-events:none}
+.park-strip{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;border-radius:var(--r-m);padding:10px 14px;background:var(--accent-soft);color:var(--fg);font-size:var(--fs-s);line-height:1.35;min-height:56px}
+.park-strip .tile{width:36px;height:36px}
+.park-strip>span:nth-child(2){flex:1}
+.kz-rij .tile.kz-leeg{border:2px dashed var(--muted);background:transparent;color:var(--muted);box-shadow:none;border-radius:50%;padding:0}
 .tips{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px}
 .fl{display:inline-block;font-size:var(--fs-xs);font-weight:800;background:var(--fk);color:var(--lbl-tx);border-radius:8px;padding:0 8px;margin-left:8px;vertical-align:3px;letter-spacing:.02em}
 /* kleine keuzeknop met tegel (wisselen, kopiëren) */
@@ -1413,6 +1417,17 @@ function ontdooiHTML(){
   if(!nm.length) return "";
   return `<li class="vz-strip" role="note">${ic("snow")}<span>Leg je <b>${esc(nm.join(" en je "))}</b> in je koelkast voor morgen.</span></li>`;
 }
+// Gerecht in huis maar zonder dag (weggehaald terwijl de boodschappen al gehaald waren): niet vergeten!
+function parkHTML(){
+  return Object.keys(S.park).filter(id=>byId[id]).slice(0,2).map(id=>`<button class="park-strip" data-park="${id}">${tile(byId[id])}<span>Denk je aan je <b>${esc(sn(byId[id]).toLowerCase())}</b>? Tik om in te plannen.</span><span class="kz-pijl" aria-hidden="true">›</span></button>`).join("");
+}
+function openPark(id){
+  const r=byId[id]; if(!r) return; const slot=r.cat==="avond"?"a":"l", map=slot==="a"?S.plan:S.lunch;
+  KZ=null; SH=null;
+  const dagen=[...Array(7)].map((_,i)=>isoOf(dayAt(i))).filter(iso=>{const v=map[iso]; return v===undefined||v==="x"||(slot==="a"?isDinner(v)&&!byId[v].f:isLunchPick(strip(v)));});
+  sheetWrap("Inplannen",`<div><h2>Wanneer eet je je ${esc(sn(r).toLowerCase())}?</h2><p class="muted small">Je hebt de boodschappen al in huis.</p></div>
+    <div class="stack tight">${dagen.map(iso=>{const v=strip(map[iso]), nu=byId[v]; return `<button class="kz-rij" data-set="${slot}|${iso}|${id}">${nu?tile(nu):`<span class="tile empty kz-leeg" aria-hidden="true">${ic("plus")}</span>`}<span><b class="cap">${esc(dagNaam(iso))}</b><small>${nu?`nu: ${esc(sn(nu).toLowerCase())}, die krijgt een andere dag`:"nog vrij"}</small></span></button>`;}).join("")||`<p class="muted">Je week zit vol. Haal eerst iets weg.</p>`}</div>`);
+}
 function vzVraagHTML(){
   const id=vzVraagId(); if(!id) return "";
   return `<div class="hint-card vz-vraag" role="note"><b class="vz-kop">${ic("snow")}Restje ${esc(sn(byId[id]).toLowerCase())} over?</b>
@@ -1444,7 +1459,7 @@ function renderVandaag(){
   $("#v-vandaag").innerHTML=`
     <header class="brand"><span class="logo" aria-hidden="true">${doodle("konijn")}</span><span class="name">Hop<b>Hap</b></span><span class="range">${d0.getMonth()===d6.getMonth()?d0.getDate():kort(d0)} – ${kort(d6)}</span>
       <button class="kop-btn" data-tab="kaarten">${ic("layers")}Gerechten</button><button class="icon-btn" data-setup="1" aria-label="Mijn instellingen">${ic("sliders")}</button></header>
-    ${vzVraagHTML()}${hintHTML()}
+    ${parkHTML()}${vzVraagHTML()}${hintHTML()}
     <div class="week-head" aria-hidden="true"><span class="wk-datum">${d0.getMonth()===d6.getMonth()?d0.getDate():kort(d0)}–${kort(d6)}</span><span>lunch</span><span>avond</span></div>
     ${hasAvond?"":`<div class="hint-card" role="note"><b>Begin hier!</b><p class="small">Tik op een vakje en kies wat je wilt eten. Plan zoveel dagen als je wilt.</p></div>`}
     <ul class="week">${hasAvond?rows:rows.replace('class="slot" data-slot="l|'+isoOf(dayAt(0))+'"','class="slot glow" data-slot="l|'+isoOf(dayAt(0))+'"')}</ul>
@@ -2109,7 +2124,7 @@ function render(){
 document.addEventListener("click",e=>{
   if(TS>=0&&e.target.closest("#tour")&&!e.target.closest(".tour-wolk")){ tourNext("klaar"); return; }
   if(e.target.closest("#toast-undo")){const u=toast.undo; $("#toast").hidden=true; toast.undo=null; if(u) u(); return;}
-  const el=e.target.closest("[data-tips],[data-bestel],[data-haal],[data-rv],[data-wnieuw],[data-nieuwtour],[data-tab],[data-kzf],[data-kz],[data-kzr],[data-kzopen],[data-hart],[data-thuis],[data-vz],[data-deel],[data-add],[data-min],[data-open],[data-filter],[data-slot],[data-set],[data-close],[data-more],[data-sub],[data-unsub],[data-own],[data-copy],[data-edit],[data-del],[data-hide],[data-unhide],[data-setup],[data-sun],[data-backup],[data-about],[data-hint],[data-lc],[data-unlc],[data-qf],[data-tour],[data-weg],[data-gate]");
+  const el=e.target.closest("[data-park],[data-tips],[data-bestel],[data-haal],[data-rv],[data-wnieuw],[data-nieuwtour],[data-tab],[data-kzf],[data-kz],[data-kzr],[data-kzopen],[data-hart],[data-thuis],[data-vz],[data-deel],[data-add],[data-min],[data-open],[data-filter],[data-slot],[data-set],[data-close],[data-more],[data-sub],[data-unsub],[data-own],[data-copy],[data-edit],[data-del],[data-hide],[data-unhide],[data-setup],[data-sun],[data-backup],[data-about],[data-hint],[data-lc],[data-unlc],[data-qf],[data-tour],[data-weg],[data-gate]");
   if(!el){ if(e.target.id==="sb") closeSheet(); return; }
   const d=el.dataset;
   if(d.sun!==undefined){
@@ -2135,6 +2150,7 @@ document.addEventListener("click",e=>{
   else if(d.haal){ lunchHalen(d.haal); }
   else if(d.bestel){ bestellen(d.bestel); }
   else if(d.tips){ openTips(d.tips); }
+  else if(d.park){ openPark(d.park); }
   else if(d.rv){ const [k,iso]=d.rv.split("|"), m=isoShift(iso,1), id=S.plan[iso];
     if(k==="lunch"){ S.lunch[m]="p2"; toast("Restjes als lunch!"); }
     else if(k==="vries"&&byId[id]){ S.vries[Date.now().toString(36)]={id,d:iso}; S.vq[iso]=1; toast(`Komt in je vriezer! Nog ${VDAGEN} dagen goed na het koken.`); }
