@@ -208,6 +208,9 @@ label.btn{cursor:pointer}
 .slot .lbl.fk{background:var(--fk)}
 .slot .lbl.rs{background:var(--rs)}
 .slot .lbl.vz{background:var(--vz)}
+/* bij de dag vóór een vriezer-gerecht: zelfde kleur als het vriezer-label */
+.lbl-ont{display:inline-flex;align-items:center;gap:2px;margin-top:4px;font-size:.62rem;font-weight:800;line-height:1;padding:3px 5px;border-radius:8px;background:var(--vz);color:var(--lbl-tx);white-space:nowrap;transform:rotate(-3deg);box-shadow:0 1.5px 0 rgba(0,0,0,.18)}
+.lbl-ont svg.i{width:10px;height:10px;stroke-width:2.4}
 .vz-strip{display:flex;gap:8px;align-items:flex-start;margin:2px 0 6px;padding:8px 12px;border-radius:var(--r-m);background:var(--vz-bg);font-size:var(--fs-s);line-height:1.35}
 .vz-strip svg.i{flex:none;margin-top:2px}
 .mini small{display:block;font-size:var(--fs-xs);font-weight:600;color:var(--muted)}
@@ -1360,7 +1363,7 @@ function renderVandaag(){
     const lab=r=>r&&r.f?'<span class="lbl fk">fuck-it</span>':"";
     const mag=(r,kind,extra)=>r?`<span class="tile cat-${kind}" aria-hidden="true">${doodle(r.pic||PIC[r.id]||CATPIC[r.cat])}</span>${extra||lab(r)}<span class="t">${esc(sn(r))}</span>`:emptyCell;
     rows+=`<li class="day${i===0?" today":""}">
-      <span class="dn">${dn}${i<2?`<small>${wd} ${dag}</small>`:""}</span>
+      <span class="dn">${dn}${i<2?`<small>${wd} ${dag}</small>`:""}${(()=>{const m=isoShift(iso,1); return i>0&&(vzOf(S.plan[m])||vzOf(S.lunch[m]))?`<span class="lbl-ont" title="Leg vanavond je restje uit de vriezer in de koelkast">${ic("snow")}ontdooien</span>`:"";})()}</span>
       <button class="slot" data-slot="l|${iso}" aria-label="Lunch ${dn}: ${L.uit?"niet thuis":L.r?esc(sn(L.r))+(L.p2?", restjes":""):"nog niks"}">${L.uit?uitCell:mag(L.r,"lunch",L.p2?'<span class="lbl rs">restjes</span>':L.vz?vzLbl:"")}</button>
       <button class="slot" data-slot="a|${iso}" aria-label="Avond ${dn}: ${au?"niet thuis":ar?esc(sn(ar)):"nog niks"}">${au?uitCell:mag(ar,"avond",av?vzLbl:"")}</button>
     </li>`;
