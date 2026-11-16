@@ -1200,7 +1200,8 @@ const vzLeft=e=>VDAGEN-dagenTussen(e.d,isoOf(dayAt(0)));
 function vzFree(){
   const used=new Set([...Object.values(S.plan),...Object.values(S.lunch)].filter(isVz).map(v=>v.slice(2)));
   const t=isoOf(dayAt(0));
-  return Object.keys(S.vries).filter(k=>!used.has(k)&&byId[S.vries[k].id]&&S.vries[k].d<t) // pas de dag na het koken in je vriezer.map(k=>({k,id:S.vries[k].id,d:S.vries[k].d})).sort((x,y)=>x.d<y.d?-1:x.d>y.d?1:0);
+  // pas de dag na het koken staat een restje echt in je vriezer
+  return Object.keys(S.vries).filter(k=>!used.has(k)&&byId[S.vries[k].id]&&S.vries[k].d<t).map(k=>({k,id:S.vries[k].id,d:S.vries[k].d})).sort((x,y)=>x.d<y.d?-1:x.d>y.d?1:0);
 }
 // Restje van gisteravond niet als lunch gegeten? Dan vragen of het in de vriezer ging (één keer per restje, alleen vriezerproof).
 function vzVraagId(){
