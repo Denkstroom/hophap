@@ -1173,6 +1173,8 @@ function normalizePlan(){
   const inPlan=new Set([...Object.values(S.plan),...Object.values(S.lunch)].filter(isVz).map(v=>v.slice(2)));
   for(const k of Object.keys(S.vries)) if(!inPlan.has(k)&&(vzLeft(S.vries[k])<0||!byId[S.vries[k].id])) delete S.vries[k];
   for(const k of Object.keys(S.vq)) if(k<isoOf(dayAt(-7))) delete S.vq[k];
+  // alvast in de vriezer gezet, maar dat avondeten is daarna gewisseld? Dan is er ook geen restje
+  for(const k of Object.keys(S.vries)){ const e=S.vries[k]; if(e.d>=isoOf(dayAt(0))&&S.plan[e.d]!==e.id){ delete S.vries[k]; delete S.vq[e.d]; } }
   for(const k of Object.keys(S.plan)) if(S.plan[k]==="-") delete S.plan[k]; // "vrije avond" bestaat niet meer
   tidy(S.plan,isDinner);
   let q=roundRobin(isDinner,S.plan);
@@ -1194,7 +1196,8 @@ const dagenTussen=(x,y)=>Math.round((new Date(y+"T12:00")-new Date(x+"T12:00"))/
 const vzLeft=e=>VDAGEN-dagenTussen(e.d,isoOf(dayAt(0)));
 function vzFree(){
   const used=new Set([...Object.values(S.plan),...Object.values(S.lunch)].filter(isVz).map(v=>v.slice(2)));
-  return Object.keys(S.vries).filter(k=>!used.has(k)&&byId[S.vries[k].id]).map(k=>({k,id:S.vries[k].id,d:S.vries[k].d})).sort((x,y)=>x.d<y.d?-1:x.d>y.d?1:0);
+  const t=isoOf(dayAt(0));
+  return Object.keys(S.vries).filter(k=>!used.has(k)&&byId[S.vries[k].id]&&S.vries[k].d<t) // pas de dag na het koken in je vriezer.map(k=>({k,id:S.vries[k].id,d:S.vries[k].d})).sort((x,y)=>x.d<y.d?-1:x.d>y.d?1:0);
 }
 // Restje van gisteravond niet als lunch gegeten? Dan vragen of het in de vriezer ging (één keer per restje, alleen vriezerproof).
 function vzVraagId(){
@@ -1276,6 +1279,24 @@ function setSlot(slot,iso,id){
   if(slot==="a"){ if(byId[id].f&&isAvond(S.plan[iso])) noPuf(iso,id); else choose(S.plan,iso,id); }
   else { if(id==="p2") S.lunch[iso]=id; else choose(S.lunch,iso,id); }
   save(); closeSheet(); render();
+  if(slot==="a") restjesVraag(iso);
+}
+// Je kookt een portie extra, maar de lunch van morgen ligt al vast (ander gerecht, niet thuis of uit de vriezer).
+// Dan meteen vragen wat je met de restjes doet, in plaats van ze stilletjes te laten verdwijnen.
+function restjesVraag(iso){
+  const id=S.plan[iso], r=byId[id], m=isoShift(iso,1), v=S.lunch[m];
+  if(!rest()||!isAvond(id)||v===undefined||v==="p2"||String(v)[0]==="~"||v==="x") return;
+  const L=lunchOf(m), nu=v==="uit"?"je eet niet thuis":L.r?esc(sn(L.r).toLowerCase()):"";
+  if(!nu) return;
+  const rij=(val,icn,cls,t,sub)=>`<button class="kz-rij" data-rv="${val}|${iso}">${icn?`<span class="kz-ic ${cls}" aria-hidden="true">${icn}</span>`:tile(r)}<span><b>${t}</b><small>${sub}</small></span></button>`;
+  KZ=null; SH=null;
+  sheetWrap("Restjes",`<div><p class="muted small cap">${esc(dayTitle(iso))}</p><h2>Restjes van je ${esc(sn(r).toLowerCase())}</h2>
+    <p class="muted">Je kookt een portie extra, maar ${dagNaam(m)} ${v==="uit"?"eet je niet thuis":"staat er al "+nu+" als lunch"}. Wat doe je met de restjes?</p></div>
+    <div class="stack tight">
+      ${rij("lunch","","",`${dagNaam(m)[0].toUpperCase()+dagNaam(m).slice(1)} als lunch`,v==="uit"?"toch thuis eten":`${nu} schuift naar een andere dag`)}
+      ${r.vries?rij("vries",ic("snow"),"k5","In de vriezer","HopHap plant het later voor je in"):""}
+      ${rij("niks",ic("x"),"k4","Laat maar",r.vries?"je lunch blijft zoals hij is":"niet vriezerproof, dus eet ze gewoon een andere dag")}
+    </div>`);
 }
 
 // ---------- 6. SCHERMEN ----------
@@ -2011,7 +2032,7 @@ function render(){
 document.addEventListener("click",e=>{
   if(TS>=0&&e.target.closest("#tour")&&!e.target.closest(".tour-wolk")){ tourNext("klaar"); return; }
   if(e.target.closest("#toast-undo")){const u=toast.undo; $("#toast").hidden=true; toast.undo=null; if(u) u(); return;}
-  const el=e.target.closest("[data-wnieuw],[data-nieuwtour],[data-tab],[data-kzf],[data-kz],[data-kzr],[data-kzopen],[data-hart],[data-thuis],[data-vz],[data-deel],[data-add],[data-min],[data-open],[data-filter],[data-slot],[data-set],[data-close],[data-more],[data-sub],[data-unsub],[data-own],[data-copy],[data-edit],[data-del],[data-hide],[data-unhide],[data-setup],[data-sun],[data-backup],[data-about],[data-hint],[data-lc],[data-unlc],[data-qf],[data-tour],[data-weg],[data-gate]");
+  const el=e.target.closest("[data-rv],[data-wnieuw],[data-nieuwtour],[data-tab],[data-kzf],[data-kz],[data-kzr],[data-kzopen],[data-hart],[data-thuis],[data-vz],[data-deel],[data-add],[data-min],[data-open],[data-filter],[data-slot],[data-set],[data-close],[data-more],[data-sub],[data-unsub],[data-own],[data-copy],[data-edit],[data-del],[data-hide],[data-unhide],[data-setup],[data-sun],[data-backup],[data-about],[data-hint],[data-lc],[data-unlc],[data-qf],[data-tour],[data-weg],[data-gate]");
   if(!el){ if(e.target.id==="sb") closeSheet(); return; }
   const d=el.dataset;
   if(d.sun!==undefined){
@@ -2034,6 +2055,10 @@ document.addEventListener("click",e=>{
   else if(d.vz){ const y=isoOf(dayAt(-1)), id=vzVraagId(); S.vq[y]=1;
     if(d.vz==="ja"&&id){ S.vries[Date.now().toString(36)]={id,d:y}; toast(`In je vriezer! Nog ${VDAGEN-1} dagen goed.`); }
     save(); render(); }
+  else if(d.rv){ const [k,iso]=d.rv.split("|"), m=isoShift(iso,1), id=S.plan[iso];
+    if(k==="lunch"){ S.lunch[m]="p2"; toast("Restjes als lunch!"); }
+    else if(k==="vries"&&byId[id]){ S.vries[Date.now().toString(36)]={id,d:iso}; S.vq[iso]=1; toast(`Komt in je vriezer! Nog ${VDAGEN} dagen goed na het koken.`); }
+    save(); closeSheet(); render(); }
   else if(d.wnieuw){ closeSetup&&closeSetup(); toonNieuw(true); }
   else if(d.nieuwtour){ closeSheet(); startTour(); }
   else if(d.deel){ deel(d.deel); }
