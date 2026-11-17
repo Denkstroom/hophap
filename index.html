@@ -1684,12 +1684,7 @@ function buildList(){
     it.qs=qtyText(it.stock?Object.fromEntries(Object.keys(it.qc).map(q=>[q,1])):it.qc);
     it.sig=it.qs.join(" + ");
     // al (deels) gehaald? S.bought[k] = {qc:{...}} met wat je had toen je afvinkte. Dan blijft alleen het verschil over.
-    const b=S.bought[it.k];
-    if(!it.stock&&b&&typeof b==="object"&&b.qc){
-      const nog={}, al={};
-      for(const [q,c] of Object.entries(it.qc)){ if(q===""){ if(b.qc[""]!==undefined) al[q]=c; else nog[q]=c; continue; } const h=Math.min(c,b.qc[q]||0); if(c-h>1e-9) nog[q]=c-h; if(h>1e-9) al[q]=h; }
-      it.nogLeeg=!Object.keys(nog).length; it.nog=qtyText(nog).join(" + "); it.al=qtyText(al).join(" + ");
-    }
+    vulNog(it);
   }
   return Object.values(items).sort((a,b)=>a.afd-b.afd||a.name.localeCompare(b.name,"nl"));
 }
@@ -1700,12 +1695,37 @@ function migrate(items){ // oude opslag omzetten
     if(it.stock&&S.bought[it.k]!==undefined){S.stock[it.k]=true;delete S.bought[it.k];ch=true;}
   }
   for(const k of Object.keys(S.bought)){ const b=S.bought[k]; if(typeof b!=="string"&&!(b&&typeof b==="object"&&b.qc)){delete S.bought[k];ch=true;} }
-  for(const it of items) if(!it.stock&&typeof S.bought[it.k]==="string"&&S.bought[it.k]===it.sig){ S.bought[it.k]={qc:{...it.qc}}; it.nogLeeg=true; it.nog=""; it.al=it.sig; ch=true; } // oud afvinkje → hoeveelheden
+  for(const it of items) if(!it.stock&&typeof S.bought[it.k]==="string"){ S.bought[it.k]=oudNaarQc(S.bought[it.k],it); ch=true; vulNog(it); } // oud afvinkje ("3 pakken") → hoeveelheden
   for(const k of ["have","today"]) if(S[k]!==undefined){delete S[k];ch=true;}
   if(S.qv!==2){for(const it of items) if(typeof S.bought[it.k]==="string") S.bought[it.k]=it.sig; S.qv=2; ch=true;} // nieuwe notatie: afgevinkt blijft afgevinkt
   if(!Object.keys(S.fav).length&&Object.keys(S.picks).length){Object.assign(S.fav,S.picks);ch=true;} // favorieten starten met je huidige lijst
   for(const id of Object.keys(S.picks)) if(!byId[id]){delete S.picks[id];ch=true;} // verwijderde kaarten
   if(ch) save();
+}
+// Oud afvinkje was tekst, bv. "3 pakken" of "± 300 g + 2 blikken". Reken terug naar hoeveelheden per verpakking.
+function oudNaarQc(str,it){
+  const had={}; // eenheid -> aantal
+  for(const deel of String(str).split(" + ")){
+    const m=deel.match(/^(±\s*)?(\d*)(½?)\s*(.*)$/); if(!m) continue;
+    const n=(m[2]?Number(m[2]):0)+(m[3]?0.5:0); const u=(m[4]||"").replace(/^×\s*/,"");
+    if(!n&&!m[4]) continue;
+    had[u]=(had[u]||0)+(n||1);
+  }
+  const qc={};
+  for(const [q,c] of Object.entries(it.qc)){
+    if(q===""){ qc[""]=c; continue; } // geen hoeveelheid: afgevinkt = in huis
+    const m=q.match(/^(±\s*)?(\d+|½)\s*(.*)$/); if(!m) continue;
+    const per=m[2]==="½"?0.5:Number(m[2]), u=m[3]||"";
+    const sleutel=Object.keys(had).find(x=>x===u||x===meervoud(u)); if(sleutel===undefined) continue;
+    const n=Math.min(c,had[sleutel]/per); if(n>0){ qc[q]=n; had[sleutel]-=n*per; }
+  }
+  return {qc};
+}
+function vulNog(it){
+  const b=S.bought[it.k]; if(it.stock||!b||typeof b!=="object"||!b.qc) return;
+  const nog={}, al={};
+  for(const [q,c] of Object.entries(it.qc)){ if(q===""){ if(b.qc[""]!==undefined) al[q]=c; else nog[q]=c; continue; } const h=Math.min(c,b.qc[q]||0); if(c-h>1e-9) nog[q]=c-h; if(h>1e-9) al[q]=h; }
+  it.nogLeeg=!Object.keys(nog).length; it.nog=qtyText(nog).join(" + "); it.al=qtyText(al).join(" + ");
 }
 const isDone=i=>{ if(i.stock) return !!S.stock[i.k]; const b=S.bought[i.k]; return b&&typeof b==="object"?!!i.nogLeeg:b===i.sig; };
 const toonQ=i=>i.stock?"":(i.nog&&!i.nogLeeg?i.nog:i.sig); // wat er nog gehaald moet worden
