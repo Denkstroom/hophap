@@ -1045,16 +1045,18 @@ const SHORT={"l-carpaccio":"Orzo carpaccio","l-caesar":"Caesar-salade","l-mango"
   "f-pizza":"Pizza","f-wrap":"Quesadilla","f-friet":"Friet-bord","f-vis":"Vissticks"};
 const sn=r=>SHORT[r.id]||r.t;
 // Voorraad: gaat lang mee. Eén keer afvinken = blijft van je lijst, tot je zegt dat het op is.
-const STOCK=new Set(["walnoten","nootjes","mueslirepen met noten","mini-zakjes chips","rijstcrackers","hagelslag","ras el hanout","bouillonblokje","rozijnen","volkoren couscous","risottorijst","volkoren penne","speltpenne","volkoren orzo","Parmezaanse kaas","havermout","zilvervliesrijst","honing","olijven","ketjap manis","sambal oelek","gele linzen","pindakaas (100% pinda)","vermicelli","baharat (7-kruidenmix)","papadums","kletskoeken","gedroogde vijgen","bakpoeder","volkoren speltmeel","cacaopoeder (ongezoet)","bosvruchten (diepvries)","edamame (diepvries)","vanille-ijs","appelflappen (diepvries)","rode currypasta","kappertjes","pijnboompitten"]);
+const STOCK=new Set(["walnoten","nootjes","mueslirepen met noten","mini-zakjes chips","rijstcrackers","hagelslag","ras el hanout","bouillonblokje","rozijnen","volkoren couscous","risottorijst","volkoren penne","speltpenne","volkoren orzo","Parmezaanse kaas","havermout","zilvervliesrijst","honing","olijven","ketjap manis","sambal oelek","gele linzen","pindakaas (100% pinda)","vermicelli","baharat (7-kruidenmix)","papadums","kletskoeken","gedroogde vijgen","bakpoeder","volkoren speltmeel","cacaopoeder (ongezoet)","bosvruchten (diepvries)","edamame (diepvries)","vanille-ijs","appelflappen (diepvries)","rode currypasta","kappertjes","pijnboompitten","ketjap","satésaus (pindasaus)"]);
 // Hoeveelheden optellen: 3 + 1 + 2 eieren = 6, 200 g + 150 g kwark = 350 g. De rest (½, handje, 3 el) los erachter.
 // Meervoud voor verpakkingen: 2 × "1 bakje" = "2 bakjes". Onbekend woord? Dan blijft het zo (g, ml, el, ...).
 const MV={bakje:"bakjes",zakje:"zakjes",blik:"blikken",blikje:"blikjes","klein blik":"kleine blikken",pak:"pakken",zak:"zakken",pot:"potten",potje:"potjes",
   bol:"bollen",rol:"rollen",stuk:"stuks",doos:"dozen",netje:"netjes",fles:"flessen",plantje:"plantjes",bak:"bakken",multipak:"multipakken"};
 const meervoud=u=>MV[u]||u;
+// hoeveelheden die je niet in de winkel koopt
+const VAAG=/^\s*(handje|handjes|scheutje|scheut|snufje|klodder|klodders|beetje|naar keuze|naar wens|wat)\b/i;
 function qtyText(qc){
   const sum={},approx={},rest=[];
   for(const [q,c] of Object.entries(qc)){
-    if(!q){ if(c>1) rest.push(c+"×"); continue; }
+    if(!q) continue; // geen hoeveelheid: alleen de naam
     const m=q.match(/^(±\s*)?(\d+|½)\s*(.*)$/);
     if(m){const u=m[3]||""; sum[u]=(sum[u]||0)+(m[2]==="½"?0.5:Number(m[2]))*c; if(m[1]) approx[u]=1;}
     else rest.push((c>1?nr(c)+"× ":"")+q);
@@ -1669,7 +1671,7 @@ function buildList(){
     const r=byId[id]; if(!r) continue;
     for(let [q,orig] of r.i){
       const lo=lcOf(orig); if(lo&&lo.x===0) continue; // "zonder deeg"
-      const name=effName(orig), k=name.toLowerCase(); q=effQty(q,orig);
+      const name=effName(orig), k=name.toLowerCase(); q=effQty(q,orig); if(VAAG.test(q)) q=""; // handje/scheutje koop je niet: op de lijst alleen de naam
       items[k]=items[k]||{k,name,qc:{},afd:AISLE[name]??AISLE[orig]??AFD.length-1,stock:STOCK.has(orig)&&!lo,warn:conflicts(orig).length&&name===orig?conflicts(orig).map(x=>TN[x]):null};
       items[k].qc[q]=(items[k].qc[q]||0)+n*fac(r);
     }
@@ -1681,6 +1683,13 @@ function buildList(){
   for(const it of Object.values(items)){
     it.qs=qtyText(it.stock?Object.fromEntries(Object.keys(it.qc).map(q=>[q,1])):it.qc);
     it.sig=it.qs.join(" + ");
+    // al (deels) gehaald? S.bought[k] = {qc:{...}} met wat je had toen je afvinkte. Dan blijft alleen het verschil over.
+    const b=S.bought[it.k];
+    if(!it.stock&&b&&typeof b==="object"&&b.qc){
+      const nog={}, al={};
+      for(const [q,c] of Object.entries(it.qc)){ if(q===""){ if(b.qc[""]!==undefined) al[q]=c; else nog[q]=c; continue; } const h=Math.min(c,b.qc[q]||0); if(c-h>1e-9) nog[q]=c-h; if(h>1e-9) al[q]=h; }
+      it.nogLeeg=!Object.keys(nog).length; it.nog=qtyText(nog).join(" + "); it.al=qtyText(al).join(" + ");
+    }
   }
   return Object.values(items).sort((a,b)=>a.afd-b.afd||a.name.localeCompare(b.name,"nl"));
 }
@@ -1690,17 +1699,19 @@ function migrate(items){ // oude opslag omzetten
     if(S.bought[it.k]===true||(S.have&&S.have[it.k])){S.bought[it.k]=it.sig;ch=true;}
     if(it.stock&&S.bought[it.k]!==undefined){S.stock[it.k]=true;delete S.bought[it.k];ch=true;}
   }
-  for(const k of Object.keys(S.bought)) if(typeof S.bought[k]!=="string"){delete S.bought[k];ch=true;}
+  for(const k of Object.keys(S.bought)){ const b=S.bought[k]; if(typeof b!=="string"&&!(b&&typeof b==="object"&&b.qc)){delete S.bought[k];ch=true;} }
+  for(const it of items) if(!it.stock&&typeof S.bought[it.k]==="string"&&S.bought[it.k]===it.sig){ S.bought[it.k]={qc:{...it.qc}}; it.nogLeeg=true; it.nog=""; it.al=it.sig; ch=true; } // oud afvinkje → hoeveelheden
   for(const k of ["have","today"]) if(S[k]!==undefined){delete S[k];ch=true;}
   if(S.qv!==2){for(const it of items) if(typeof S.bought[it.k]==="string") S.bought[it.k]=it.sig; S.qv=2; ch=true;} // nieuwe notatie: afgevinkt blijft afgevinkt
   if(!Object.keys(S.fav).length&&Object.keys(S.picks).length){Object.assign(S.fav,S.picks);ch=true;} // favorieten starten met je huidige lijst
   for(const id of Object.keys(S.picks)) if(!byId[id]){delete S.picks[id];ch=true;} // verwijderde kaarten
   if(ch) save();
 }
-const isDone=i=>i.stock?!!S.stock[i.k]:S.bought[i.k]===i.sig;
+const isDone=i=>{ if(i.stock) return !!S.stock[i.k]; const b=S.bought[i.k]; return b&&typeof b==="object"?!!i.nogLeeg:b===i.sig; };
+const toonQ=i=>i.stock?"":(i.nog&&!i.nogLeeg?i.nog:i.sig); // wat er nog gehaald moet worden
 const buyRow=(i,on)=>`<li><label class="check">
   <input type="checkbox" data-buy="${esc(i.k)}" data-sig="${esc(i.sig)}" ${i.stock?'data-stock="1"':""} ${on?"checked":""}>
-  <span class="txt">${esc(i.name)}${i.warn?` <span class="tag-warn">⚠ ${esc(i.warn.join(", "))}</span>`:""}<br><span class="q">${esc(i.sig)}${i.stock?(i.sig?" · ":"")+(on?"voorraad, tik als het op is":"voorraad"):(!on&&S.bought[i.k]?" · er kwam meer bij":"")}</span></span></label></li>`;
+  <span class="txt">${esc(i.name)}${i.warn?` <span class="tag-warn">⚠ ${esc(i.warn.join(", "))}</span>`:""}<br><span class="q">${i.stock?(on?"voorraad, tik als het op is":"voorraad"):esc(on?i.sig:(i.al&&!i.nogLeeg?"nog ":"")+toonQ(i))+(!on&&i.al?` · ${esc(i.al)} heb je al`:!on&&typeof S.bought[i.k]==="string"?" · er kwam meer bij":"")}</span></span></label></li>`;
 function renderLijst(items){
   const dag=Object.keys(CATS); // volgorde van de dag
   const picks=Object.entries(S.picks).filter(([id])=>byId[id]).sort(([x],[y])=>dag.indexOf(byId[x].cat)-dag.indexOf(byId[y].cat));
@@ -1728,7 +1739,7 @@ function renderLijst(items){
     </div>`}`;
   const db=$(".done-box"); if(db) db.ontoggle=()=>{showDone=db.open;};
   const kp=$("#kopieer"); if(kp) kp.onclick=async()=>{
-    const txt=halen.map(i=>"- "+i.name+(i.sig?" ("+i.sig+")":"")).join("\n");
+    const txt=halen.map(i=>"- "+i.name+(toonQ(i)?" ("+toonQ(i)+")":"")).join("\n");
     try{await navigator.clipboard.writeText(txt);toast("Je lijst is gekopieerd!");}catch(e){toast("Kopiëren lukt hier niet");}
   };
   const lg=$("#leeg"); if(lg) lg.onclick=()=>{
@@ -1740,8 +1751,11 @@ function renderLijst(items){
 // Recept (schuift van onderen in beeld)
 // SH = open recept · ctx = vanuit de week (dag + lunch/avond, of kies:true vanuit het keuzescherm)
 let SH=null;
+// Voorraad die je per verpakking koopt maar maar een beetje gebruikt (walnoten, ketjap, Parmezaan): in het recept "naar wens"
+const pakVoorraad=(q,name)=>STOCK.has(name)&&/^1\s*(zak|zakje|pot|potje|fles|stuk|pak|doos|bak)\b/.test(q||"");
 function ingRow(q,name,f){
   const c=conflicts(name), k=name.toLowerCase(), v=S.subs[k], lo=lcOf(name);
+  if(pakVoorraad(q,name)&&!c.length&&!lo) return `<li>${esc(name)} <span class="muted small">naar wens</span></li>`;
   const qq=lo&&lo.x===0?"":esc(scaleQ(effQty(q,name),f));
   if(!c.length) return lcRow(q,name,f,qq);
   const why=c.map(t=>TN[t]).join(", ");
@@ -2162,7 +2176,7 @@ document.addEventListener("change",e=>{
   if(SU&&ds.rest!==undefined){SU.d.rest=Number(ds.rest); return;}
   const k=ds.buy; if(k===undefined) return;
   const stock=!!ds.stock, sig=ds.sig, map=stock?S.stock:S.bought, prev=map[k];
-  if(t.checked) map[k]=stock?true:sig; else delete map[k];
+  if(t.checked){ const it=stock?null:buildList().find(x=>x.k===k); map[k]=stock?true:(it?{qc:{...it.qc}}:sig); } else delete map[k];
   save();
   setTimeout(render,300); // even het vinkje laten zien, dan verdwijnt het
   if(t.checked) toast(stock?"In je voorraad gezet!":"Van je lijst gehaald!",()=>{ if(prev===undefined) delete map[k]; else map[k]=prev; save(); render(); });
