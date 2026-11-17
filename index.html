@@ -1262,24 +1262,25 @@ function lunchOf(iso){
 // Kies een gerecht voor een vakje. Staat het al op een andere dag? Dan ruilen ze. Is het "op"? Dan komt het nog een keer op je lijst.
 // Gerechten zonder boodschappen (bv. een eigen gerecht zonder ingrediënten), dus die kun je zo vaak kiezen als je wilt (nooit ruilen met een andere dag).
 const vrij=id=>!!(byId[id]&&byId[id].f&&!(byId[id].i||[]).length);
-function choose(map,iso,id){
+// erbij = gekozen bij Weinig energie of Nog halen: je wilt er nog een, dus nooit van een andere dag weghalen
+function choose(map,iso,id,erbij){
   const old=map[iso];
   if(S.park[id]&&strip(old)!==id){ S.park[id]--; if(!S.park[id]) delete S.park[id]; } // geparkeerd gerecht krijgt weer een dag
   if(vrij(id)){ if(strip(old)!==id&&left(map,id)<=0){ S.picks[id]=(S.picks[id]||0)+1; S.fav[id]=(S.fav[id]||0)+1; } map[iso]=id; return; }
   const counted=map===S.plan?isDinner(id):isLunchPick(id);
   if(counted&&left(map,id)<=0&&strip(old)!==id){
     const t=isoOf(dayAt(0));
-    const other=Object.keys(map).sort().find(k=>k>=t&&k!==iso&&strip(map[k])===id);
+    const other=erbij?null:Object.keys(map).sort().find(k=>k>=t&&k!==iso&&strip(map[k])===id);
     if(other){ if(old===undefined) delete map[other]; else map[other]=old; }
     else { const nieuw=!S.picks[id]; S.picks[id]=(S.picks[id]||0)+1; S.fav[id]=(S.fav[id]||0)+1; toast(nieuw?"Staat in je week én op je lijst!":"Nog een keer op je lijst gezet!"); }
   }
   map[iso]=id;
 }
 // Geen puf: fuck-it vandaag, je gerecht schuift een dag door (en de rest schuift mee)
-function noPuf(iso,fid){
+function noPuf(iso,fid,erbij){
   // de fuck-it telt mee als gerecht van je lijst: staat hij al op een andere dag, dan verhuist hij; anders komt hij er één keer bij
   const t=isoOf(dayAt(0)), other=Object.keys(S.plan).find(k=>k>=t&&k!==iso&&S.plan[k]===fid);
-  if(other&&!vrij(fid)) delete S.plan[other]; else if(left(S.plan,fid)<=0){ S.picks[fid]=(S.picks[fid]||0)+1; S.fav[fid]=(S.fav[fid]||0)+1; }
+  if(other&&!vrij(fid)&&!erbij) delete S.plan[other]; else if(left(S.plan,fid)<=0){ S.picks[fid]=(S.picks[fid]||0)+1; S.fav[fid]=(S.fav[fid]||0)+1; }
   let carry=S.plan[iso]; S.plan[iso]=fid; let k=iso;
   for(let n=0;n<14&&isAvond(carry);n++){
     k=isoShift(k,1); const v=S.plan[k];
@@ -1345,13 +1346,13 @@ function nietThuis(slot,iso){
   save(); closeSheet(); render();
   toast(moved?"Je eet niet thuis. Je gerecht schuift een dag door.":"Je eet niet thuis.",()=>{ const b=JSON.parse(before); S.plan=b.plan; S.lunch=b.lunch; save(); render(); });
 }
-function setSlot(slot,iso,id){
+function setSlot(slot,iso,id,erbij){
   if(isVz(id)){ // uit je vriezer
     const moved=slot==="a"?zetAvond(iso,id):(S.lunch[iso]=id,false);
     save(); closeSheet(); render(); if(moved) toast("Je gerecht schuift een dag door!"); return;
   }
-  if(slot==="a"){ if(byId[id].f&&isAvond(S.plan[iso])) noPuf(iso,id); else choose(S.plan,iso,id); }
-  else { if(id==="p2") S.lunch[iso]=id; else choose(S.lunch,iso,id); }
+  if(slot==="a"){ if(byId[id].f&&isAvond(S.plan[iso])) noPuf(iso,id,erbij); else choose(S.plan,iso,id,erbij); }
+  else { if(id==="p2") S.lunch[iso]=id; else choose(S.lunch,iso,id,erbij); }
   save(); closeSheet(); render();
   if(slot==="a") restjesVraag(iso);
 }
@@ -1540,7 +1541,7 @@ function openSlot(slot,iso,view){
   let body;
   if(view==="vz") body=vzs.map(e=>{const n=vzLeft(e);return `<div class="kz-rij kz-2"><span class="kz-info">${tile(byId[e.id])}<span><b>${esc(sn(byId[e.id]))}</b><small class="${n<=5?"oud":""}">nog ${n} ${n===1?"dag":"dagen"} goed</small></span></span><button class="kz-kies" data-set="${slot}|${iso}|v:${e.k}">Kies</button></div>`;}).join("");
   else { const l=kzLijst(slot,iso,view);
-    body=l.length?l.map(o=>{const v=ver(o)||o;return `<div class="kz-rij kz-2">${nsticker(o)}<button class="kz-info" data-kzr="${o.id}" aria-label="${esc(o.t)}: recept bekijken">${tile(o)}<span><b>${esc(o.t)}${S.hart[o.id]?`<span class="hartje" aria-label="favoriet">${ic("hart")}</span>`:""}</b><small>${(()=>{const m=slot==="a"?S.plan:S.lunch, k=Object.keys(m).sort().find(x=>x>=isoOf(dayAt(0))&&x!==iso&&strip(m[x])===o.id); return k?`staat nu op ${dagNaam(k)}, schuift hierheen · `:view==="huis"&&S.park[o.id]?"nog geen dag · ":"";})()}${esc(v.m)} · <u>recept</u></small></span></button><button class="kz-kies" data-set="${slot}|${iso}|${o.id}" aria-label="${esc(o.t)} kiezen voor ${dagNaam(iso)}">Kies</button></div>`;}).join("")
+    body=l.length?l.map(o=>{const v=ver(o)||o;return `<div class="kz-rij kz-2">${nsticker(o)}<button class="kz-info" data-kzr="${o.id}" aria-label="${esc(o.t)}: recept bekijken">${tile(o)}<span><b>${esc(o.t)}${S.hart[o.id]?`<span class="hartje" aria-label="favoriet">${ic("hart")}</span>`:""}</b><small>${(()=>{const m=slot==="a"?S.plan:S.lunch, k=Object.keys(m).sort().find(x=>x>=isoOf(dayAt(0))&&x!==iso&&strip(m[x])===o.id); return k?`staat nu op ${dagNaam(k)}, schuift hierheen · `:view==="huis"&&S.park[o.id]?"nog geen dag · ":"";})()}${esc(v.m)} · <u>recept</u></small></span></button><button class="kz-kies" data-set="${slot}|${iso}|${o.id}${view==="huis"?"":"|erbij"}" aria-label="${esc(o.t)} kiezen voor ${dagNaam(iso)}">Kies</button></div>`;}).join("")
       :`<p class="muted">${view==="huis"?`Je hebt nog niks gekozen. Probeer <button class="link" data-kz="nieuw">iets nieuws</button>.`:view==="nieuw"&&KQ.size?`Niks gevonden met dit filter. <button class="link" data-kzf="uit">${KQ.size>1?"Filters uit":"Filter uit"}</button>`:"Hier is niks te kiezen."}</p>`; }
   if(view==="puf"){ // geen boodschappen: lunch halen of bestellen, met tips om het toch voedzamer te maken
     const hb=slot==="l"?(S.lunch[iso]==="haal"?"":`<div class="kz-rij kz-2"><button class="kz-info" data-tips="haal" aria-label="Lunch halen: tips bekijken"><span class="kz-ic k4" aria-hidden="true">${ic("tas")}</span><span><b>Lunch halen</b><small>geen boodschappen nodig · <u>tips</u></small></span></button><button class="kz-kies" data-haal="${iso}">Kies</button></div>`)
@@ -1772,7 +1773,7 @@ function drawSheet(){
     ${r.n?`<p class="note">${esc(r.n)}</p>`:""}`;
   if(ctx&&ctx.kies){
     sheetWrap(r.t,`<button class="kz-terug" data-kz="${ctx.view}">‹ ${KZV[ctx.view][0]}</button>${kop}${recept}`,
-      `<div class="row foot-row"><button class="btn btn-main" data-set="${ctx.slot}|${ctx.iso}|${r.id}">Kies voor ${dagNaam(ctx.iso)}</button></div>`,hartKnop(id)+deelKnop(id));
+      `<div class="row foot-row"><button class="btn btn-main" data-set="${ctx.slot}|${ctx.iso}|${r.id}${ctx.view==="huis"?"":"|erbij"}">Kies voor ${dagNaam(ctx.iso)}</button></div>`,hartKnop(id)+deelKnop(id));
     return;
   }
   if(ctx){
@@ -2109,7 +2110,7 @@ document.addEventListener("click",e=>{
   else if(d.open){openSheet(d.open);}
   else if(d.filter){S.filter=d.filter;save();render();}
   else if(d.slot){const [s,iso]=d.slot.split("|");tapSlot(s,iso);}
-  else if(d.set){const [s,iso,id]=d.set.split("|");setSlot(s,iso,id);}
+  else if(d.set){const [s,iso,id,m]=d.set.split("|");setSlot(s,iso,id,m==="erbij");}
   else if(d.gate){ try{localStorage.setItem("hophap-safari","1");}catch(e){} openSetup(true); }
   else if(d.thuis){ const [s,iso]=d.thuis.split("|"); nietThuis(s,iso); }
   else if(d.vz){ const y=isoOf(dayAt(-1)), id=vzVraagId(); S.vq[y]=1;
