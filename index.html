@@ -159,6 +159,8 @@ label.btn{cursor:pointer}
 .small-acts{display:flex;gap:8px;flex-wrap:wrap}
 .small-links{gap:20px}
 .link{border:0;background:none;font-weight:800;color:var(--accent);padding:6px 0;min-height:36px}
+.versie{text-align:center;display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap}
+.versie .link{padding:0;min-height:0;font-size:inherit}
 .icon-btn{margin-left:auto;width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line-strong);background:var(--surface);display:grid;place-items:center}
 .toggle{flex:none;border:1.5px solid var(--line-strong);border-radius:999px;padding:6px 14px;font-weight:700;background:transparent;min-height:40px;min-width:40px}
 
@@ -244,14 +246,14 @@ label.btn{cursor:pointer}
 .sheet-hart.on{color:#d6336c}.sheet-hart.on svg{fill:currentColor}
 .hartje{display:inline-block;width:16px;height:16px;margin-left:6px;vertical-align:-1px;color:#d6336c}.hartje svg{width:16px;height:16px;fill:currentColor}
 .nieuw-bg{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.45);display:grid;place-items:center;padding:16px}
-.nieuw{background:var(--surface);color:var(--fg);border-radius:26px;padding:22px 20px 14px;width:100%;max-width:360px;max-height:calc(100dvh - 32px);overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+.nieuw{background:var(--surface);color:var(--fg);border-radius:26px;padding:30px 24px 18px;width:100%;max-width:360px;max-height:calc(100dvh - 32px);overflow-y:auto;display:flex;flex-direction:column;gap:18px}
 .nieuw .logo{margin:0 auto;width:52px;height:52px}
 .nieuw .logo svg.doo{width:40px;height:40px}
 .nieuw h2,.nieuw .sub,.nieuw .v{text-align:center;margin:0}
-.nieuw ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11px}
-.nieuw li{display:flex;gap:12px;align-items:flex-start;font-size:var(--fs-s);line-height:1.3}
-.nieuw li .ic{flex:none;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent)}
-.nieuw .btn-main{width:100%}
+.nieuw ul{list-style:none;margin:6px 0;padding:0;display:flex;flex-direction:column;gap:20px}
+.nieuw li{display:flex;gap:14px;align-items:center;font-size:var(--fs-s);line-height:1.4}
+.nieuw li .ic{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent)}
+.nieuw .btn-main{width:100%;margin-top:6px}
 .nieuw .nieuw-zelf{align-self:center;font-weight:800;min-height:40px}
 .deel-img{width:100%;border-radius:var(--r-m);box-shadow:0 2px 12px rgba(0,0,0,.18)}
 .slot .lbl+.t{margin-top:6px}
@@ -442,6 +444,26 @@ nav.tabs{display:none}
 .ook-rij{padding:4px 0 6px}
 .ook-rij .slot .tile{transform:rotate(-4deg)}
 .ook-rij .slot+.slot .tile{transform:rotate(3deg)}
+.ook-kop{margin:0 0 6px}
+.ook.ookd{margin-top:2px}
+.ook-pillen{display:flex;gap:8px}
+.ook-pil{display:flex;align-items:center;gap:8px;flex:1;min-width:0;min-height:48px;padding:6px 10px 6px 6px;border-radius:999px;border:1.5px solid var(--line-strong);background:var(--surface);color:var(--fg);text-align:left}
+.ook-pil .tile{width:32px;height:32px;flex:none}
+.ook-pil .tile.leeg{background:transparent;border:2px dashed var(--muted);color:var(--muted);box-shadow:none}
+.ook-pil .tile svg{width:20px;height:20px}
+.ook-pil>span:last-child{display:flex;flex-direction:column;line-height:1.15;min-width:0}
+.ook-pil b{font-size:13px}
+.ook-pil small{font-size:11px;color:var(--muted)}
+.kruiden.thee{display:flex;flex-direction:column;gap:6px}
+.ev-kop{margin:12px 0 0}
+.ev-plus{justify-content:center;border-style:dashed;background:none;font-weight:700;margin-top:6px}
+.ev-plus>span{flex:none!important}
+.ev-stap{display:flex;align-items:center;gap:16px;margin-top:6px}
+.ev-stap b{font-size:1.3em;min-width:1.5em;text-align:center}
+.ev-w{border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.ev-w legend{margin-bottom:6px;padding:0}
+.ev-weg{align-self:flex-start;gap:6px}
+.kz-licht{border-style:dashed}
 .slot .lbl.nn{background:var(--surface);color:var(--fg);border:1px solid var(--line-strong)}
 .kz-terug{border:0;background:none;color:var(--accent);font-weight:800;padding:4px 0;min-height:40px;align-self:flex-start;text-align:left}
 .kz-rij small.oud{color:var(--warn,#e8590c)}
@@ -573,6 +595,11 @@ const R = [
   i:[["100 g","volkoren couscous"],["1 bakje","kipreepjes"],["½","komkommer"],["2","tomaten"],["1 bakje","hummus"]],
   s:["Doe de couscous in een kom met {heet} erover, tot hij net onder staat. Doe er een deksel op en wacht 5 minuten.","Snijd de komkommer en tomaat in blokjes en schep de kip erdoor.","Doe er een klodder hummus en een snufje komijn op. Morgen is het nog net zo lekker!"]},
 
+ {id:"l-falafel",cat:"lunch",nieuw:"2026-11-18",t:"Pita falafel",m:"5 min",need:[["fornuis","oven","magnetron"]],
+  i:[["2","volkoren pitabroodjes"],["1 pak","falafel (kant-en-klaar)"],["1 bakje","tzatziki"],["½","komkommer"]],
+  s:["{pan:Bak de falafel 5 minuten in een pan met een beetje olie. Schep af en toe om.|oven:Zet de falafel 10 minuten in de oven op 200°. Leg het pitabroodje er de laatste 2 minuten bij.|mw:Warm de falafel 1 minuut op in de magnetron.}","Snijd de komkommer in plakjes en snijd het pitabroodje open.","Smeer tzatziki in het broodje en vul het met de falafel en komkommer."],
+  n:"Neem je hem mee? Doe de tzatziki in een apart bakje, dan wordt je broodje niet slap."},
+
  // lunch: fuck-it (houdbaar in huis, voor dagen zonder restjes). "Lunch halen" is geen gerecht meer maar een keuze voor je vakje.
  {id:"l-soep",cat:"lunch",f:1,nieuw:"2026-11-16",t:"Pimp je soep",m:"5 min",need:[["fornuis","magnetron"]],
   i:[["1 pak","tomatensoep"],["1 blik","witte bonen"],["handje","geraspte kaas"],["1","volkoren broodje"]],
@@ -591,9 +618,12 @@ const R = [
  {id:"s-cracker",cat:"snack",t:"Rijstcrackers met smeerkaas",m:"1 min",k:"paprikapoeder of peper",i:[["1 pak","rijstcrackers"],["1 bakje","smeerkaas"]],s:["Smeer de smeerkaas op de crackers en doe er een snufje paprikapoeder of peper op. Hüttenkäse kan ook."]},
  {id:"s-noot",cat:"snack",t:"Handje nootjes",m:"0 min",i:[["1 zak","nootjes"]],s:["Een handje is ± 30 gram: een klein kommetje vol. Walnoten en pecannoten zitten vol gezonde vetten."]},
  {id:"s-babybel",cat:"snack",t:"Babybel + fruit",m:"0 min",k:"kaneel (op appel of peer)",i:[["1 netje","babybel"],["naar keuze","fruit van het seizoen"]],s:["Een kaasje met een stuk fruit. Kies in de winkel wat er nu lekker is. In de winter is appel of peer met een snufje kaneel heerlijk."]},
- {id:"s-thee",cat:"snack",t:"Theekoekje",m:"2 min",k:"zwarte peper",
+ {id:"s-thee",th:["zwarte thee","Jin Jun Mei"],cat:"snack",t:"Theekoekje",m:"2 min",k:"zwarte peper",
   i:[["1 pak","kletskoeken"],["1 bakje","zachte geitenkaas"],["1 zakje","gedroogde vijgen"],["1 pak","serranoham"]],
-  s:["Smeer wat geitenkaas op een kletskoek.","Leg er een plakje ham en een halve vijg op, met een snufje zwarte peper. Lekker bij een kop thee."]},
+  s:["Smeer wat geitenkaas op een kletskoek.","Leg er een plakje ham en een halve vijg op, met een snufje zwarte peper."]},
+ {id:"s-brie",th:["puerthee","Shu Puer"],cat:"snack",nieuw:"2026-11-18",t:"Kaas-en-theehapje",m:"1 min",k:"zeezout",
+  i:[["1 stuk","brie"],["1 bakje","dadels (zonder pit)"],["1 zakje","walnoten"]],
+  s:["Snijd een dadel open en leg er een plakje brie in.","Druk er een halve walnoot op en strooi er een snufje zeezout over."]},
  {id:"s-edamame",cat:"snack",t:"Edamame",m:"3 min",need:[["magnetron","fornuis"]],
   i:[["1 zak","edamame (diepvries)"]],
   s:["{mw:Doe een kommetje edamame 3 minuten in de magnetron.|pan:Kook een kommetje edamame 3 minuten.}","Strooi er wat zeezout over en peul ze zo uit de schil."]},
@@ -719,30 +749,30 @@ const R = [
   v:[{need:[["fornuis"]],m:"5 min werk · pan",s:["Bak de vissticks in een koekenpan met een beetje olie, 4 minuten per kant.","Maak de puree en doperwten warm in een pannetje.","Schep alles op je bord, met een klodder mosterd erbij. Klaar!"]}]},
 
  // toetje
- {id:"t-noot",cat:"toetje",t:"Kwark met walnoot en hagelslag",m:"1 min",k:"kaneel",i:[["150 g","magere kwark"],["1 zak","walnoten"],["1 pak","hagelslag"]],s:["Doe de kwark in een kom met walnoten en een snufje kaneel. Strooi er hagelslag op."]},
- {id:"t-appel",cat:"toetje",t:"Warme appel uit de oven",m:"2 min werk · 20 min oven 200°",need:[["oven"]],k:"kaneel",
+ {id:"t-noot",th:["rooibos","Shu Puer"],cat:"toetje",t:"Kwark met walnoot en hagelslag",m:"1 min",k:"kaneel",i:[["150 g","magere kwark"],["1 zak","walnoten"],["1 pak","hagelslag"]],s:["Doe de kwark in een kom met walnoten en een snufje kaneel. Strooi er hagelslag op."]},
+ {id:"t-appel",th:["oolongthee","Da Hong Pao"],cat:"toetje",t:"Warme appel uit de oven",m:"2 min werk · 20 min oven 200°",need:[["oven"]],k:"kaneel",
   i:[["1","appel"],["handje","rozijnen"],["1 zak","walnoten"],["150 g","magere kwark"]],
   s:["Snijd de appel in partjes en leg ze in een schaaltje. Strooi er rozijnen, een paar walnoten en kaneel over.","Zet het 20 minuten in de oven. Hij kan mooi mee met je avondeten.","Doe er een klodder kwark op."],
   v:[{need:[["magnetron"]],m:"2 min werk · 4 min magnetron",s:["Snijd de appel in partjes en doe ze in een kommetje. Strooi er rozijnen, walnoten en kaneel over.","Doe er een bord op en zet het 4 minuten in de magnetron.","Doe er een klodder kwark op."]}]},
- {id:"t-yoghurt",cat:"toetje",t:"Griekse yoghurt met fruit en honing",m:"1 min",k:"kaneel",
+ {id:"t-yoghurt",th:["jasmijnthee","Jasmijn Dragonpearls"],cat:"toetje",t:"Griekse yoghurt met fruit en honing",m:"1 min",k:"kaneel",
   i:[["150 g","Griekse yoghurt (0%)"],["naar keuze","fruit van het seizoen"],["1 pot","honing"]],
   s:["Doe de yoghurt in een kom met fruit en een straaltje honing erop. Een snufje kaneel erover, als je wilt."]},
- {id:"t-mousse",cat:"toetje",t:"Chocomousse van kwark",m:"2 min",k:"kaneel",
+ {id:"t-mousse",th:["zwarte thee","Jin Jun Mei"],cat:"toetje",t:"Chocomousse van kwark",m:"2 min",k:"kaneel",
   i:[["150 g","magere kwark"],["1 pak","cacaopoeder (ongezoet)"],["1 pot","honing"]],
   s:["Roer een eetlepel cacao en een theelepel honing door de kwark.","Klop het even luchtig met een garde of vork. Strooi er een snufje kaneel over."]},
- {id:"t-bes",cat:"toetje",t:"Warme bosvruchten met skyr",m:"1 min werk · 2 min magnetron",need:[["magnetron"]],k:"kaneel",
+ {id:"t-bes",th:["groene thee","Sencha"],cat:"toetje",t:"Warme bosvruchten met skyr",m:"1 min werk · 2 min magnetron",need:[["magnetron"]],k:"kaneel",
   i:[["1 zak","bosvruchten (diepvries)"],["150 g","skyr"]],
   s:["Doe een flinke hand bosvruchten in een kommetje en zet ze 2 minuten in de magnetron.","Schep de skyr erop, met een snufje kaneel. Warm en koud tegelijk!"],
   v:[{need:[["fornuis"]],m:"3 min · pannetje",s:["Warm een flinke hand bosvruchten 3 minuten op in een pannetje.","Schep ze over de skyr, met een snufje kaneel. Warm en koud tegelijk!"]}]},
- {id:"t-peer",cat:"toetje",t:"Peer met geitenkaas en walnoot",m:"2 min",k:"zwarte peper, tijm",
+ {id:"t-peer",th:["witte thee","Yue Guang Bai"],cat:"toetje",t:"Peer met geitenkaas en walnoot",m:"2 min",k:"zwarte peper, tijm",
   i:[["1","peer"],["1 bakje","zachte geitenkaas"],["1 zak","walnoten"],["1 pot","honing"]],
   s:["Halveer de peer en haal het klokhuis eruit met een theelepel.","Leg er een klodder geitenkaas en wat walnoten op, met een straaltje honing en een snufje zwarte peper of tijm.","{oven:Zin in warm? Zet hem 10 minuten in de oven op 200°: dan hoef je er niet bij te blijven.|mw:Zin in warm? Zet hem 2 minuten in de magnetron.|pan:Zin in warm? Bak hem 3 minuten in een koekenpan.}"]},
 
  // toetje: fuck-it
- {id:"t-ijs",cat:"toetje",f:1,t:"Pimp je ijsje",m:"1 min",need:[["magnetron","fornuis"]],
+ {id:"t-ijs",th:["verse muntthee","Gunpowder met verse munt"],cat:"toetje",f:1,t:"Pimp je ijsje",m:"1 min",need:[["magnetron","fornuis"]],
   i:[["1 bak","vanille-ijs"],["1 zak","bosvruchten (diepvries)"]],
   s:["{mw:Warm een handje bosvruchten 1 minuut op in de magnetron.|pan:Warm een handje bosvruchten even op in een pannetje.}","Schep ze over een bolletje vanille-ijs. Warm en koud tegelijk: net een dame blanche! Door het fruit is één bolletje al een heel toetje."]},
- {id:"t-appelflap",cat:"toetje",f:1,t:"Appelflap met kwark",m:"0 min werk · 20 min oven",need:[["oven"]],k:"kaneel",
+ {id:"t-appelflap",th:["zwarte thee","Darjeeling"],cat:"toetje",f:1,t:"Appelflap met kwark",m:"0 min werk · 20 min oven",need:[["oven"]],k:"kaneel",
   i:[["1 doos","appelflappen (diepvries)"],["150 g","magere kwark"]],
   s:["Bak een appelflap in de oven zoals op de doos staat. Mooi mee met je avondeten.","Doe er een klodder kwark met een snufje kaneel bij. De kwark geeft eiwit: daardoor zit je langer vol dan met alleen een appelflap."]}
 ];
@@ -851,8 +881,8 @@ const AISLE = {
 };
 // Plaatje per gerecht (emoji). Nieuw recept zonder plaatje? Dan het plaatje van de soort.
 const PIC={"o-spek":"🍳","o-kwark":"🥣","o-bol":"🥯","o-oats":"🫙","o-havermout":"🥣","o-rogge":"🥑","o-cake":"🍞","o-hartig":"🍞","o-pannenkoek":"🥞","o-tosti":"🥪","o-croissant":"🥐",
-  "l-carpaccio":"🥩","l-caesar":"🥗","l-mango":"🥭","l-caprese":"🍅","l-tonijn":"🐟","l-wrap":"🌯","l-couscous":"🥣","l-soep":"🥣","l-noedels":"🍜","l-supersalade":"🥗",
-  "s-cracker":"🍘","s-noot":"🥜","s-reep":"🍪","s-chips":"🍟","s-babybel":"🧀","s-edamame":"🫛","s-hummus":"🥦","s-kikker":"🥜","s-thee":"🍪",
+  "l-carpaccio":"🥩","l-caesar":"🥗","l-mango":"🥭","l-caprese":"🍅","l-tonijn":"🐟","l-wrap":"🌯","l-couscous":"🥣","l-falafel":"taco","l-soep":"🥣","l-noedels":"🍜","l-supersalade":"🥗",
+  "s-cracker":"🍘","s-noot":"🥜","s-reep":"🍪","s-chips":"🍟","s-babybel":"🧀","s-edamame":"🫛","s-hummus":"🥦","s-kikker":"🥜","s-thee":"🍪","s-brie":"🧀",
   mex:"🌮",pasta:"🍝",tajine:"🍗",stoof:"🍲",taart:"🥧",risotto:"🎃",zalm:"🐟",kabeljauw:"🫒",gnocchi:"🍅",paprika:"🫑",frittata:"🍳",viscurry:"🥘",garnalen:"🦐",puttanesca:"🍝",pilav:"🍛",burrito:"🌯",spaghetti:"🍝",dahl:"🍲",gadogado:"🥗",sate:"🍢",syrisch:"🍗",
   "f-pizza":"🍕","f-wrap":"🫓","f-friet":"🍟","f-vis":"🐟",
   "t-noot":"🍨","t-appel":"🍎","t-yoghurt":"🥣","t-mousse":"🥣","t-bes":"🫐","t-peer":"🍐","t-ijs":"🍨","t-appelflap":"🥧"};
@@ -920,7 +950,7 @@ const doodle=e=>`<svg class="doo" viewBox="0 0 32 32" aria-hidden="true">${DOOD[
 const tile=r=>`<span class="tile cat-${r.cat}" aria-hidden="true">${doodle(r.pic||PIC[r.id]||CATPIC[r.cat])}</span>`;
 
 // Icoontjes (Lucide, ISC-licentie) zitten in de app zelf: werkt ook met slecht bereik
-const IC={tas:'<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>',zap:'<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>',hart:'<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',share:'<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="m16 6-4-4-4 4"/><path d="M12 2v13"/>',
+const IC={kop:'<path d="M4 9h13v4a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6Z"/><path d="M17 10.5h1a2.5 2.5 0 0 1 0 5h-1.4"/><path d="M8 3.5v2.5M12 3.5v2.5"/>',tas:'<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>',zap:'<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>',hart:'<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',share:'<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="m16 6-4-4-4 4"/><path d="M12 2v13"/>',
  trash:'<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
  alert:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
  swap:'<path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>',
@@ -944,7 +974,7 @@ function icons(){document.querySelectorAll("i[data-lucide]").forEach(el=>{el.out
 //   lc     {product: vervanger} koolhydraatarm
 //   hidden verborgen kaarten                  own    eigen gerechten   setup  antwoorden vragenlijst
 const KEY="eetkaarten-v1";
-const VERSIE="1.2"; // ophogen bij elke update die online gaat
+const VERSIE="1.3"; // ophogen bij elke update die online gaat
 const OBJ=["picks","bought","stock","plan","lunch","used","fav","subs","hidden","lc","vries","vq","hart","park"]; // vries = je vriezer, vq = vriezervraag al gesteld
 const parseOwn=v=>{try{const a=typeof v==="string"?JSON.parse(v):v; return Array.isArray(a)?a:[];}catch(e){return [];}};
 const FRESH=()=>({park:{},hart:{},vries:{},vq:{},picks:{},bought:{},stock:{},plan:{},lunch:{},used:{},fav:{},subs:{},hidden:{},lc:{},own:[],setup:null,filter:"ontbijt",tab:"vandaag"});
@@ -963,7 +993,16 @@ let showDone=false;
 
 let byId={};
 const allR=()=>[...R,...S.own];
-function rebuild(){byId=Object.fromEntries(allR().map(r=>[r.id,r]));}
+// Eigen vriezer-eten (pizza, soep van oma): elke portie is een S.vries-item met ev:{n,w}. Ze krijgen een nep-recept in byId,
+// zodat ze net als restjes in een vakje kunnen. Niet bij Gerechten, geen boodschappen, geen houdbaarheid (die staat op de verpakking).
+const EVW={pan:["Pannetje, meteen","pannetje, direct","Doe het bevroren in een pannetje en warm het op laag vuur op. Af en toe roeren. Ontdooien hoeft niet."],
+  oven:["Oven, meteen","oven, direct","Warm het op in de oven. Hoe lang? Dat staat op de verpakking. Ontdooien hoeft niet."],
+  ontdooi:["Eerst ontdooien (dag ervoor)","eerst ontdooien","Leg het de avond ervoor in je koelkast. Daarna kun je het opwarmen."]};
+const EVPIC=[[/pizza/,"pizza"],[/soep|stoof|curry|chili|dahl|goulash|tajine/,"stoof"],[/lasagne|pasta|macaroni|spaghetti|ravioli/,"pasta"],[/friet|patat/,"friet"],[/ijs/,"ijs"],[/vis|zalm|kibbeling|garnaal/,"vis"],[/brood|croissant|bol/,"croissant"],[/erwt|spinazie|bonen|groente|broccoli|boerenkool/,"groente"],[/kip|vlees|gehakt|burger|bal/,"vlees"],[/pannenkoek/,"pannenkoek"]];
+const evPic=n=>{const t=n.toLowerCase(); const m=EVPIC.find(([re])=>re.test(t)); return m?m[1]:"kom";};
+function evR(){ const g={}; for(const e of Object.values(S.vries)) if(e.ev&&!g[e.id]){ const w=EVW[e.ev.w]?e.ev.w:"pan";
+  g[e.id]={id:e.id,cat:"avond",ev:1,t:e.ev.n,pic:evPic(e.ev.n),m:EVW[w][1],w,i:[],s:[EVW[w][2]]}; } return Object.values(g); }
+function rebuild(){byId=Object.fromEntries([...allR(),...evR()].map(r=>[r.id,r]));}
 rebuild();
 
 // ---------- 4. REGELS ----------
@@ -1039,7 +1078,7 @@ const scaleQ=(q,f)=>f===1?q:q.replace(/^(±\s*)?(\d+|½)/,(m,a,n)=>(a||"")+nr((n
 
 // Korte namen voor het weekoverzicht
 const SHORT={"l-carpaccio":"Orzo carpaccio","l-caesar":"Caesar-salade","l-mango":"Rijst mango-kip","l-caprese":"Caprese-salade","l-tonijn":"Bonen-tonijn",
-  "l-wrap":"Wrap kip","l-couscous":"Couscous-salade","l-soep":"Soep","l-noedels":"Noedels","l-supersalade":"Salade",
+  "l-wrap":"Wrap kip","l-couscous":"Couscous-salade","l-falafel":"Pita falafel","l-soep":"Soep","l-noedels":"Noedels","l-supersalade":"Salade",
   mex:"Mexicaans",pasta:"Ovenpasta",tajine:"Marokkaanse kip",stoof:"Stoofpotje",taart:"Hartige taart",risotto:"Risotto",
   zalm:"Zalm",kabeljauw:"Kabeljauw",gnocchi:"Gnocchi",paprika:"Gevulde paprika",frittata:"Frittata",viscurry:"Viscurry",garnalen:"Garnalen-wok",puttanesca:"Puttanesca",pilav:"Pilav gehakt",burrito:"Burrito's",spaghetti:"Spaghetti",dahl:"Dahl met kip",gadogado:"Gado gado",sate:"Saté",syrisch:"Syrische kip",
   "f-pizza":"Pizza","f-wrap":"Quesadilla","f-friet":"Friet-bord","f-vis":"Vissticks"};
@@ -1215,10 +1254,10 @@ function normalizePlan(){
   for(const id of Object.keys(S.park)){ const max=Math.max(0,(S.picks[id]||0)-(S.used[id]||0)); if(!byId[id]||max<=0) delete S.park[id]; else if(S.park[id]>max) S.park[id]=max; }
   // vriezer: na 30 dagen eruit (tenzij al ingepland); oude vragen opruimen
   const inPlan=new Set([...Object.values(S.plan),...Object.values(S.lunch)].filter(isVz).map(v=>v.slice(2)));
-  for(const k of Object.keys(S.vries)) if(!inPlan.has(k)&&(vzLeft(S.vries[k])<0||!byId[S.vries[k].id])) delete S.vries[k];
+  for(const k of Object.keys(S.vries)) if(!inPlan.has(k)&&((!S.vries[k].ev&&vzLeft(S.vries[k])<0)||!byId[S.vries[k].id])) delete S.vries[k];
   for(const k of Object.keys(S.vq)) if(k<isoOf(dayAt(-7))) delete S.vq[k];
   // alvast in de vriezer gezet, maar dat avondeten is daarna gewisseld? Dan is er ook geen restje
-  for(const k of Object.keys(S.vries)){ const e=S.vries[k]; if(e.d>=isoOf(dayAt(0))&&S.plan[e.d]!==e.id){ delete S.vries[k]; delete S.vq[e.d]; } }
+  for(const k of Object.keys(S.vries)){ const e=S.vries[k]; if(!e.ev&&e.d>=isoOf(dayAt(0))&&S.plan[e.d]!==e.id){ delete S.vries[k]; delete S.vq[e.d]; } }
   for(const k of Object.keys(S.plan)) if(S.plan[k]==="-") delete S.plan[k]; // "vrije avond" bestaat niet meer
   tidy(S.plan,isDinner);
   let q=roundRobin(isDinner,S.plan);
@@ -1236,13 +1275,14 @@ const VDAGEN=30;
 const VPAN=new Set(["stoof","dahl"]); // die kun je bevroren in een pannetje opwarmen (ontdooien hoeft niet)
 const isVz=v=>typeof v==="string"&&v.slice(0,2)==="v:";
 const vzOf=v=>{ if(!isVz(v)) return null; const e=S.vries[v.slice(2)]; return e&&byId[e.id]?{k:v.slice(2),id:e.id,d:e.d}:null; };
+const moetOntdooien=e=>!!e&&(!byId[e.id]||!byId[e.id].ev||byId[e.id].w==="ontdooi");
 const dagenTussen=(x,y)=>Math.round((new Date(y+"T12:00")-new Date(x+"T12:00"))/864e5);
 const vzLeft=e=>VDAGEN-dagenTussen(e.d,isoOf(dayAt(0)));
 function vzFree(){
   const used=new Set([...Object.values(S.plan),...Object.values(S.lunch)].filter(isVz).map(v=>v.slice(2)));
   const t=isoOf(dayAt(0));
   // pas de dag na het koken staat een restje echt in je vriezer
-  return Object.keys(S.vries).filter(k=>!used.has(k)&&byId[S.vries[k].id]&&S.vries[k].d<t).map(k=>({k,id:S.vries[k].id,d:S.vries[k].d})).sort((x,y)=>x.d<y.d?-1:x.d>y.d?1:0);
+  return Object.keys(S.vries).filter(k=>!used.has(k)&&byId[S.vries[k].id]&&(S.vries[k].ev||S.vries[k].d<t)).map(k=>({k,id:S.vries[k].id,d:S.vries[k].d})).sort((x,y)=>x.d<y.d?-1:x.d>y.d?1:0);
 }
 // Restje van gisteravond niet als lunch gegeten? Dan vragen of het in de vriezer ging (één keer per restje, alleen vriezerproof).
 function vzVraagId(){
@@ -1416,8 +1456,8 @@ const emptyCell=`<span class="tile empty" aria-hidden="true">${ic("plus")}</span
 const vzLbl='<span class="lbl vz">vriezer</span>';
 // Morgen iets uit de vriezer? Dan vandaag een balkje: leg het vanavond in de koelkast.
 function ontdooiHTML(){
-  const m=isoOf(dayAt(1)), l=vzOf(S.lunch[m]), a=vzOf(S.plan[m]);
-  const nm=[l,a].filter(Boolean).map(e=>sn(byId[e.id]).toLowerCase());
+  const m=isoOf(dayAt(1)), l=vzOf(S.lunch[m]), a=vzOf(S.plan[m]); // alleen wat echt moet ontdooien
+  const nm=[l,a].filter(moetOntdooien).map(e=>sn(byId[e.id]).toLowerCase());
   if(!nm.length) return "";
   return `<li class="vz-strip" role="note">${ic("snow")}<span>Leg je <b>${esc(nm.join(" en je "))}</b> in je koelkast voor morgen.</span></li>`;
 }
@@ -1453,7 +1493,7 @@ function renderVandaag(){
     const lab=r=>r&&r.f?'<span class="lbl fk">fuck-it</span>':"";
     const mag=(r,kind,extra)=>r?`<span class="tile cat-${kind}" aria-hidden="true">${doodle(r.pic||PIC[r.id]||CATPIC[r.cat])}</span>${extra||lab(r)}<span class="t">${esc(sn(r))}</span>`:emptyCell;
     rows+=`<li class="day${i===0?" today":""}">
-      <span class="dn">${dn}${i<2?`<small>${wd} ${dag}</small>`:""}${(()=>{const m=isoShift(iso,1); return i>0&&(vzOf(S.plan[m])||vzOf(S.lunch[m]))?`<span class="lbl-ont" title="Leg vanavond je restje uit de vriezer in de koelkast">${ic("snow")}ontdooien</span>`:"";})()}</span>
+      <span class="dn">${dn}${i<2?`<small>${wd} ${dag}</small>`:""}${(()=>{const m=isoShift(iso,1); return i>0&&(moetOntdooien(vzOf(S.plan[m]))||moetOntdooien(vzOf(S.lunch[m])))?`<span class="lbl-ont" title="Leg vanavond je restje uit de vriezer in de koelkast">${ic("snow")}ontdooien</span>`:"";})()}</span>
       <button class="slot" data-slot="l|${iso}" aria-label="Lunch ${dn}: ${L.uit?"niet thuis":L.haal?"lunch halen":L.r?esc(sn(L.r))+(L.p2?", restjes":""):"nog niks"}">${L.uit?uitCell:L.haal?haalCell:mag(L.r,"lunch",L.p2?'<span class="lbl rs">restjes</span>':L.vz?vzLbl:"")}</button>
       <button class="slot" data-slot="a|${iso}" aria-label="Avond ${dn}: ${au?"niet thuis":ab?"bestellen":ar?esc(sn(ar)):"nog niks"}">${au?uitCell:ab?bestelCell:mag(ar,"avond",av?vzLbl:"")}</button>
     </li>`;
@@ -1467,18 +1507,14 @@ function renderVandaag(){
     <div class="week-head" aria-hidden="true"><span class="wk-datum">${d0.getMonth()===d6.getMonth()?d0.getDate():kort(d0)}–${kort(d6)}</span><span>lunch</span><span>avond</span></div>
     ${hasAvond?"":`<div class="hint-card" role="note"><b>Begin hier!</b><p class="small">Tik op een vakje en kies wat je wilt eten. Plan zoveel dagen als je wilt.</p></div>`}
     <ul class="week">${hasAvond?rows:rows.replace('class="slot" data-slot="l|'+isoOf(dayAt(0))+'"','class="slot glow" data-slot="l|'+isoOf(dayAt(0))+'"')}</ul>
-    ${hasAvond&&leeg?`<p class="muted small center">Plak je week zo ver vol als je zin hebt.</p>`:""}
     ${ookHTML()}`;
 }
 // Ontbijt, snacks en toetjes staan niet in een vakje, maar wel hier: zo zie je wat je deze week in huis haalt
 function ookHTML(){
-  // Ontbijt, snack en toetje: één rij magneten, net als je week. Tik = kiezen bij Gerechten.
-  const cel=c=>{ const ids=Object.keys(S.picks).filter(id=>byId[id]&&byId[id].cat===c), r=byId[ids[0]], n=ids.reduce((a,id)=>a+S.picks[id],0);
-    const lab=ids.length>1?`+${ids.length-1}`:n>1?`${n}×`:"";
-    return `<button class="slot" data-tab="kaarten" data-cat="${c}" aria-label="${CATS[c]}: ${r?esc(ids.map(id=>sn(byId[id])).join(", ")):"nog niks"}">${r?`<span class="tile cat-${c}" aria-hidden="true">${doodle(r.pic||PIC[r.id]||CATPIC[c])}</span>${lab?`<span class="lbl nn">${lab}</span>`:""}<span class="t">${esc(sn(r))}</span>`:`<span class="tile empty" aria-hidden="true">${ic("plus")}</span><span class="t" aria-hidden="true">&nbsp;</span>`}</button>`; };
-  return `<section class="stack tight ook ookd"><div><h3>Ontbijt, snack en toetje</h3><p class="muted small">Kies wat je deze week in huis wilt hebben. Het komt op je boodschappenlijst.</p></div>
-    <div class="ook-head" aria-hidden="true"><span>ontbijt</span><span>snack</span><span>toetje</span></div>
-    <div class="ook-rij">${["ontbijt","snack","toetje"].map(cel).join("")}</div></section>`;
+  // Ontbijt, snack en toetje: een klein balkje onder je week (zo past je hele week op je scherm). Tik = kiezen bij Gerechten.
+  const pil=c=>{ const ids=Object.keys(S.picks).filter(id=>byId[id]&&byId[id].cat===c), r=byId[ids[0]];
+    return `<button class="ook-pil" data-tab="kaarten" data-cat="${c}" aria-label="${CATS[c]}: ${r?esc(ids.map(id=>sn(byId[id])).join(", ")):"nog niks"}"><span class="tile cat-${c}${r?"":" leeg"}" aria-hidden="true">${r?doodle(r.pic||PIC[r.id]||CATPIC[c]):ic("plus")}</span><span><b>${CATS[c]}</b><small>${ids.length?ids.length+" gekozen":"kies"}</small></span></button>`; };
+  return `<section class="ook ookd" aria-label="Deze week in huis"><p class="muted small ook-kop">Deze week in huis</p><div class="ook-pillen">${["ontbijt","snack","toetje"].map(pil).join("")}</div></section>`;
 }
 // Tik op een vakje: gevuld = eerst het recept, met kleine knoppen om te wisselen. Leeg = meteen kiezen.
 function tapSlot(slot,iso){
@@ -1518,7 +1554,54 @@ function kzLijst(slot,iso,view){
   if(view==="puf") return allR().filter(x=>x.cat===cat&&x.f&&avail(x)&&x.id!==cur);
   return [];
 }
-const KZV={huis:["Al in huis","Deze koos je al, dus de boodschappen heb je. Kies welke je deze dag eet."],nieuw:["Nog halen","Kies er een en de boodschappen komen op je lijst."],puf:["Weinig energie","Snel, makkelijk en niemand die het ziet."],vz:["Uit je vriezer","Oudste eerst, dan is niks zonde."]};
+const KZV={huis:["Al in huis","Deze koos je al, dus de boodschappen heb je. Kies welke je deze dag eet."],nieuw:["Nog halen","Kies er een en de boodschappen komen op je lijst."],puf:["Weinig energie","Snel, makkelijk en niemand die het ziet."],vz:["Uit je vriezer","Restjes: oudste eerst, dan is niks zonde."]};
+// Eigen vriezer-eten toevoegen (vanuit het keuzescherm, dus KZ onthoudt de dag)
+let EVQ=1;
+function openEvNieuw(){
+  EVQ=1; SH=null; const terug=KZ?`<button class="kz-terug" data-kz="vz">‹ Terug</button>`:"";
+  sheetWrap("Iets in je vriezer",`${terug}<div><h2>Iets in je vriezer</h2><p class="muted small">Eten dat je wilt opmaken. Kies het daarna gewoon in een vakje.</p></div>
+    <label class="field"><b>Wat is het?</b><input type="text" id="ev-n" maxlength="40" placeholder="bijv. pizza, soep van oma" autocomplete="off"></label>
+    <div class="field"><b>Hoeveel porties?</b><div class="ev-stap"><button class="btn btn-soft btn-sm" data-ev="q|-1" aria-label="Eentje minder">−</button><b id="ev-q" aria-live="polite">1</b><button class="btn btn-soft btn-sm" data-ev="q|1" aria-label="Eentje meer">+</button></div></div>
+    <fieldset class="field ev-w"><legend><b>Hoe maak je het warm?</b></legend>${Object.entries(EVW).map(([k,[t]],i)=>`<label class="opt sm"><input type="radio" name="ev-w" value="${k}" ${i===0?"checked":""}><span>${t}</span></label>`).join("")}</fieldset>`,
+    `<div class="row foot-row"><button class="btn btn-main" data-ev="save">In je vriezer</button></div>`);
+}
+function evVrij(g){ return vzFree().filter(e=>e.id===g); }
+function openEvAanpas(g){
+  const r=byId[g]; if(!r) return; const l=evVrij(g); SH=null;
+  sheetWrap(r.t,`<button class="kz-terug" data-kz="vz">‹ Terug</button>
+    <div class="sheet-head">${tile(r)}<div><h2>${esc(r.t)}</h2><p class="muted small">${esc(r.m)}</p></div></div>
+    <div class="field"><b>Hoeveel heb je nog?</b><div class="ev-stap"><button class="btn btn-soft btn-sm" data-ev="min|${g}" aria-label="Eentje minder">−</button><b aria-live="polite">${l.length}</b><button class="btn btn-soft btn-sm" data-ev="plus|${g}" aria-label="Eentje meer">+</button></div></div>
+    <p class="note">${esc(r.s[0])}</p>
+    <button class="btn btn-soft btn-sm ev-weg" data-ev="weg|${g}">${ic("trash")}Alles uit je vriezer</button>`);
+}
+function evActie(arg){
+  const [act,g]=arg.split("|");
+  if(act==="nieuw") return openEvNieuw();
+  if(act==="open") return openEvAanpas(g);
+  if(act==="q"){ EVQ=Math.max(1,Math.min(20,EVQ+Number(g))); const q=$("#ev-q"); if(q) q.textContent=EVQ; return; }
+  if(act==="save"){
+    const inp=$("#ev-n"), n=(inp&&inp.value||"").trim().replace(/\s+/g," ");
+    if(!n){ toast("Vul in wat het is"); if(inp) inp.focus(); return; }
+    const w=(document.querySelector('input[name="ev-w"]:checked')||{}).value||"pan", id="ev-"+Date.now().toString(36), d=isoOf(dayAt(0));
+    for(let i=0;i<EVQ;i++) S.vries[id+"-"+i]={id,d,ev:{n:n.slice(0,1).toUpperCase()+n.slice(1),w}};
+    rebuild(); save(); render(); toast(`${n.slice(0,1).toUpperCase()+n.slice(1)} staat in je vriezer!`);
+    if(KZ) openSlot(KZ.slot,KZ.iso,"vz"); else closeSheet(); return;
+  }
+  const l=evVrij(g), e0=l[0]&&S.vries[l[0].k];
+  if(act==="plus"&&e0){ S.vries[g+"-"+Date.now().toString(36)]={id:g,d:e0.d,ev:{...e0.ev}}; }
+  if(act==="min"&&l.length){ delete S.vries[l[l.length-1].k]; }
+  if(act==="weg"){ const ev=e0?{...e0}:null; const weg=l.map(e=>[e.k,S.vries[e.k]]); for(const [k] of weg) delete S.vries[k];
+    rebuild(); save(); render(); toast("Uit je vriezer gehaald",()=>{ for(const [k,v] of weg) S.vries[k]=v; rebuild(); save(); render(); });
+    if(KZ) openSlot(KZ.slot,KZ.iso,vzFree().length?"vz":null); else closeSheet(); return; }
+  rebuild(); save(); render();
+  if(evVrij(g).length) openEvAanpas(g); else if(KZ) openSlot(KZ.slot,KZ.iso,vzFree().length?"vz":null); else closeSheet();
+}
+function vzTekst(vzs){
+  const rj=vzs.filter(e=>!byId[e.id].ev), n=vzs.length, w=n>1?"dingen":"ding";
+  if(rj.length) return `${n} ${w}, oudste: ${esc(sn(byId[rj[0].id]).toLowerCase())} (nog ${vzLeft(rj[0])} ${vzLeft(rj[0])===1?"dag":"dagen"} goed)`;
+  const nm=[...new Set(vzs.map(e=>sn(byId[e.id]).toLowerCase()))];
+  return `${n} ${w}: ${esc(nm.slice(0,2).join(", ")+(nm.length>2?" en meer":""))}`;
+}
 function openSlot(slot,iso,view){
   SH=null; if(!view) KQ.clear(); KZ={slot,iso,view:view||null};
   const wat=slot==="a"?"Avondeten":"Lunch", cur=slot==="a"?S.plan[iso]:S.lunch[iso], kop=`<p class="muted small cap">${esc(dayTitle(iso))}</p>`;
@@ -1535,13 +1618,21 @@ function openSlot(slot,iso,view){
         ${knop("puf",ic("zap"),"k3","Weinig energie",slot==="l"?"snel maken of lunch halen":"snel maken of bestellen")}
         ${cur==="uit"?"":`<button class="kz-knop" data-thuis="${slot}|${iso}"><span class="kz-ic k4" aria-hidden="true">${ic("deur")}</span><b>Niet thuis</b><small>${slot==="a"?"je gerecht schuift door":"vakje blijft leeg"}</small></button>`}
       </div>
-      ${vzs.length?`<button class="kz-rij vz" data-kz="vz"><span class="kz-ic k5" aria-hidden="true">${ic("snow")}</span><span><b>Uit je vriezer</b><small>${vzs.length} ${vzs.length>1?"restjes":"restje"}, oudste: ${esc(sn(byId[vzs[0].id]).toLowerCase())} (nog ${vzLeft(vzs[0])} dagen goed)</small></span></button>`:""}`);
+      ${vzs.length?`<button class="kz-rij vz" data-kz="vz"><span class="kz-ic k5" aria-hidden="true">${ic("snow")}</span><span><b>Uit je vriezer</b><small>${vzTekst(vzs)}</small></span></button>`
+        :`<button class="kz-rij vz kz-licht" data-ev="nieuw"><span class="kz-ic k5" aria-hidden="true">${ic("snow")}</span><span><b>Iets in je vriezer zetten</b><small>pizza, soep van oma… dan vergeet je het niet</small></span></button>`}`);
     return;
   }
   let [t,sub]=KZV[view];
   if(view==="puf"&&slot==="a"&&isAvond(S.plan[iso])) sub+=` Je ${sn(byId[S.plan[iso]]).toLowerCase()} schuift een dag door.`;
   let body;
-  if(view==="vz") body=vzs.map(e=>{const n=vzLeft(e);return `<div class="kz-rij kz-2"><span class="kz-info">${tile(byId[e.id])}<span><b>${esc(sn(byId[e.id]))}</b><small class="${n<=5?"oud":""}">nog ${n} ${n===1?"dag":"dagen"} goed</small></span></span><button class="kz-kies" data-set="${slot}|${iso}|v:${e.k}">Kies</button></div>`;}).join("");
+  if(view==="vz"){
+    const rj=vzs.filter(e=>!byId[e.id].ev), eig={};
+    for(const e of vzs) if(byId[e.id].ev) (eig[e.id]=eig[e.id]||[]).push(e);
+    body=rj.map(e=>{const n=vzLeft(e);return `<div class="kz-rij kz-2"><span class="kz-info">${tile(byId[e.id])}<span><b>${esc(sn(byId[e.id]))}</b><small class="${n<=5?"oud":""}">nog ${n} ${n===1?"dag":"dagen"} goed</small></span></span><button class="kz-kies" data-set="${slot}|${iso}|v:${e.k}">Kies</button></div>`;}).join("")
+      +(Object.keys(eig).length?`<p class="muted small ev-kop"><b>Je eigen vriezer-eten</b></p>`:"")
+      +Object.entries(eig).map(([g,l])=>{const r=byId[g];return `<div class="kz-rij kz-2"><button class="kz-info" data-ev="open|${g}" aria-label="${esc(r.t)}: aanpassen">${tile(r)}<span><b>${esc(r.t)}</b><small>${l.length} ${l.length>1?"porties":"portie"} · ${esc(r.m)}</small></span></button><button class="kz-kies" data-set="${slot}|${iso}|v:${l[0].k}">Kies</button></div>`;}).join("")
+      +`<button class="kz-rij ev-plus" data-ev="nieuw">${ic("plus")}<span><b>Iets anders in je vriezer</b></span></button>`;
+  }
   else { const l=kzLijst(slot,iso,view);
     body=l.length?l.map(o=>{const v=ver(o)||o;return `<div class="kz-rij kz-2">${nsticker(o)}<button class="kz-info" data-kzr="${o.id}" aria-label="${esc(o.t)}: recept bekijken">${tile(o)}<span><b>${esc(o.t)}${S.hart[o.id]?`<span class="hartje" aria-label="favoriet">${ic("hart")}</span>`:""}</b><small>${(()=>{const m=slot==="a"?S.plan:S.lunch, k=Object.keys(m).sort().find(x=>x>=isoOf(dayAt(0))&&x!==iso&&strip(m[x])===o.id); return k?`staat nu op ${dagNaam(k)}, schuift hierheen · `:view==="huis"&&S.park[o.id]?"nog geen dag · ":"";})()}${esc(v.m)} · <u>recept</u></small></span></button><button class="kz-kies" data-set="${slot}|${iso}|${o.id}${view==="huis"?"":"|erbij"}" aria-label="${esc(o.t)} kiezen voor ${dagNaam(iso)}">Kies</button></div>`;}).join("")
       :`<p class="muted">${view==="huis"?`Je hebt nog niks gekozen. Probeer <button class="link" data-kz="nieuw">iets nieuws</button>.`:view==="nieuw"&&KQ.size?`Niks gevonden met dit filter. <button class="link" data-kzf="uit">${KQ.size>1?"Filters uit":"Filter uit"}</button>`:"Hier is niks te kiezen."}</p>`; }
@@ -1793,7 +1884,7 @@ function lcRow(q,name,f,qq){
   return `<li class="ing-lc"><span>${qq} ${esc(name)} <span class="tag-lc">${ic("swap")} kan low carb</span></span>
     <span class="subs">${opts.map(o=>`<button class="subbtn lc" data-lc="${esc(k)}|${esc(o.naam)}">→ ${esc(o.naam)}</button>`).join("")}<button class="subbtn plain" data-lc="${esc(k)}|=">gewoon laten</button></span></li>`;
 }
-function openSheet(id,ctx){SH={id,ctx:ctx||null};drawSheet();maakDeel(id);}
+function openSheet(id,ctx){SH={id,ctx:ctx||null};drawSheet();if(byId[id]&&!byId[id].ev) maakDeel(id);}
 function drawSheet(){
   const {id,ctx}=SH, r=byId[id]; if(!r){closeSheet();return;}
   const v=ver(r)||r, f=fac(r), n=S.picks[id]||0;
@@ -1802,7 +1893,7 @@ function drawSheet(){
   const recept=`${r.i.length?`<div class="stack tight"><h3>Boodschappen</h3>${voor?`<p class="muted small">${voor}</p>`:""}
       <ul class="ing">${r.i.map(([q,nm])=>ingRow(q,nm,f)).join("")}</ul>
       ${r.k?`<p class="kruiden">🌿 Uit je kruidenkast: ${esc(r.k)}</p>`:""}${kastPaprika(r)?`<p class="note warn-note">⚠ Let op: laat paprikapoeder, chilivlokken en sambal uit je kruidenkast weg. Neem zwarte peper, komijn of gember.</p>`:""}</div>`:""}
-    <div class="stack tight"><h3>Zo doe je het</h3><ol>${v.s.map(x=>`<li>${esc(fill(x,r))}</li>`).join("")}</ol></div>
+    <div class="stack tight"><h3>Zo doe je het</h3><ol>${v.s.map(x=>`<li>${esc(fill(x,r))}</li>`).join("")}</ol>${r.th?`<div class="kruiden thee"><span>🍵 Goede match: <b>${esc(r.th[0])}</b></span><span>✨ Perfecte match: <b>${esc(r.th[1])}</b></span></div>`:""}</div>
     ${r.i.map(([,nm])=>lcOf(nm)).filter(o=>o&&o.tip).map(o=>`<p class="note"><b>Low carb:</b> ${esc(o.tip)}</p>`).join("")}
     ${r.n?`<p class="note">${esc(r.n)}</p>`:""}`;
   if(ctx&&ctx.kies){
@@ -1818,12 +1909,14 @@ function drawSheet(){
       <p class="muted small cap">${esc(dayTitle(ctx.iso))} · ${ctx.slot==="a"?"avond":"lunch"}</p>
       ${ctx.p2?`<div class="sheet-head">${tile(r)}<div><h2>Restjes</h2><p class="muted small">van gisteravond: ${esc(r.t)}</p></div></div>
         ${r.warm?`<p class="note">${esc(warmNote())}</p>`:""}`
+      :ctx.vz&&r.ev?`<div class="sheet-head">${tile(r)}<div><h2>Uit je vriezer</h2><p class="muted small">${esc(r.t)} · ${esc(r.m)}</p></div></div>
+        <p class="note">${esc(r.s[0])}</p>`
       :ctx.vz?`<div class="sheet-head">${tile(r)}<div><h2>Uit je vriezer</h2><p class="muted small">${esc(r.t)} · ingevroren op ${datum(ctx.vz.d)}</p></div></div>
         <p class="note">Ontdooien: leg het de avond ervoor in de koelkast.${VPAN.has(r.id)?" Vergeten? Warm het bevroren op in een pannetje, 20 minuten op laag vuur.":""}</p>`:kop}
       <div class="small-acts week-acts">
         <button class="btn btn-soft btn-sm" data-kzopen="${ctx.slot}|${ctx.iso}">${ic("swap")}Iets anders</button>
         <button class="btn btn-ghost weg" data-weg="1" aria-label="Weghalen uit je week" title="Weghalen uit je week">${ic("trash")}</button></div>
-      ${ctx.p2||ctx.vz?`<details class="done-box"><summary>Recept bekijken</summary><div class="stack">${recept}</div></details>`:`<div class="stack sheet-recept">${recept}</div>`}`,"",hartKnop(id)+deelKnop(id));
+      ${r.ev?"":ctx.p2||ctx.vz?`<details class="done-box"><summary>Recept bekijken</summary><div class="stack">${recept}</div></details>`:`<div class="stack sheet-recept">${recept}</div>`}`,"",r.ev?"":hartKnop(id)+deelKnop(id));
     return;
   }
   sheetWrap(r.t,`${kop}${n>1?`<p class="note">Je hebt dit ${n}× gekozen. Hieronder staat het recept voor één keer; je boodschappenlijst rekent al met ${n}×.</p>`:""}${recept}
@@ -1834,18 +1927,18 @@ function drawSheet(){
 // ---------- Nieuw in HopHap ----------
 // Wie de app al gebruikte, ziet na een update één keer wat er nieuw is (per apparaat). Nieuwe gebruikers krijgen de uitleg.
 // Bij een volgende update: VERSIE ophogen en NIEUW vervangen.
-const NIEUW=[["calendar","Alles begint bij je week.","Tik op een vakje en kies wat je die dag eet."],
-  ["swap","Al in huis of nog halen?","Eet een eerder gekozen gerecht of kies iets nieuws."],
-  ["shopping-basket","Boodschappen? Kijk in het mandje.","Wat je nog moet halen, komt er vanzelf in."]];
+const NIEUW=[["snow","Wat ligt er nog in je vriezer?","HopHap weet het nu ook. Plan het in en gooi niks meer weg."],
+  ["calendar","Je hele week op één scherm.","Scrollen is zó vorige week."],
+  ["kop","Match je toetje met thee.","Bij elk toetje zit nu een verrassende theetip."]];
 function nieuwGezien(){ try{ return localStorage.getItem("hophap-nieuw")===VERSIE; }catch(e){ return true; } }
 function zetGezien(){ try{ localStorage.setItem("hophap-nieuw",VERSIE); }catch(e){} }
 function toonNieuw(force){
   if(!force&&nieuwGezien()) return; zetGezien(); SH=null;
   $("#sheet-root").innerHTML=`<div class="nieuw-bg"><div class="nieuw" role="dialog" aria-modal="true" aria-label="Nieuw in HopHap" tabindex="-1">
     <span class="logo" aria-hidden="true">${doodle("konijn")}</span>
-    <h2>We hebben de keuken verbouwd!</h2><p class="sub muted">Alles is er nog, het staat alleen op een handigere plek.</p>
+    <h2>Opgeruimd staat netjes.</h2><p class="sub muted">Meer overzicht, minder weggooien.</p>
     <ul>${NIEUW.map(([i,t,s])=>`<li><span class="ic" aria-hidden="true">${ic(i)}</span><span><b>${esc(t)}</b><br>${esc(s)}</span></li>`).join("")}</ul>
-    <button class="btn btn-main" data-nieuwtour="1">Laat zien</button><button class="link nieuw-zelf" data-close="1">Ik zoek het zelf wel uit</button><p class="v muted small">versie ${VERSIE}</p></div></div>`;
+    <button class="btn btn-main" data-close="1">Lekker!</button><p class="v muted small">versie ${VERSIE}</p></div></div>`;
   $(".nieuw").focus({preventScroll:true});
 }
 // Deelknop rechtsboven in elk recept
@@ -1904,7 +1997,7 @@ const TOUR=[
   {doel:'nav [data-tab="lijst"]',kop:"3. Je boodschappenlijst maakt zichzelf",tekst:"Alles wat je kiest staat hier. Vink af wat je hebt."}];
 // Rondleiding (vanaf 1.2): wijst naar de week, ontbijt/snack/toetje en de knop Gerechten
 TOUR[0].doel=".day.today"; TOUR[0].kop="1. Begin bij je week"; TOUR[0].tekst="Tik op een vakje en kies wat je die dag eet. Wat je nog moet halen, komt vanzelf op je boodschappenlijst.";
-TOUR[1].doel=".ookd"; TOUR[1].kop="2. Ontbijt, snack en toetje"; TOUR[1].tekst="Kies hier wat je deze week in huis wilt hebben, zoals een tosti of een ijsje. Die plan je niet op een dag: ze komen alleen op je boodschappenlijst.";
+TOUR[1].doel=".ookd"; TOUR[1].kop="2. Ontbijt, snack en toetje"; TOUR[1].tekst="Je wilt niet over alles uitgebreid nadenken. Kies daarom 1 of 2 opties voor de hele week.";
 TOUR[2].doel=".kop-btn"; TOUR[2].kop="3. Rondkijken"; TOUR[2].tekst="Hier vind je alle gerechten. Geef je favorieten een hartje, dan staan ze bovenaan. Je boodschappen vind je straks onderin, in het mandje.";
 let TS=-1;
 function startTour(){ closeSheet(); S.tab="vandaag"; render(); scrollTo(0,0); TS=0; drawTour(); }
@@ -2128,7 +2221,7 @@ function render(){
 document.addEventListener("click",e=>{
   if(TS>=0&&e.target.closest("#tour")&&!e.target.closest(".tour-wolk")){ tourNext("klaar"); return; }
   if(e.target.closest("#toast-undo")){const u=toast.undo; $("#toast").hidden=true; toast.undo=null; if(u) u(); return;}
-  const el=e.target.closest("[data-park],[data-tips],[data-bestel],[data-haal],[data-rv],[data-wnieuw],[data-nieuwtour],[data-tab],[data-kzf],[data-kz],[data-kzr],[data-kzopen],[data-hart],[data-thuis],[data-vz],[data-deel],[data-add],[data-min],[data-open],[data-filter],[data-slot],[data-set],[data-close],[data-sub],[data-unsub],[data-own],[data-copy],[data-edit],[data-del],[data-hide],[data-unhide],[data-setup],[data-sun],[data-backup],[data-about],[data-hint],[data-lc],[data-unlc],[data-qf],[data-tour],[data-weg],[data-gate]");
+  const el=e.target.closest("[data-ev],[data-park],[data-tips],[data-bestel],[data-haal],[data-rv],[data-wnieuw],[data-nieuwtour],[data-tab],[data-kzf],[data-kz],[data-kzr],[data-kzopen],[data-hart],[data-thuis],[data-vz],[data-deel],[data-add],[data-min],[data-open],[data-filter],[data-slot],[data-set],[data-close],[data-sub],[data-unsub],[data-own],[data-copy],[data-edit],[data-del],[data-hide],[data-unhide],[data-setup],[data-sun],[data-backup],[data-about],[data-hint],[data-lc],[data-unlc],[data-qf],[data-tour],[data-weg],[data-gate]");
   if(!el){ if(e.target.id==="sb") closeSheet(); return; }
   const d=el.dataset;
   if(d.sun!==undefined){
@@ -2150,6 +2243,7 @@ document.addEventListener("click",e=>{
   else if(d.vz){ const y=isoOf(dayAt(-1)), id=vzVraagId(); S.vq[y]=1;
     if(d.vz==="ja"&&id){ S.vries[Date.now().toString(36)]={id,d:y}; toast(`In je vriezer! Nog ${VDAGEN-1} dagen goed.`); }
     save(); render(); }
+  else if(d.ev){ evActie(d.ev); }
   else if(d.haal){ lunchHalen(d.haal); }
   else if(d.bestel){ bestellen(d.bestel); }
   else if(d.tips){ openTips(d.tips); }
