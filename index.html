@@ -402,16 +402,26 @@ nav.tabs .in{display:flex;width:100%;max-width:560px}
 /* ---------- D: week + mandje (proefversie) ---------- */
 nav.tabs{display:none}
 .wrap{padding-bottom:110px}
-/* Ruime rijen (Irene: liever een stukje scrollen dan rondjes tegen de lijntjes). Grote telefoon? Dan vult je week het scherm,
-   de dagen verdelen de ruimte die over is (100dvh = de echte schermhoogte). Onderaan lucht onder 'Deze week in huis'. */
-.wrap.op-week{padding-bottom:calc(28px + env(safe-area-inset-bottom,0px))}
-.wrap.op-week>#v-vandaag{min-height:calc(100dvh - 60px - env(safe-area-inset-bottom,0px))}
-.wrap.op-week .week{flex:1 0 auto}
-.wrap.op-week .week>.day{flex:1 0 auto;padding-top:5px;padding-bottom:5px}
+/* Weekscherm (Irene, 18-11): elke rij even hoog, met 'rondje + naam' als basis. Rondjes staan op één lijn (ook lege),
+   de dagnaam naast het midden van het rondje. Lege vakjes rustig. Scrollen mag. */
+.week .day{align-items:start;padding-top:12px;padding-bottom:12px}
+.week .slot{min-height:0;padding:0;justify-content:flex-start}
 .week .slot .lbl{top:36px}
-.week .slot .t{margin-top:6px}
-.week .slot .lbl+.t{margin-top:6px}
-.wrap.op-week .ookd{margin-top:8px} /* op je week zweeft er geen knop meer onderin: dan geen lege ruimte om naar te scrollen */
+.week .slot .t{margin-top:9px;min-height:1.2em;-webkit-line-clamp:1}
+.week .slot .lbl+.t{margin-top:9px}
+.week .day .dn{margin-top:15px}
+.week .day.dn2 .dn{margin-top:8px}
+.week .slot .tile.empty{border:0;background:color-mix(in srgb,var(--fg) 7%,transparent);box-shadow:none;color:color-mix(in srgb,var(--fg) 45%,transparent)}
+.week .slot .tile.empty svg.i{width:16px;height:16px}
+/* 'Deze week in huis' staat vast onderin, als zwevend eilandje; de week scrolt eronder door */
+.wrap.op-week{padding-bottom:calc(132px + env(safe-area-inset-bottom,0px))}
+.wrap.op-week .ookd{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:7;max-width:540px;margin:0 auto!important;padding:10px;background:var(--surface);border-radius:26px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.wrap.op-week .ookd .ook-kop{margin:0 0 6px 4px}
+/* kopbalk: verdwijnt als je omlaag scrolt, komt terug zodra je omhoog scrolt */
+.wrap.op-week #v-vandaag>.brand{position:sticky;top:0;z-index:8;background:var(--bg);margin:-16px -16px 0;padding:calc(16px + env(safe-area-inset-top,0px)) 16px 10px;transition:transform .25s ease,box-shadow .25s ease}
+.wrap.op-week #v-vandaag>.brand.kop-los{box-shadow:0 10px 16px -12px rgba(0,0,0,.6)}
+.wrap.op-week #v-vandaag>.brand.kop-weg{transform:translateY(-110%)}
+@media (prefers-reduced-motion:reduce){.wrap.op-week #v-vandaag>.brand{transition:none}} /* op je week zweeft er geen knop meer onderin: dan geen lege ruimte om naar te scrollen */
 .kop-btn{margin-left:8px;display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line-strong);background:var(--surface);color:var(--fg);border-radius:999px;padding:6px 12px;font-weight:800;font-size:var(--fs-s);min-height:40px}
 .kop-btn svg.i{width:18px;height:18px}
 .brand .range{display:none}
@@ -1144,6 +1154,11 @@ document.addEventListener("pointerdown",e=>{
 document.addEventListener("pointermove",e=>{ if(T.el&&Math.hypot(e.clientX-T.x,e.clientY-T.y)>10) tapCancel(); },{passive:true});
 document.addEventListener("pointercancel",tapCancel);
 document.addEventListener("scroll",tapCancel,{passive:true,capture:true});
+// Kopbalk op je week: weg bij omlaag scrollen, meteen terug bij omhoog scrollen (zoals in Safari)
+let kopY=0;
+document.addEventListener("scroll",()=>{ const b=document.querySelector("#v-vandaag>.brand"), y=window.scrollY||0; if(!b||!b.classList) return;
+  if(y>kopY+6&&y>90) b.classList.add("kop-weg"); else if(y<kopY-6||y<40) b.classList.remove("kop-weg");
+  b.classList.toggle("kop-los",y>8); kopY=y; },{passive:true});
 document.addEventListener("pointerup",()=>{
   if(!T.el) return; clearTimeout(T.t);
   P.sel=pressSel(T.el); T.el.classList.add("pressed"); T.el=null;
@@ -1508,7 +1523,7 @@ function renderVandaag(){
     if(!L.r&&!L.uit&&!L.haal||!ar&&!au&&!ab) leeg=true;
     const lab=r=>r&&r.f?'<span class="lbl fk">fuck-it</span>':"";
     const mag=(r,kind,extra)=>r?`<span class="tile cat-${kind}" aria-hidden="true">${doodle(r.pic||PIC[r.id]||CATPIC[r.cat])}</span>${extra||lab(r)}<span class="t">${esc(sn(r))}</span>`:emptyCell;
-    rows+=`<li class="day${i===0?" today":""}">
+    rows+=`<li class="day${i===0?" today":""}${i<2?" dn2":""}">
       <span class="dn">${dn}${i<2?`<small>${wd} ${dag}</small>`:""}${(()=>{const m=isoShift(iso,1); return i>0&&(moetOntdooien(vzOf(S.plan[m]))||moetOntdooien(vzOf(S.lunch[m])))?`<span class="lbl-ont" title="Leg vanavond je restje uit de vriezer in de koelkast">${ic("snow")}ontdooien</span>`:"";})()}</span>
       <button class="slot" data-slot="l|${iso}" aria-label="Lunch ${dn}: ${L.uit?"niet thuis":L.haal?"lunch halen":L.r?esc(sn(L.r))+(L.p2?", restjes":""):"nog niks"}">${L.uit?uitCell:L.haal?haalCell:mag(L.r,"lunch",L.p2?'<span class="lbl rs">restjes</span>':L.vz?vzLbl:"")}</button>
       <button class="slot" data-slot="a|${iso}" aria-label="Avond ${dn}: ${au?"niet thuis":ab?"bestellen":ar?esc(sn(ar)):"nog niks"}">${au?uitCell:ab?bestelCell:mag(ar,"avond",av?vzLbl:"")}</button>
@@ -2232,7 +2247,7 @@ function render(){
   const n=items.filter(i=>!isDone(i)).length;
   $("#lijst-badge").innerHTML=n?`<span class="badge">${n}</span>`:"";
   // Op je week staat het mandje rechtsboven (anders valt het over 'Deze week in huis'); bij Gerechten zweeft het onderin
-  if(S.tab==="vandaag"&&$("#kop-mand")) $("#kop-mand").innerHTML=pickCount()?`<button class="icon-btn kop-mand" data-tab="lijst" aria-label="Boodschappen${n?`: nog ${n} te halen`:""}">${ic("shopping-basket")}${n?`<span class="n" aria-hidden="true">${n}</span>`:""}</button>`:"";
+  if(S.tab==="vandaag"&&$("#kop-mand")) $("#kop-mand").innerHTML=`<button class="icon-btn kop-mand" data-tab="lijst" aria-label="Boodschappen${n?`: nog ${n} te halen`:""}">${ic("shopping-basket")}${n?`<span class="n" aria-hidden="true">${n}</span>`:""}</button>`;
   $("#mand-root").innerHTML=pickCount()&&S.tab==="kaarten"?`<button class="mand" data-tab="lijst">${ic("shopping-basket")}Boodschappen${n?`<span class="n">${n}</span>`:""}</button>`:"";
   if(SH) drawSheet();
   icons(); markPressed();
