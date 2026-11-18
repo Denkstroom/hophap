@@ -482,6 +482,10 @@ nav.tabs{display:none}
 .ook-pil small{font-size:11px;color:var(--muted)}
 .kruiden.thee{display:flex;flex-direction:column;gap:6px}
 .ev-kop{margin:12px 0 0}
+.rest-vraag{display:flex;flex-direction:column;gap:10px}
+.rest-knoppen{display:flex;flex-direction:column;gap:8px}
+.rest-knoppen .btn{justify-content:center;gap:8px}
+.rest-anders{align-self:center;display:inline-flex;align-items:center;gap:6px}
 .ev-plus{justify-content:center;border-style:dashed;background:none;font-weight:700;margin-top:6px}
 .ev-plus>span{flex:none!important}
 .ev-stap{display:flex;align-items:center;gap:16px;margin-top:6px}
@@ -1627,6 +1631,12 @@ function evActie(arg){
   rebuild(); save(); render();
   if(evVrij(g).length) openEvAanpas(g); else if(KZ) openSlot(KZ.slot,KZ.iso,vzFree().length?"vz":null); else closeSheet();
 }
+function restKeuze(arg){ // restjes: in de vriezer, of er is niks over. Daarna niet nog eens vragen of het is ingevroren.
+    const [k,iso]=arg.split("|"), y=isoShift(iso,-1), id=S.plan[y], before=JSON.stringify({lunch:S.lunch,vries:S.vries,vq:S.vq});
+    S.vq[y]=1; S.lunch[iso]="x";
+    if(k==="vries"&&byId[id]) S.vries[Date.now().toString(36)]={id,d:y};
+    save(); closeSheet(); render();
+    toast(k==="vries"?`In je vriezer! Nog ${VDAGEN} dagen goed.`:"Oké, niks over. Je lunch is weer vrij.",()=>{ const b=JSON.parse(before); S.lunch=b.lunch; S.vries=b.vries; S.vq=b.vq; save(); render(); }); }
 function vzTekst(vzs){
   const rj=vzs.filter(e=>!byId[e.id].ev), n=vzs.length, w=n>1?"dingen":"ding";
   if(rj.length) return `${n} ${w}, oudste: ${esc(sn(byId[rj[0].id]).toLowerCase())} (nog ${vzLeft(rj[0])} ${vzLeft(rj[0])===1?"dag":"dagen"} goed)`;
@@ -1939,14 +1949,19 @@ function drawSheet(){
     sheetWrap(r.t,`
       <p class="muted small cap">${esc(dayTitle(ctx.iso))} · ${ctx.slot==="a"?"avond":"lunch"}</p>
       ${ctx.p2?`<div class="sheet-head">${tile(r)}<div><h2>Restjes</h2><p class="muted small">van gisteravond: ${esc(r.t)}</p></div></div>
-        ${r.warm?`<p class="note">${esc(warmNote())}</p>`:""}`
+        ${r.warm?`<p class="note">${esc(warmNote())}</p>`:""}
+        <div class="hint-card rest-vraag"><b>Eet je dit ${esc(dagNaam(ctx.iso))} als lunch?</b>
+          <div class="rest-knoppen"><button class="btn btn-main btn-wide" data-close="1">Ja, lekker</button>
+          ${r.vries?`<button class="btn btn-soft btn-wide" data-rest="vries|${ctx.iso}">${ic("snow")}Nee, in de vriezer</button>`:""}
+          <button class="btn btn-soft btn-wide" data-rest="op|${ctx.iso}">${ic("trash")}Er is niks over</button></div>
+          <button class="link rest-anders" data-kzopen="${ctx.slot}|${ctx.iso}">${ic("swap")}Iets anders als lunch</button></div>`
       :ctx.vz&&r.ev?`<div class="sheet-head">${tile(r)}<div><h2>Uit je vriezer</h2><p class="muted small">${esc(r.t)} · ${esc(r.m)}</p></div></div>
         <p class="note">${esc(r.s[0])}</p>`
       :ctx.vz?`<div class="sheet-head">${tile(r)}<div><h2>Uit je vriezer</h2><p class="muted small">${esc(r.t)} · ingevroren op ${datum(ctx.vz.d)}</p></div></div>
         <p class="note">Ontdooien: leg het de avond ervoor in de koelkast.${VPAN.has(r.id)?" Vergeten? Warm het bevroren op in een pannetje, 20 minuten op laag vuur.":""}</p>`:kop}
-      <div class="small-acts week-acts">
+      ${ctx.p2?"":`<div class="small-acts week-acts">
         <button class="btn btn-soft btn-sm" data-kzopen="${ctx.slot}|${ctx.iso}">${ic("swap")}Iets anders</button>
-        ${ctx.p2?`<button class="btn btn-soft btn-sm" data-weg="1">${ic("trash")}Geen restjes over</button>`:`<button class="btn btn-ghost weg" data-weg="1" aria-label="Weghalen uit je week" title="Weghalen uit je week">${ic("trash")}</button>`}</div>
+        <button class="btn btn-ghost weg" data-weg="1" aria-label="Weghalen uit je week" title="Weghalen uit je week">${ic("trash")}</button></div>`}
       ${r.ev?"":ctx.p2||ctx.vz?`<details class="done-box"><summary>Recept bekijken</summary><div class="stack">${recept}</div></details>`:`<div class="stack sheet-recept">${recept}</div>`}`,"",r.ev?"":hartKnop(id)+deelKnop(id));
     return;
   }
@@ -2255,7 +2270,7 @@ function render(){
 document.addEventListener("click",e=>{
   if(TS>=0&&e.target.closest("#tour")&&!e.target.closest(".tour-wolk")){ tourNext("klaar"); return; }
   if(e.target.closest("#toast-undo")){const u=toast.undo; $("#toast").hidden=true; toast.undo=null; if(u) u(); return;}
-  const el=e.target.closest("[data-ev],[data-park],[data-tips],[data-bestel],[data-haal],[data-rv],[data-wnieuw],[data-nieuwtour],[data-tab],[data-kzf],[data-kz],[data-kzr],[data-kzopen],[data-hart],[data-thuis],[data-vz],[data-deel],[data-add],[data-min],[data-open],[data-filter],[data-slot],[data-set],[data-close],[data-sub],[data-unsub],[data-own],[data-copy],[data-edit],[data-del],[data-hide],[data-unhide],[data-setup],[data-sun],[data-backup],[data-about],[data-hint],[data-lc],[data-unlc],[data-qf],[data-tour],[data-weg],[data-gate]");
+  const el=e.target.closest("[data-rest],[data-ev],[data-park],[data-tips],[data-bestel],[data-haal],[data-rv],[data-wnieuw],[data-nieuwtour],[data-tab],[data-kzf],[data-kz],[data-kzr],[data-kzopen],[data-hart],[data-thuis],[data-vz],[data-deel],[data-add],[data-min],[data-open],[data-filter],[data-slot],[data-set],[data-close],[data-sub],[data-unsub],[data-own],[data-copy],[data-edit],[data-del],[data-hide],[data-unhide],[data-setup],[data-sun],[data-backup],[data-about],[data-hint],[data-lc],[data-unlc],[data-qf],[data-tour],[data-weg],[data-gate]");
   if(!el){ if(e.target.id==="sb") closeSheet(); return; }
   const d=el.dataset;
   if(d.sun!==undefined){
@@ -2278,6 +2293,7 @@ document.addEventListener("click",e=>{
     if(d.vz==="ja"&&id){ S.vries[Date.now().toString(36)]={id,d:y}; toast(`In je vriezer! Nog ${VDAGEN-1} dagen goed.`); }
     save(); render(); }
   else if(d.ev){ evActie(d.ev); }
+  else if(d.rest){ restKeuze(d.rest); }
   else if(d.haal){ lunchHalen(d.haal); }
   else if(d.bestel){ bestellen(d.bestel); }
   else if(d.tips){ openTips(d.tips); }
