@@ -410,6 +410,12 @@ nav.tabs{display:none}
 .terug svg.i{width:18px;height:18px}
 .mand{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:6;border:0;background:var(--accent);color:var(--on-accent);font-weight:800;font-size:1.05rem;border-radius:999px;padding:12px 22px;display:flex;align-items:center;gap:8px;box-shadow:0 6px 20px rgba(0,0,0,.28);min-height:52px}
 .mand svg.i{width:20px;height:20px}
+.kop-logo{width:48px;height:48px}
+.kop-logo svg.doo{width:36px;height:36px}
+#kop-mand{display:contents}
+.brand .icon-btn.kop-mand{position:relative;margin-left:10px;width:44px;height:44px;border:1.5px solid var(--line-strong);background:var(--surface);color:var(--fg)}
+.kop-mand .n{position:absolute;top:-6px;right:-8px;background:var(--accent);color:var(--on-accent);font-weight:800;font-size:12px;line-height:1.4;border-radius:999px;padding:0 6px;min-width:20px;text-align:center}
+.brand .icon-btn.kop-mand+.icon-btn{margin-left:10px}
 .mand .n{background:var(--on-accent);color:var(--accent);border-radius:999px;padding:0 8px;font-size:.9rem}
 .toast{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
 .slot.glow .tile.empty{border-color:var(--accent);box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 22%,transparent);animation:puls 1.6s ease-in-out infinite}
@@ -1501,8 +1507,8 @@ function renderVandaag(){
   }
   const d0=dayAt(0), d6=dayAt(6), kort=d=>d.toLocaleDateString("nl-NL",{day:"numeric",month:"short"}).replace(".","");
   $("#v-vandaag").innerHTML=`
-    <header class="brand"><span class="logo" aria-hidden="true">${doodle("konijn")}</span><span class="name">Hop<b>Hap</b></span><span class="range">${d0.getMonth()===d6.getMonth()?d0.getDate():kort(d0)} – ${kort(d6)}</span>
-      <button class="kop-btn" data-tab="kaarten">${ic("layers")}Gerechten</button><button class="icon-btn" data-setup="1" aria-label="Mijn instellingen">${ic("sliders")}</button></header>
+    <header class="brand"><span class="logo kop-logo" role="img" aria-label="HopHap">${doodle("konijn")}</span><span class="range">${d0.getMonth()===d6.getMonth()?d0.getDate():kort(d0)} – ${kort(d6)}</span>
+      <button class="kop-btn" data-tab="kaarten">${ic("layers")}Gerechten</button><span id="kop-mand"></span><button class="icon-btn" data-setup="1" aria-label="Mijn instellingen">${ic("sliders")}</button></header>
     ${parkHTML()}${vzVraagHTML()}${hintHTML()}
     <div class="week-head" aria-hidden="true"><span class="wk-datum">${d0.getMonth()===d6.getMonth()?d0.getDate():kort(d0)}–${kort(d6)}</span><span>lunch</span><span>avond</span></div>
     ${hasAvond?"":`<div class="hint-card" role="note"><b>Begin hier!</b><p class="small">Tik op een vakje en kies wat je wilt eten. Plan zoveel dagen als je wilt.</p></div>`}
@@ -1998,7 +2004,7 @@ const TOUR=[
 // Rondleiding (vanaf 1.2): wijst naar de week, ontbijt/snack/toetje en de knop Gerechten
 TOUR[0].doel=".day.today"; TOUR[0].kop="1. Begin bij je week"; TOUR[0].tekst="Tik op een vakje en kies wat je die dag eet. Wat je nog moet halen, komt vanzelf op je boodschappenlijst.";
 TOUR[1].doel=".ookd"; TOUR[1].kop="2. Ontbijt, snack en toetje"; TOUR[1].tekst="Je wilt niet over alles uitgebreid nadenken. Kies daarom 1 of 2 opties voor de hele week.";
-TOUR[2].doel=".kop-btn"; TOUR[2].kop="3. Rondkijken"; TOUR[2].tekst="Hier vind je alle gerechten. Geef je favorieten een hartje, dan staan ze bovenaan. Je boodschappen vind je straks onderin, in het mandje.";
+TOUR[2].doel=".kop-btn"; TOUR[2].kop="3. Rondkijken"; TOUR[2].tekst="Hier vind je alle gerechten. Geef je favorieten een hartje, dan staan ze bovenaan. Je boodschappen vind je rechtsboven, in het mandje.";
 let TS=-1;
 function startTour(){ closeSheet(); S.tab="vandaag"; render(); scrollTo(0,0); TS=0; drawTour(); }
 function tourNext(v){ if(v==="klaar"){ TS=-1; S.tour=1; save(); $("#tour").hidden=true; $("#tour").innerHTML=""; toast("Veel kook- en eetplezier!"); return; } TS++; drawTour(); }
@@ -2214,7 +2220,9 @@ function render(){
   if(S.tab==="lijst") renderLijst(items);
   const n=items.filter(i=>!isDone(i)).length;
   $("#lijst-badge").innerHTML=n?`<span class="badge">${n}</span>`:"";
-  $("#mand-root").innerHTML=pickCount()&&S.tab!=="lijst"?`<button class="mand" data-tab="lijst">${ic("shopping-basket")}Boodschappen${n?`<span class="n">${n}</span>`:""}</button>`:"";
+  // Op je week staat het mandje rechtsboven (anders valt het over 'Deze week in huis'); bij Gerechten zweeft het onderin
+  if(S.tab==="vandaag"&&$("#kop-mand")) $("#kop-mand").innerHTML=pickCount()?`<button class="icon-btn kop-mand" data-tab="lijst" aria-label="Boodschappen${n?`: nog ${n} te halen`:""}">${ic("shopping-basket")}${n?`<span class="n" aria-hidden="true">${n}</span>`:""}</button>`:"";
+  $("#mand-root").innerHTML=pickCount()&&S.tab==="kaarten"?`<button class="mand" data-tab="lijst">${ic("shopping-basket")}Boodschappen${n?`<span class="n">${n}</span>`:""}</button>`:"";
   if(SH) drawSheet();
   icons(); markPressed();
 }
