@@ -402,6 +402,7 @@ nav.tabs .in{display:flex;width:100%;max-width:560px}
 /* ---------- D: week + mandje (proefversie) ---------- */
 nav.tabs{display:none}
 .wrap{padding-bottom:110px}
+.wrap.op-week{padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))} /* op je week zweeft er geen knop meer onderin: dan geen lege ruimte om naar te scrollen */
 .kop-btn{margin-left:8px;display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line-strong);background:var(--surface);color:var(--fg);border-radius:999px;padding:6px 12px;font-weight:800;font-size:var(--fs-s);min-height:40px}
 .kop-btn svg.i{width:18px;height:18px}
 .brand .range{display:none}
@@ -2208,6 +2209,7 @@ if(SITE&&"serviceWorker" in navigator&&location.protocol==="https:"){ try{naviga
 
 // ---------- 8. RENDER + KLIKKEN ----------
 function render(){
+  const wr=$(".wrap"); if(wr&&wr.classList) wr.classList.toggle("op-week",S.tab==="vandaag");
   rebuild();
   normalizePlan(); // week altijd bijwerken, ook als je net iets op je lijst zette
   const items=buildList(); migrate(items);
