@@ -1974,7 +1974,7 @@ function drawSheet(){
 // Wie de app al gebruikte, ziet na een update één keer wat er nieuw is (per apparaat). Nieuwe gebruikers krijgen de uitleg.
 // Bij een volgende update: VERSIE ophogen en NIEUW vervangen.
 const NIEUW=[["snow","Wat ligt er nog in je vriezer?","HopHap weet het nu ook. Plan het in en gooi niks meer weg."],
-  ["calendar","Je hele week op één scherm.","Scrollen is zó vorige week."],
+  ["calendar","Je week, maar dan rustiger.","Met ontbijt, snack en toetje altijd onder handbereik."],
   ["kop","Match je toetje met thee.","Bij elk toetje zit nu een verrassende theetip."]];
 function nieuwGezien(){ try{ return localStorage.getItem("hophap-nieuw")===VERSIE; }catch(e){ return true; } }
 function zetGezien(){ try{ localStorage.setItem("hophap-nieuw",VERSIE); }catch(e){} }
