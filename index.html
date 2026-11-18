@@ -1381,7 +1381,7 @@ function removeSlot(slot,iso){
   else if(counted){ const n=(S.picks[id]||0)-1; if(n>0) S.picks[id]=n; else delete S.picks[id]; }
   if(slot==="a") delete S.plan[iso]; else S.lunch[iso]="x";
   save(); closeSheet(); render();
-  toast(bewaar?"Weggehaald. Staat nog bij Al in huis.":"Weggehaald uit je week",()=>{ const b=JSON.parse(before); S.plan=b.plan; S.lunch=b.lunch; S.picks=b.picks; S.park=b.park||{}; save(); render(); });
+  toast(bewaar?"Weggehaald. Staat nog bij Al in huis.":id==="p2"||(!id&&slot==="l"&&hasP2(iso))?"Oké, geen restjes. Je lunch is weer vrij.":"Weggehaald uit je week",()=>{ const b=JSON.parse(before); S.plan=b.plan; S.lunch=b.lunch; S.picks=b.picks; S.park=b.park||{}; save(); render(); });
 }
 // Niet thuis: het vakje krijgt "uit". Stond er avondeten? Dat schuift een dag door (je hebt de boodschappen al).
 function zetAvond(iso,val){
@@ -1946,7 +1946,7 @@ function drawSheet(){
         <p class="note">Ontdooien: leg het de avond ervoor in de koelkast.${VPAN.has(r.id)?" Vergeten? Warm het bevroren op in een pannetje, 20 minuten op laag vuur.":""}</p>`:kop}
       <div class="small-acts week-acts">
         <button class="btn btn-soft btn-sm" data-kzopen="${ctx.slot}|${ctx.iso}">${ic("swap")}Iets anders</button>
-        <button class="btn btn-ghost weg" data-weg="1" aria-label="Weghalen uit je week" title="Weghalen uit je week">${ic("trash")}</button></div>
+        ${ctx.p2?`<button class="btn btn-soft btn-sm" data-weg="1">${ic("trash")}Geen restjes over</button>`:`<button class="btn btn-ghost weg" data-weg="1" aria-label="Weghalen uit je week" title="Weghalen uit je week">${ic("trash")}</button>`}</div>
       ${r.ev?"":ctx.p2||ctx.vz?`<details class="done-box"><summary>Recept bekijken</summary><div class="stack">${recept}</div></details>`:`<div class="stack sheet-recept">${recept}</div>`}`,"",r.ev?"":hartKnop(id)+deelKnop(id));
     return;
   }
