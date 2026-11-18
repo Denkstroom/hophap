@@ -402,11 +402,17 @@ nav.tabs .in{display:flex;width:100%;max-width:560px}
 /* ---------- D: week + mandje (proefversie) ---------- */
 nav.tabs{display:none}
 .wrap{padding-bottom:110px}
-.wrap.op-week{padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
-/* compacter weekrooster: zo past je week + "Deze week in huis" ook op een iPhone met klok en veegbalk (gemeten, niet geschat) */
-.week .day{padding-top:2px;padding-bottom:2px}
+/* Je week vult precies je scherm, op elke telefoon: de dagen verdelen de ruimte die over is (100dvh = de echte schermhoogte).
+   Kleine telefoon? Dan blijven de rijen compact en scroll je een klein stukje. */
+.wrap.op-week{padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+.wrap.op-week>#v-vandaag{min-height:calc(100dvh - 48px - env(safe-area-inset-bottom,0px))}
+.wrap.op-week .week{flex:1 0 auto}
+.wrap.op-week .week>.day{flex:1 0 auto;padding-top:2px;padding-bottom:2px}
 .week .slot .tile{width:44px;height:44px}
-.week .slot .tile svg.doo{width:28px;height:28px} /* op je week zweeft er geen knop meer onderin: dan geen lege ruimte om naar te scrollen */
+.week .slot .lbl{top:32px}
+.week .slot .t{margin-top:6px}
+.week .slot .lbl+.t{margin-top:6px}
+.wrap.op-week .ookd{margin-top:0} /* op je week zweeft er geen knop meer onderin: dan geen lege ruimte om naar te scrollen */
 .kop-btn{margin-left:8px;display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line-strong);background:var(--surface);color:var(--fg);border-radius:999px;padding:6px 12px;font-weight:800;font-size:var(--fs-s);min-height:40px}
 .kop-btn svg.i{width:18px;height:18px}
 .brand .range{display:none}
