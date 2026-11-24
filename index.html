@@ -413,6 +413,8 @@ nav.tabs{display:none}
 .week .day.dn2 .dn{margin-top:8px}
 .week .slot .tile.empty{border:0;background:color-mix(in srgb,var(--fg) 7%,transparent);box-shadow:none;color:color-mix(in srgb,var(--fg) 45%,transparent)}
 .week .slot .tile.empty svg.i{width:16px;height:16px}
+/* per week + overslaan */
+.per-week{display:block;margin-top:2px}.link-knop{background:none;border:0;padding:4px 0 0;color:var(--accent);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer}
 /* 'Deze week in huis' staat vast onderin, als zwevend eilandje; de week scrolt eronder door */
 .wrap.op-week{padding-bottom:calc(132px + env(safe-area-inset-bottom,0px))}
 .wrap.op-week .ookd{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:7;max-width:540px;margin:0 auto!important;padding:10px;background:var(--surface);border-radius:26px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
@@ -479,7 +481,7 @@ nav.tabs{display:none}
 .ook-pil .tile svg{width:20px;height:20px}
 .ook-pil>span:last-child{display:flex;flex-direction:column;line-height:1.15;min-width:0}
 .ook-pil b{font-size:13px}
-.ook-pil small{font-size:11px;color:var(--muted)}
+.ook-pil small{font-size:11px;color:var(--muted);white-space:nowrap}
 .kruiden.thee{display:flex;flex-direction:column;gap:6px}
 .ev-kop{margin:12px 0 0}
 .rest-vraag{display:flex;flex-direction:column;gap:10px}
@@ -1004,10 +1006,10 @@ function icons(){document.querySelectorAll("i[data-lucide]").forEach(el=>{el.out
 //   lc     {product: vervanger} koolhydraatarm
 //   hidden verborgen kaarten                  own    eigen gerechten   setup  antwoorden vragenlijst
 const KEY="eetkaarten-v1";
-const VERSIE="1.3"; // ophogen bij elke update die online gaat
-const OBJ=["picks","bought","stock","plan","lunch","used","fav","subs","hidden","lc","vries","vq","hart","park"]; // vries = je vriezer, vq = vriezervraag al gesteld
+const VERSIE="1.4"; // ophogen bij elke update die online gaat
+const OBJ=["skip","picks","bought","stock","plan","lunch","used","fav","subs","hidden","lc","vries","vq","hart","park"]; // vries = je vriezer, vq = vriezervraag al gesteld
 const parseOwn=v=>{try{const a=typeof v==="string"?JSON.parse(v):v; return Array.isArray(a)?a:[];}catch(e){return [];}};
-const FRESH=()=>({park:{},hart:{},vries:{},vq:{},picks:{},bought:{},stock:{},plan:{},lunch:{},used:{},fav:{},subs:{},hidden:{},lc:{},own:[],setup:null,filter:"ontbijt",tab:"vandaag"});
+const FRESH=()=>({skip:{},wk:"",park:{},hart:{},vries:{},vq:{},picks:{},bought:{},stock:{},plan:{},lunch:{},used:{},fav:{},subs:{},hidden:{},lc:{},own:[],setup:null,filter:"ontbijt",tab:"vandaag"});
 // START: verander je deze code, dan begint iedereen één keer opnieuw (alsof het de eerste keer is).
 // De oude gegevens worden eerst bewaard: op dit apparaat onder KEY+"-voor-"+START, in je account in het document "hophap-voor-"+START.
 const START="opnieuw-2026-11-14g";
@@ -1171,7 +1173,7 @@ document.addEventListener("pointerup",()=>{
 
 // Opslaan: pas naar je account schrijven als de opgeslagen versie binnen is (anders overschrijft een oude versie je lijst)
 const keep=()=>({park:S.park,hart:S.hart,vries:S.vries,vq:S.vq,picks:S.picks,bought:S.bought,stock:S.stock,plan:S.plan,lunch:S.lunch,used:S.used,fav:S.fav,subs:S.subs,hidden:S.hidden,lc:S.lc,
-  own:JSON.stringify(S.own),setup:S.setup||null,qv:S.qv||0,eetv:S.eetv||0,filter:S.filter,start:START,tour:S.tour||0});
+  own:JSON.stringify(S.own),setup:S.setup||null,qv:S.qv||0,eetv:S.eetv||0,skip:S.skip,wk:S.wk||"",filter:S.filter,start:START,tour:S.tour||0});
 let REF=null, synced=false, lastSent="", writing=false, again=false, wt=null;
 function save(){
   try{localStorage.setItem(KEY,JSON.stringify(keep()));}catch(e){}
@@ -1231,7 +1233,7 @@ function addPick(id,d=1){
   const voor=JSON.stringify([S.plan,S.lunch]);
   save(); render();
   if(d>0){ const r=byId[id], inWeek=r&&(r.cat==="avond"||(r.cat==="lunch"&&!r.f));
-    if(!inWeek){ toast(n>1?`Nu ${n}× op je lijst!`:"Op je lijst gezet!"); return; }
+    if(!inWeek){ toast(isExtra(id)?(n>1?`Nu ${n}× per week op je lijst!`:"Elke week op je lijst!"):n>1?`Nu ${n}× op je lijst!`:"Op je lijst gezet!"); return; }
     // waar is hij in je week beland?
     const [p0,l0]=JSON.parse(voor), map=r.cat==="avond"?S.plan:S.lunch, oud=r.cat==="avond"?p0:l0;
     const dag=Object.keys(map).sort().find(k=>strip(map[k])===id&&strip(oud[k])!==id);
@@ -1274,7 +1276,20 @@ function tidy(map,isPick){
     if(iso>=tIso&&cnt[id]+(S.used[id]||0)>(S.picks[id]||0)){cnt[id]--;delete map[iso];}
   }
 }
+// Ontbijt, snack en toetje: je kiest hoe vaak per week. Elke 7 dagen is dat op, en staat het vanzelf weer op je lijst.
+const EXTRA=new Set(["ontbijt","snack","toetje"]);
+const isExtra=id=>!!(byId[id]&&EXTRA.has(byId[id].cat));
+function weekRitme(){
+  const t=isoOf(dayAt(0)); if(!S.wk){ S.wk=t; return true; }
+  let ch=false;
+  while(dagenTussen(S.wk,t)>=7){
+    for(const [id,n] of Object.entries(S.picks)) if(isExtra(id)&&!S.skip[id]) for(let i=0;i<n;i++) opgegeten(id);
+    S.wk=isoShift(S.wk,7); S.skip={}; ch=true;
+  }
+  return ch;
+}
 function normalizePlan(){
+  if(weekRitme()) save();
   if(S.eetv!==2){ // eenmalig (24-11-2026): wat al is opgegeten telt niet meer als 'in huis', en een half pak telt als heel pak
     for(const [id,n] of Object.entries(S.used)) if(byId[id]) for(let i=0;i<Math.min(n,S.picks[id]||0);i++) opgegeten(id);
     for(const b of Object.values(S.bought)) if(b&&typeof b==="object"&&b.qc) b.qc=heelPak(b.qc);
@@ -1486,6 +1501,7 @@ function card(r){
       <span class="card-title">${esc(r.t)}${S.hart[r.id]?`<span class="hartje" aria-label="favoriet">${ic("hart")}</span>`:""}${r.f?flabel:""}</span>
       <span class="muted small">${esc(v.m)}</span>
       ${cardTags(r,w,lc)}
+      ${n&&EXTRA.has(r.cat)?`<span class="muted small per-week">${n}× per week op je lijst</span>`:""}
     </button>
     ${n?`<button class="add min" data-min="${r.id}" aria-label="${esc(r.t)}: één minder">−</button>`:""}${`<button class="add ${n?"on":""}" data-add="${r.id}" aria-label="${esc(r.t)} op lijst zetten">${n?n+"×":ic("plus")}</button>`}
   </div>`;
@@ -1553,7 +1569,7 @@ function renderVandaag(){
 function ookHTML(){
   // Ontbijt, snack en toetje: een klein balkje onder je week (zo past je hele week op je scherm). Tik = kiezen bij Gerechten.
   const pil=c=>{ const ids=Object.keys(S.picks).filter(id=>byId[id]&&byId[id].cat===c), r=byId[ids[0]];
-    return `<button class="ook-pil" data-tab="kaarten" data-cat="${c}" aria-label="${CATS[c]}: ${r?esc(ids.map(id=>sn(byId[id])).join(", ")):"nog niks"}"><span class="tile cat-${c}${r?"":" leeg"}" aria-hidden="true">${r?doodle(r.pic||PIC[r.id]||CATPIC[c]):ic("plus")}</span><span><b>${CATS[c]}</b><small>${ids.length?ids.length+" gekozen":"kies"}</small></span></button>`; };
+    return `<button class="ook-pil" data-tab="kaarten" data-cat="${c}" aria-label="${CATS[c]}: ${r?esc(ids.map(id=>sn(byId[id])).join(", ")):"nog niks"}"><span class="tile cat-${c}${r?"":" leeg"}" aria-hidden="true">${r?doodle(r.pic||PIC[r.id]||CATPIC[c]):ic("plus")}</span><span><b>${CATS[c]}</b><small>${ids.length?ids.reduce((a,id)=>a+S.picks[id],0)+"× p/w":"kies"}</small></span></button>`; };
   return `<section class="ook ookd" aria-label="Deze week in huis"><p class="muted small ook-kop">Deze week in huis</p><div class="ook-pillen">${["ontbijt","snack","toetje"].map(pil).join("")}</div></section>`;
 }
 // Tik op een vakje: gevuld = eerst het recept, met kleine knoppen om te wisselen. Leeg = meteen kiezen.
@@ -1806,7 +1822,7 @@ function buildList(){
   const items={};
   for(const [id,n0] of Object.entries(S.picks)){
     const r=byId[id]; if(!r) continue;
-    const n=n0-(S.used[id]||0); if(n<=0) continue; // al opgegeten: die boodschappen heb je niet meer nodig
+    const n=n0-(S.used[id]||0); if(n<=0||S.skip[id]) continue; // al opgegeten (of deze week overgeslagen): die boodschappen heb je niet meer nodig
     for(let [q,orig] of r.i){
       const lo=lcOf(orig); if(lo&&lo.x===0) continue; // "zonder deeg"
       const name=effName(orig), k=name.toLowerCase(); q=effQty(q,orig); if(VAAG.test(q)) q=""; // handje/scheutje koop je niet: op de lijst alleen de naam
@@ -1815,7 +1831,7 @@ function buildList(){
     }
   }
   for(const id of Object.keys(S.picks)){ // bijzondere kruiden, als voorraad
-    if((S.picks[id]||0)-(S.used[id]||0)<=0) continue;
+    if((S.picks[id]||0)-(S.used[id]||0)<=0||S.skip[id]) continue;
     const kk=((byId[id]||{}).k||"").toLowerCase(); if(!kk) continue;
     for(const [naam,re] of KRUID) if(re.test(kk)&&!(restr().has("paprika")&&/paprika|chili/i.test(naam))){const k=naam.toLowerCase(); items[k]=items[k]||{k,name:naam,qc:{"":1},afd:6,stock:true,warn:null};}
   }
@@ -1915,7 +1931,7 @@ function renderLijst(items){
       <h2>Gekozen</h2>
       <ul class="list">${picks.map(([id,n])=>`<li><div class="check static">
         ${tile(byId[id])}
-        <span class="txt">${esc(byId[id].t)}<br><span class="q">${CATS[byId[id].cat]}${byId[id].f?" · fuck-it":""}</span></span>
+        <span class="txt">${esc(byId[id].t)}<br><span class="q">${CATS[byId[id].cat]}${byId[id].f?" · fuck-it":""}${isExtra(id)?` · ${n}× per week`:""}</span>${isExtra(id)?`<br><button class="link-knop" data-skip="${id}">${S.skip[id]?"Toch deze week":"Sla deze week over"}</button>`:""}</span>
         <button class="toggle" data-min="${id}" aria-label="${esc(byId[id].t)}: één minder">−</button><span class="num">${n}</span>
         <button class="toggle" data-add="${id}" aria-label="${esc(byId[id].t)}: één meer">+</button></div></li>`).join("")}</ul>
       <button class="btn btn-ghost btn-wide" id="leeg">${S.confirmClear?"Zeker weten? Tik nog een keer":"Nieuwe week: lijst leegmaken"}</button>
@@ -1927,7 +1943,7 @@ function renderLijst(items){
   };
   const lg=$("#leeg"); if(lg) lg.onclick=()=>{
     if(!S.confirmClear){S.confirmClear=true;render();setTimeout(()=>{S.confirmClear=false;render();},4000);return;}
-    S.picks={};S.bought={};S.plan={};S.lunch={};S.used={};S.confirmClear=false;showDone=false;save();render();toast("Je lijst is leeg. Je voorraad blijft staan!");
+    S.picks={};S.bought={};S.plan={};S.lunch={};S.used={};S.skip={};S.wk=isoOf(dayAt(0));S.confirmClear=false;showDone=false;save();render();toast("Je lijst is leeg. Je voorraad blijft staan!");
   };
 }
 
@@ -2004,9 +2020,8 @@ function drawSheet(){
 // ---------- Nieuw in HopHap ----------
 // Wie de app al gebruikte, ziet na een update één keer wat er nieuw is (per apparaat). Nieuwe gebruikers krijgen de uitleg.
 // Bij een volgende update: VERSIE ophogen en NIEUW vervangen.
-const NIEUW=[["snow","Wat ligt er nog in je vriezer?","HopHap weet het nu ook. Plan het in en gooi niks meer weg."],
-  ["calendar","Je week, maar dan rustiger.","Met ontbijt, snack en toetje altijd onder handbereik."],
-  ["kop","Match je toetje met thee.","Bij elk toetje zit nu een verrassende theetip."]];
+const NIEUW=[["calendar","Ontbijt, snack en toetje: elke week vanzelf.","Kies hoe vaak per week je iets eet. Elke week staat het in de goede hoeveelheid op je lijst. Zin in iets anders? Tik op − en kies een nieuwe."],
+  ["shopping-basket","Je lijst klopt beter.","Wat je al hebt opgegeten, of nog half in huis hebt, staat er niet meer op."]];
 function nieuwGezien(){ try{ return localStorage.getItem("hophap-nieuw")===VERSIE; }catch(e){ return true; } }
 function zetGezien(){ try{ localStorage.setItem("hophap-nieuw",VERSIE); }catch(e){} }
 function toonNieuw(force){
@@ -2074,7 +2089,7 @@ const TOUR=[
   {doel:'nav [data-tab="lijst"]',kop:"3. Je boodschappenlijst maakt zichzelf",tekst:"Alles wat je kiest staat hier. Vink af wat je hebt."}];
 // Rondleiding (vanaf 1.2): wijst naar de week, ontbijt/snack/toetje en de knop Gerechten
 TOUR[0].doel=".day.today"; TOUR[0].kop="1. Begin bij je week"; TOUR[0].tekst="Tik op een vakje en kies wat je die dag eet. Wat je nog moet halen, komt vanzelf op je boodschappenlijst.";
-TOUR[1].doel=".ookd"; TOUR[1].kop="2. Ontbijt, snack en toetje"; TOUR[1].tekst="Je wilt niet over alles uitgebreid nadenken. Kies daarom 1 of 2 opties voor de hele week.";
+TOUR[1].doel=".ookd"; TOUR[1].kop="2. Ontbijt, snack en toetje"; TOUR[1].tekst="Je wilt niet over alles uitgebreid nadenken. Kies 1 of 2 opties en hoe vaak per week. Elke week staan ze vanzelf weer op je lijst.";
 TOUR[2].doel=".kop-btn"; TOUR[2].kop="3. Rondkijken"; TOUR[2].tekst="Hier vind je alle gerechten. Geef je favorieten een hartje, dan staan ze bovenaan. Je boodschappen vind je rechtsboven, in het mandje.";
 let TS=-1;
 function startTour(){ closeSheet(); S.tab="vandaag"; render(); scrollTo(0,0); TS=0; drawTour(); }
@@ -2301,7 +2316,7 @@ function render(){
 document.addEventListener("click",e=>{
   if(TS>=0&&e.target.closest("#tour")&&!e.target.closest(".tour-wolk")){ tourNext("klaar"); return; }
   if(e.target.closest("#toast-undo")){const u=toast.undo; $("#toast").hidden=true; toast.undo=null; if(u) u(); return;}
-  const el=e.target.closest("[data-rest],[data-ev],[data-park],[data-tips],[data-bestel],[data-haal],[data-rv],[data-wnieuw],[data-nieuwtour],[data-tab],[data-kzf],[data-kz],[data-kzr],[data-kzopen],[data-hart],[data-thuis],[data-vz],[data-deel],[data-add],[data-min],[data-open],[data-filter],[data-slot],[data-set],[data-close],[data-sub],[data-unsub],[data-own],[data-copy],[data-edit],[data-del],[data-hide],[data-unhide],[data-setup],[data-sun],[data-backup],[data-about],[data-hint],[data-lc],[data-unlc],[data-qf],[data-tour],[data-weg],[data-gate]");
+  const el=e.target.closest("[data-rest],[data-ev],[data-park],[data-tips],[data-bestel],[data-haal],[data-rv],[data-wnieuw],[data-nieuwtour],[data-tab],[data-kzf],[data-kz],[data-kzr],[data-kzopen],[data-hart],[data-thuis],[data-vz],[data-deel],[data-skip],[data-add],[data-min],[data-open],[data-filter],[data-slot],[data-set],[data-close],[data-sub],[data-unsub],[data-own],[data-copy],[data-edit],[data-del],[data-hide],[data-unhide],[data-setup],[data-sun],[data-backup],[data-about],[data-hint],[data-lc],[data-unlc],[data-qf],[data-tour],[data-weg],[data-gate]");
   if(!el){ if(e.target.id==="sb") closeSheet(); return; }
   const d=el.dataset;
   if(d.sun!==undefined){
@@ -2312,6 +2327,7 @@ document.addEventListener("click",e=>{
     return;
   }
   if(d.tab){closeSheet();S.tab=d.tab;if(d.cat&&CATS[d.cat]){S.filter=d.cat;QON.clear();}kOrder=null;render();scrollTo(0,0);}
+  else if(d.skip){ const aan=!S.skip[d.skip]; if(aan) S.skip[d.skip]=1; else delete S.skip[d.skip]; save(); render(); toast(aan?"Deze week niet op je lijst. Volgende week weer wel!":"Toch deze week op je lijst!"); }
   else if(d.add){addPick(d.add,1); if(d.close) closeSheet();}
   else if(d.min){addPick(d.min,-1);}
   else if(d.open){openSheet(d.open);}
