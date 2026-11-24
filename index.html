@@ -1171,7 +1171,7 @@ document.addEventListener("pointerup",()=>{
 
 // Opslaan: pas naar je account schrijven als de opgeslagen versie binnen is (anders overschrijft een oude versie je lijst)
 const keep=()=>({park:S.park,hart:S.hart,vries:S.vries,vq:S.vq,picks:S.picks,bought:S.bought,stock:S.stock,plan:S.plan,lunch:S.lunch,used:S.used,fav:S.fav,subs:S.subs,hidden:S.hidden,lc:S.lc,
-  own:JSON.stringify(S.own),setup:S.setup||null,qv:S.qv||0,filter:S.filter,start:START,tour:S.tour||0});
+  own:JSON.stringify(S.own),setup:S.setup||null,qv:S.qv||0,eetv:S.eetv||0,filter:S.filter,start:START,tour:S.tour||0});
 let REF=null, synced=false, lastSent="", writing=false, again=false, wt=null;
 function save(){
   try{localStorage.setItem(KEY,JSON.stringify(keep()));}catch(e){}
@@ -1263,7 +1263,7 @@ function roundRobin(ok,map){
 // oude dagen opruimen + gerechten die niet meer op je lijst staan eruit halen
 function tidy(map,isPick){
   const yIso=isoOf(dayAt(-1)), tIso=isoOf(dayAt(0)), cnt={};
-  for(const iso of Object.keys(map)) if(iso<yIso){const id=strip(map[iso]); if(isVz(map[iso])) delete S.vries[map[iso].slice(2)]; else if(isPick(id)) S.used[id]=(S.used[id]||0)+1; delete map[iso];}
+  for(const iso of Object.keys(map)) if(iso<yIso){const id=strip(map[iso]); if(isVz(map[iso])) delete S.vries[map[iso].slice(2)]; else if(isPick(id)){ S.used[id]=(S.used[id]||0)+1; opgegeten(id); } delete map[iso];}
   for(const iso of Object.keys(map).sort()){
     const v=map[iso], id=strip(v);
     if(isVz(v)){ if(!S.vries[v.slice(2)]) delete map[iso]; continue; } // uit je vriezer
@@ -1275,6 +1275,11 @@ function tidy(map,isPick){
   }
 }
 function normalizePlan(){
+  if(S.eetv!==2){ // eenmalig (24-11-2026): wat al is opgegeten telt niet meer als 'in huis', en een half pak telt als heel pak
+    for(const [id,n] of Object.entries(S.used)) if(byId[id]) for(let i=0;i<Math.min(n,S.picks[id]||0);i++) opgegeten(id);
+    for(const b of Object.values(S.bought)) if(b&&typeof b==="object"&&b.qc) b.qc=heelPak(b.qc);
+    S.eetv=2; save();
+  }
   const before=JSON.stringify([S.plan,S.lunch,S.used,S.vries,S.vq]);
   // vanaf 1.2: "Lunch halen" (l-kantine) is geen gerecht meer, maar een keuze voor je vakje
   if(S.picks["l-kantine"]||Object.values(S.lunch).some(v=>strip(v)==="l-kantine")){
@@ -1799,8 +1804,9 @@ function hideR(id){
 // Voorraad (walnoten, havermout ...) blijft weg tot je zegt dat het op is, ook na "nieuwe week".
 function buildList(){
   const items={};
-  for(const [id,n] of Object.entries(S.picks)){
+  for(const [id,n0] of Object.entries(S.picks)){
     const r=byId[id]; if(!r) continue;
+    const n=n0-(S.used[id]||0); if(n<=0) continue; // al opgegeten: die boodschappen heb je niet meer nodig
     for(let [q,orig] of r.i){
       const lo=lcOf(orig); if(lo&&lo.x===0) continue; // "zonder deeg"
       const name=effName(orig), k=name.toLowerCase(); q=effQty(q,orig); if(VAAG.test(q)) q=""; // handje/scheutje koop je niet: op de lijst alleen de naam
@@ -1809,6 +1815,7 @@ function buildList(){
     }
   }
   for(const id of Object.keys(S.picks)){ // bijzondere kruiden, als voorraad
+    if((S.picks[id]||0)-(S.used[id]||0)<=0) continue;
     const kk=((byId[id]||{}).k||"").toLowerCase(); if(!kk) continue;
     for(const [naam,re] of KRUID) if(re.test(kk)&&!(restr().has("paprika")&&/paprika|chili/i.test(naam))){const k=naam.toLowerCase(); items[k]=items[k]||{k,name:naam,qc:{"":1},afd:6,stock:true,warn:null};}
   }
@@ -1819,6 +1826,30 @@ function buildList(){
     vulNog(it);
   }
   return Object.values(items).sort((a,b)=>a.afd-b.afd||a.name.localeCompare(b.name,"nl"));
+}
+// Boodschappen voor één keer dit gerecht: {product:{hoeveelheid:aantal}} (zonder voorraad)
+function dishQc(r){
+  const uit={}; if(!r) return uit;
+  for(let [q,orig] of r.i||[]){
+    const lo=lcOf(orig); if(lo&&lo.x===0) continue; if(STOCK.has(orig)&&!lo) continue;
+    const k=effName(orig).toLowerCase(); q=effQty(q,orig); if(VAAG.test(q)) q="";
+    uit[k]=uit[k]||{}; uit[k][q]=(uit[k][q]||0)+fac(r);
+  }
+  return uit;
+}
+// Opgegeten: wat je voor dit gerecht in huis had, is nu op (anders telt het mee als 'al gehaald' voor een volgend gerecht)
+function opgegeten(id){
+  for(const [k,qc] of Object.entries(dishQc(byId[id]))){
+    const b=S.bought[k]; if(!b||typeof b!=="object"||!b.qc) continue;
+    for(const [q,c] of Object.entries(qc)){ if(q===""||b.qc[q]===undefined) continue; b.qc[q]-=c; if(b.qc[q]<1e-9) delete b.qc[q]; }
+    if(!Object.keys(b.qc).length) delete S.bought[k];
+  }
+}
+// Een half pak koop je als heel pak: de andere helft heb je dus ook in huis
+function heelPak(qc){
+  const uit={...qc};
+  for(const [q,c] of Object.entries(uit)) if(/^(±\s*)?½/.test(q)&&Math.abs(c/2-Math.round(c/2))>1e-9) uit[q]=Math.ceil(c/2-1e-9)*2;
+  return uit;
 }
 function migrate(items){ // oude opslag omzetten
   let ch=false;
@@ -2340,7 +2371,7 @@ document.addEventListener("change",e=>{
   if(SU&&ds.rest!==undefined){SU.d.rest=Number(ds.rest); return;}
   const k=ds.buy; if(k===undefined) return;
   const stock=!!ds.stock, sig=ds.sig, map=stock?S.stock:S.bought, prev=map[k];
-  if(t.checked){ const it=stock?null:buildList().find(x=>x.k===k); map[k]=stock?true:(it?{qc:{...it.qc}}:sig); } else delete map[k];
+  if(t.checked){ const it=stock?null:buildList().find(x=>x.k===k); map[k]=stock?true:(it?{qc:heelPak(it.qc)}:sig); } else delete map[k];
   save();
   setTimeout(render,300); // even het vinkje laten zien, dan verdwijnt het
   if(t.checked) toast(stock?"In je voorraad gezet!":"Van je lijst gehaald!",()=>{ if(prev===undefined) delete map[k]; else map[k]=prev; save(); render(); });
