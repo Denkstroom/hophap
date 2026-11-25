@@ -440,7 +440,7 @@ nav.tabs{display:none}
 .kz-ic{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;flex:none}
 .kz-ic svg.i{width:20px;height:20px}
 .kz-ic svg.doo{width:24px;height:24px}
-.k1{background:#2f6fdc}.k2{background:#7a3bd6}.k3{background:#d6336c}.k4{background:#6b6b73}.k5{background:#2f7f99}
+.k1{background:#0f5560}.k2{background:#e8731a}.k3{background:#c25a0c}.k4{background:#5d6968}.k5{background:#2f7a80}
 .kz-rij{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--surface);border:1.5px solid var(--line-strong);border-radius:var(--r-m);padding:10px 12px;color:var(--fg);min-height:60px}
 .kz-rij>span:not(.tile):not(.kz-ic):not(.kz-pijl):not(.kz-info){display:flex;flex-direction:column;flex:1;min-width:0}
 .kz-rij .tile{width:44px;height:44px}
@@ -521,6 +521,9 @@ h1{font-size:2.3rem}.sheet h2,.nieuw h2{font-size:1.9rem;line-height:1.05}
 .ex-tile .ex-kies b{font-family:var(--hand);font-size:1.5rem;line-height:1;font-weight:700}
 .logo.lg-hh{background:none;overflow:hidden}.logo.lg-hh svg.lgo{width:100%;height:100%;display:block}
 .nieuw .logo.lg-hh{width:72px;height:72px}.lg-stap{width:28px;height:28px}
+.kz-ic.mi{width:52px;height:52px;overflow:hidden;box-shadow:none}.kz-ic.mi svg.ilt{width:100%;height:100%}
+.kz-ic.ill-p{background:var(--ill-p)}.kz-ic.ill-o{background:var(--ill-o)}
+.tags{flex-wrap:wrap;gap:4px}.tag{font-size:.72rem;padding:1px 8px 1px 6px}.tag.ti{padding:3px 6px}.tag svg.i{width:13px;height:13px}
 .ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .ex-tile{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-m);padding:12px 8px 8px;text-align:center}
 .ex-tile.on{border:2.5px solid var(--accent);background:var(--accent-soft)}
@@ -1020,9 +1023,10 @@ const E2D={"🍗":"tajine","🍝":"pasta","🍕":"pizza","🥗":"salade","🍲":
  "🫓":"wrap","🌯":"wrap","🍳":"ei","🥣":"kom","🥯":"bagel","🥩":"vlees","🥭":"mango","🍅":"tomaat","🍘":"cracker","🥜":"noot","🍪":"koek","🧀":"kaas","🍨":"ijs",
  "🍎":"appel","🍜":"noedels","🥞":"pannenkoek","🍛":"pan","🥘":"pan","🐰":"konijn","🐟":"vis","🍋":"citroen","🥑":"avocado","🍞":"cake","🫐":"bes","🫛":"peul","🍐":"peer","🥐":"croissant","🫑":"paprika","🦐":"garnaal","🫒":"olijf","🍢":"spies","🥦":"groente","🫙":"pot"};
 const doodle=e=>`<svg class="doo" viewBox="0 0 32 32" aria-hidden="true">${DOOD[E2D[e]||e]||DOOD.stoof}</svg>`;
-const illSvg=r=>`<svg class="ilt" viewBox="0 0 120 120" aria-hidden="true"><g filter="url(#hh-wiebel)">${ILLU[r.id][1]}</g></svg>`;
-const picIn=r=>ILLU[r.id]?illSvg(r):doodle(r.pic||PIC[r.id]||CATPIC[r.cat]);
-const picCls=r=>ILLU[r.id]?` tile-ill ill-${ILLU[r.id][0]}`:"";
+const illSvg=r=>{const k=illKey(r); return k?`<svg class="ilt" viewBox="0 0 120 120" aria-hidden="true"><g filter="url(#hh-wiebel)">${ILLU[k][1]}</g></svg>`:mini("bakje");};
+const illSvgOud=r=>`<svg class="ilt" viewBox="0 0 120 120" aria-hidden="true"><g filter="url(#hh-wiebel)">${ILLU[r.id][1]}</g></svg>`;
+const picIn=r=>illKey(r)||r.ev?illSvg(r):doodle(r.pic||PIC[r.id]||CATPIC[r.cat]);
+const picCls=r=>{const k=illKey(r); return k?` tile-ill ill-${ILLU[k][0]}`:r.ev?" tile-ill ill-p":"";};
 const tile=r=>`<span class="tile cat-${r.cat}${picCls(r)}" aria-hidden="true">${picIn(r)}</span>`;
 
 // Icoontjes (Lucide, ISC-licentie) zitten in de app zelf: werkt ook met slecht bereik
@@ -1511,7 +1515,7 @@ function restjesVraag(iso){
     <p class="muted">Je kookt een portie extra, maar ${dagNaam(m)} ${v==="uit"?"eet je niet thuis":v==="haal"?"haal je lunch":"staat er al "+nu+" als lunch"}. Wat doe je met de restjes?</p></div>
     <div class="stack tight">
       ${rij("lunch","","",`${dagNaam(m)[0].toUpperCase()+dagNaam(m).slice(1)} als lunch`,v==="uit"?"toch thuis eten":v==="haal"?"dan hoef je niks te halen":`${nu} schuift naar een andere dag`)}
-      ${r.vries?rij("vries",ic("snow"),"k5","In de vriezer","HopHap plant het later voor je in"):""}
+      ${r.vries?rij("vries",mini("bakje"),"mi ill-p","In de vriezer","HopHap plant het later voor je in"):""}
       ${rij("niks",ic("x"),"k4","Laat maar",r.vries?"je lunch blijft zoals hij is":"niet vriezerproof, dus eet ze gewoon een andere dag")}
     </div>`);
 }
@@ -1530,8 +1534,8 @@ function cardLc(r){
 function cardTags(r,w,lc){
   const t=[];
   if(w.length) t.push(`<span class="tag warn">${ic("alert")}${esc(w.join(", "))}</span>`);
-  if(lc) t.push(`<span class="tag${lc==="on"?" on":""}">${ic("swap")}low carb</span>`);
-  if(r.vries) t.push(`<span class="tag">${ic("snow")}vriezerproof</span>`);
+  if(lc) t.push(`<span class="tag ti${lc==="on"?" on":""}" title="kan low carb" aria-label="kan low carb">${ic("swap")}</span>`);
+  if(r.vries) t.push(`<span class="tag ti" title="vriezerproof" aria-label="vriezerproof">${ic("snow")}</span>`);
   return t.length?`<span class="tags">${t.join("")}</span>`:"";
 }
 const flabel='<span class="fl">fuck-it</span>';
@@ -1579,9 +1583,13 @@ function vzVraagHTML(){
     <p class="small">Je at je restje niet op! Heb je het ingevroren? Dan plant HopHap het later voor je in.</p>
     <div class="small-acts"><button class="btn btn-main btn-sm" data-vz="ja">Ja, in de vriezer</button><button class="btn btn-soft btn-sm" data-vz="nee">Nee, het is op</button></div></div>`;
 }
-const uitCell=`<span class="tile uit" aria-hidden="true">${ic("deur")}</span><span class="t muted">niet thuis</span>`;
-const bestelCell=`<span class="tile uit" aria-hidden="true">${doodle("🛵")}</span><span class="t muted">bestellen</span>`;
-const haalCell=`<span class="tile uit" aria-hidden="true">${ic("tas")}</span><span class="t muted">lunch halen</span>`;
+const MINI={"bakje":`<path d="M18 46h84v46a6 6 0 0 1-6 6H24a6 6 0 0 1-6-6z" fill="#e3f0ef" transform="translate(3,3)"/><path d="M18 46h84v46a6 6 0 0 1-6 6H24a6 6 0 0 1-6-6z" fill="none" stroke="#173b40" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M12 34h96v14H12z" fill="#9cc9c8" transform="translate(3,3)"/><path d="M12 34h96v14H12z" fill="none" stroke="#173b40" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/><rect x="34" y="60" width="52" height="22" rx="3" fill="#fbf7f0" stroke="#173b40" stroke-width="2.4"/><path d="M42 71h30" fill="none" stroke="#173b40" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M92 16v16M84 20l16 8M84 28l16-8" fill="none" stroke="#9cc9c8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`,"mand":`<path d="M34 56c0-34 52-34 52 0" fill="none" stroke="#173b40" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 56h92l-12 42H26z" fill="#e2a24e" transform="translate(3,3)"/><path d="M14 56h92l-12 42H26z" fill="none" stroke="#173b40" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M30 66h60M34 78h52M38 90h44" fill="none" stroke="#173b40" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M46 56l-4 42M60 56v42M74 56l4 42" fill="none" stroke="#173b40" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M70 56l14-22" stroke="#e8731a" stroke-width="7" stroke-linecap="round"/>`,"tas":`<path d="M48 40l-6-24M60 40l2-26" stroke="#9fc77a" stroke-width="6" stroke-linecap="round"/><path d="M72 40l10-22" stroke="#e8731a" stroke-width="7" stroke-linecap="round"/><path d="M26 40h68l6 60H20z" fill="#d9b07a" transform="translate(3,3)"/><path d="M26 40h68l6 60H20z" fill="none" stroke="#173b40" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M26 52h68" fill="none" stroke="#173b40" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M52 74h16M60 66v16" fill="none" stroke="#173b40" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`,"batterij":`<path d="M18 40h76a6 6 0 0 1 6 6v28a6 6 0 0 1-6 6H18a6 6 0 0 1-6-6V46a6 6 0 0 1 6-6z" fill="#fbf7f0" transform="translate(3,3)"/><path d="M18 40h76a6 6 0 0 1 6 6v28a6 6 0 0 1-6 6H18a6 6 0 0 1-6-6V46a6 6 0 0 1 6-6z" fill="none" stroke="#173b40" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M100 52h8v16h-8z" fill="#fbf7f0" transform="translate(3,3)"/><path d="M100 52h8v16h-8z" fill="none" stroke="#173b40" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><rect x="20" y="48" width="14" height="24" rx="3" fill="#d9472b" stroke="#173b40" stroke-width="2"/><path d="M50 58q5 4 10 0M70 58q5 4 10 0" fill="none" stroke="#173b40" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M58 68q7-4 14 0" fill="none" stroke="#173b40" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M86 22h10l-10 10h10" fill="none" stroke="#9cc9c8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`,"deur":`<path d="M32 16h56v88H32z" fill="#e3f0ef" transform="translate(3,3)"/><path d="M32 16h56v88H32z" fill="none" stroke="#173b40" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M32 16l36 10v86l-36-8z" fill="#e2a24e" transform="translate(3,3)"/><path d="M32 16l36 10v86l-36-8z" fill="none" stroke="#173b40" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="60" cy="64" r="3.6" fill="#173b40"/><path d="M94 50h14M100 44l8 6-8 6" fill="none" stroke="#e8731a" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>`,"zak":`<path d="M44 34l30-14 6 20z" fill="#f2dcae" stroke="#173b40" stroke-width="2.6"/><path d="M48 32l26-10" stroke="#9fc77a" stroke-width="3"/><path d="M30 38h60l4 62H26z" fill="#d9b07a" transform="translate(3,3)"/><path d="M30 38h60l4 62H26z" fill="none" stroke="#173b40" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M30 50q30 8 60 0" fill="none" stroke="#173b40" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M60 38v-6" fill="none" stroke="#173b40" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`,"bestel":`<path d="M36 46c0-26 48-26 48 0" fill="none" stroke="#173b40" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 44h76l-10 56H32z" fill="#fbf7f0" transform="translate(3,3)"/><path d="M22 44h76l-10 56H32z" fill="none" stroke="#173b40" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M26 64h68l-2 12H28z" fill="#9cc9c8"/><path d="M26 64h68M28 76h64" fill="none" stroke="#173b40" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M82 14l-18 40M92 18l-24 38" fill="none" stroke="#e8731a" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>`};
+const mini=k=>`<svg class="ilt" viewBox="0 0 120 120" aria-hidden="true"><g filter="url(#hh-wiebel)">${MINI[k]}</g></svg>`;
+const EVILL={pizza:"f-pizza",stoof:"stoof",pasta:"pasta",friet:"f-friet",ijs:"t-ijs",vis:"f-vis",croissant:"o-croissant",vlees:"syrisch",pannenkoek:"o-pannenkoek"};
+const illKey=r=>ILLU[r.id]?r.id:r.ev?(EVILL[r.pic]||null):null; // eigen vriezer-eten: tekening van een gerecht dat erop lijkt, anders het vriezerbakje
+const uitCell=`<span class="tile tile-ill ill-p" aria-hidden="true">${mini("deur")}</span><span class="t muted">niet thuis</span>`;
+const bestelCell=`<span class="tile tile-ill ill-o" aria-hidden="true">${mini("bestel")}</span><span class="t muted">bestellen</span>`;
+const haalCell=`<span class="tile tile-ill ill-o" aria-hidden="true">${mini("zak")}</span><span class="t muted">lunch halen</span>`;
 function renderVandaag(){
   const hasAvond=Object.keys(S.picks).some(x=>isDinner(x)||isLunchPick(x)); // al iets gepland (avond of lunch)
   let rows="", leeg=false;
@@ -1722,13 +1730,13 @@ function openSlot(slot,iso,view){
       ${cur==="uit"?`<p class="note">Je eet hier niet thuis. Toch thuis? Kies hieronder.</p>`:cur==="haal"?`<p class="note">Je haalt hier lunch. Toch zelf iets maken? Kies hieronder.</p>`:cur==="bestel"?`<p class="note">Je bestelt hier. Toch zelf koken? Kies hieronder.</p>`:""}
       ${p2?`<div class="kz-rij kz-2"><span class="kz-info">${tile(byId[prev])}<span><b>Restjes</b><small>van gisteravond: ${esc(sn(byId[prev]))}</small></span></span><button class="kz-kies" data-set="l|${iso}|p2">Kies</button></div>`:""}
       <div class="kz-grid">
-        ${(()=>{const l=kzLijst(slot,iso,"huis");return knop("huis",ic("shopping-basket"),"k1","Al in huis",l.length?esc(l.slice(0,2).map(o=>sn(o)).join(", ")+(l.length>2?` en nog ${l.length-2}`:"")):"nog niks gekozen");})()}
-        ${knop("nieuw",ic("plus"),"k2","Nog halen",LIJST()?"komt op je boodschappenlijst":"iets nieuws proberen")}
-        ${knop("puf",ic("zap"),"k3","Weinig energie",slot==="l"?"snel maken of lunch halen":"snel maken of bestellen")}
-        ${cur==="uit"?"":`<button class="kz-knop" data-thuis="${slot}|${iso}"><span class="kz-ic k4" aria-hidden="true">${ic("deur")}</span><b>Niet thuis</b><small>${slot==="a"?"je gerecht schuift door":"vakje blijft leeg"}</small></button>`}
+        ${(()=>{const l=kzLijst(slot,iso,"huis");return knop("huis",mini("mand"),"mi ill-o","Al in huis",l.length?esc(l.slice(0,2).map(o=>sn(o)).join(", ")+(l.length>2?` en nog ${l.length-2}`:"")):"nog niks gekozen");})()}
+        ${knop("nieuw",mini("tas"),"mi ill-p","Nog halen",LIJST()?"komt op je boodschappenlijst":"iets nieuws proberen")}
+        ${knop("puf",mini("batterij"),"mi ill-o","Weinig energie",slot==="l"?"snel maken of lunch halen":"snel maken of bestellen")}
+        ${cur==="uit"?"":`<button class="kz-knop" data-thuis="${slot}|${iso}"><span class="kz-ic mi ill-p" aria-hidden="true">${mini("deur")}</span><b>Niet thuis</b><small>${slot==="a"?"je gerecht schuift door":"vakje blijft leeg"}</small></button>`}
       </div>
-      ${vzs.length?`<button class="kz-rij vz" data-kz="vz"><span class="kz-ic k5" aria-hidden="true">${ic("snow")}</span><span><b>Uit je vriezer</b><small>${vzTekst(vzs)}</small></span></button>`
-        :`<button class="kz-rij vz kz-licht" data-ev="nieuw"><span class="kz-ic k5" aria-hidden="true">${ic("snow")}</span><span><b>Iets in je vriezer zetten</b><small>pizza, soep van oma… dan vergeet je het niet</small></span></button>`}`);
+      ${vzs.length?`<button class="kz-rij vz" data-kz="vz"><span class="kz-ic mi ill-p" aria-hidden="true">${mini("bakje")}</span><span><b>Uit je vriezer</b><small>${vzTekst(vzs)}</small></span></button>`
+        :`<button class="kz-rij vz kz-licht" data-ev="nieuw"><span class="kz-ic mi ill-p" aria-hidden="true">${mini("bakje")}</span><span><b>Iets in je vriezer zetten</b><small>pizza, soep van oma… dan vergeet je het niet</small></span></button>`}`);
     return;
   }
   let [t,sub]=KZV[view];
@@ -1747,8 +1755,8 @@ function openSlot(slot,iso,view){
     body=l.length?l.map(o=>{const v=ver(o)||o;return `<div class="kz-rij kz-2">${nsticker(o)}<button class="kz-info" data-kzr="${o.id}" aria-label="${esc(o.t)}: recept bekijken">${tile(o)}<span><b>${esc(o.t)}${S.hart[o.id]?`<span class="hartje" aria-label="favoriet">${ic("hart")}</span>`:""}</b><small>${(()=>{const m=slot==="a"?S.plan:S.lunch, k=Object.keys(m).sort().find(x=>x>=isoOf(dayAt(0))&&x!==iso&&strip(m[x])===o.id); return k?`staat nu op ${dagNaam(k)}, schuift hierheen · `:view==="huis"&&S.park[o.id]?"nog geen dag · ":"";})()}${esc(v.m)} · <u>recept</u></small></span></button><button class="kz-kies" data-set="${slot}|${iso}|${o.id}${view==="huis"?"":"|erbij"}" aria-label="${esc(o.t)} kiezen voor ${dagNaam(iso)}">Kies</button></div>`;}).join("")
       :`<p class="muted">${view==="huis"?`Je hebt nog niks gekozen. Probeer <button class="link" data-kz="nieuw">iets nieuws</button>.`:view==="nieuw"&&KQ.size?`Niks gevonden met dit filter. <button class="link" data-kzf="uit">${KQ.size>1?"Filters uit":"Filter uit"}</button>`:"Hier is niks te kiezen."}</p>`; }
   if(view==="puf"){ // geen boodschappen: lunch halen of bestellen, met tips om het toch voedzamer te maken
-    const hb=slot==="l"?(S.lunch[iso]==="haal"?"":`<div class="kz-rij kz-2"><button class="kz-info" data-tips="haal" aria-label="Lunch halen: tips bekijken"><span class="kz-ic k4" aria-hidden="true">${ic("tas")}</span><span><b>Lunch halen</b><small>geen boodschappen nodig · <u>tips</u></small></span></button><button class="kz-kies" data-haal="${iso}">Kies</button></div>`)
-      :(S.plan[iso]==="bestel"?"":`<div class="kz-rij kz-2"><button class="kz-info" data-tips="bestel" aria-label="Bestellen: tips bekijken"><span class="kz-ic k4" aria-hidden="true">${doodle("🛵")}</span><span><b>Bestellen</b><small>geen boodschappen nodig · <u>tips</u></small></span></button><button class="kz-kies" data-bestel="${iso}">Kies</button></div>`);
+    const hb=slot==="l"?(S.lunch[iso]==="haal"?"":`<div class="kz-rij kz-2"><button class="kz-info" data-tips="haal" aria-label="Lunch halen: tips bekijken"><span class="kz-ic mi ill-o" aria-hidden="true">${mini("zak")}</span><span><b>Lunch halen</b><small>geen boodschappen nodig · <u>tips</u></small></span></button><button class="kz-kies" data-haal="${iso}">Kies</button></div>`)
+      :(S.plan[iso]==="bestel"?"":`<div class="kz-rij kz-2"><button class="kz-info" data-tips="bestel" aria-label="Bestellen: tips bekijken"><span class="kz-ic mi ill-o" aria-hidden="true">${mini("bestel")}</span><span><b>Bestellen</b><small>geen boodschappen nodig · <u>tips</u></small></span></button><button class="kz-kies" data-bestel="${iso}">Kies</button></div>`);
     body=hb+body;
   }
   const filt=view==="nieuw"?`<div class="qf" role="group" aria-label="Filter">${Object.keys(QF).map(q=>`<button class="qchip" data-kzf="${q}" aria-pressed="${KQ.has(q)}">${QF[q][0]}</button>`).join("")}</div>`:"";
