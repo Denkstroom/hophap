@@ -534,6 +534,8 @@ h1{font-size:2.3rem}.sheet h2,.nieuw h2{font-size:1.9rem;line-height:1.05}
 .vz-ic{flex:none;width:46px;height:46px;border-radius:50%;background:#fff;overflow:hidden;display:block}.vz-ic svg{width:100%;height:100%;display:block}
 .ev-plus:has(.ev-tx){justify-content:flex-start;gap:12px;padding:12px 14px}
 .ev-plus .ev-tx{display:flex!important;flex-direction:column;gap:2px;flex:1!important;text-align:left}
+html.tour-aan,html.tour-aan body{overflow:hidden;overscroll-behavior:none}
+#tour{touch-action:none}.tour-wolk{touch-action:pan-y}
 .ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .ex-tile{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-m);padding:12px 8px 8px;text-align:center}
 .ex-tile.on{border:2.5px solid var(--accent);background:var(--accent-soft)}
@@ -1222,6 +1224,7 @@ document.addEventListener("scroll",tapCancel,{passive:true,capture:true});
 // Kopbalk op je week: weg bij omlaag scrollen, meteen terug bij omhoog scrollen (zoals in Safari)
 let kopY=0;
 document.addEventListener("scroll",()=>{ const b=document.querySelector("#v-vandaag>.brand"), y=window.scrollY||0; if(!b||!b.classList) return;
+  if(typeof TS!=="undefined"&&TS>=0){ kopY=y; return; } // tijdens de uitleg blijft de kopbalk staan
   if(y>kopY+6&&y>90) b.classList.add("kop-weg"); else if(y<kopY-6||y<40) b.classList.remove("kop-weg");
   b.classList.toggle("kop-los",y>8); kopY=y; },{passive:true});
 document.addEventListener("pointerup",()=>{
@@ -2249,12 +2252,13 @@ TOUR[0].doel=".day.today"; TOUR[0].kop="1. Begin bij je week"; TOUR[0].tekst=()=
 TOUR[1].doel=".ookd"; TOUR[1].kop="2. Ontbijt, snack en toetje"; TOUR[1].tekst=()=>"Je wilt niet over alles uitgebreid nadenken. Tik op ontbijt, snack of toetje en kies er 1 of 2. Dat blijft elke week staan"+(LIJST()?", en het komt vanzelf op je lijst.":".");
 TOUR[2].doel=".kop-btn"; TOUR[2].kop="3. Je vriezer"; TOUR[2].tekst="Hier zie je wat er in je vriezer ligt. Plan het in, dan zegt HopHap op tijd dat je het eruit haalt. Alle gerechten en je instellingen vind je rechtsboven, onder het menu.";
 let TS=-1;
-function startTour(){ closeSheet(); S.tab="vandaag"; render(); scrollTo(0,0); TS=0; drawTour(); }
-function tourNext(v){ if(v==="klaar"){ TS=-1; S.tour=1; save(); $("#tour").hidden=true; $("#tour").innerHTML=""; toast("Veel kook- en eetplezier!"); return; } TS++; drawTour(); }
+function tourSlot(aan){ const h=document.documentElement; if(h&&h.classList) h.classList.toggle("tour-aan",aan); const b=$(".brand"); if(aan&&b&&b.classList) b.classList.remove("kop-weg"); }
+function startTour(){ closeSheet(); S.tab="vandaag"; render(); try{ scrollTo({top:0,behavior:"instant"}); }catch(e){ scrollTo(0,0); } TS=0; tourSlot(true); drawTour(); }
+function tourNext(v){ if(v==="klaar"){ TS=-1; tourSlot(false); S.tour=1; save(); $("#tour").hidden=true; $("#tour").innerHTML=""; toast("Veel kook- en eetplezier!"); return; } TS++; drawTour(); }
 function drawTour(){
   const st=TOUR[TS], el=document.querySelector(st.doel), box=$("#tour"); if(!el||!el.getBoundingClientRect){ tourNext("klaar"); return; }
   // alleen scrollen als het doel buiten beeld staat (anders verspringt het scherm)
-  { const q=el.getBoundingClientRect(); if((q.bottom>innerHeight||q.top<0)&&el.scrollIntoView) el.scrollIntoView({block:"center",behavior:"instant"}); }
+  { const q=el.getBoundingClientRect(), vast=getComputedStyle&&/fixed|sticky/.test(getComputedStyle(el).position+getComputedStyle(el.parentElement||el).position); if(!vast&&(q.bottom>innerHeight||q.top<0)&&el.scrollIntoView) el.scrollIntoView({block:"center",behavior:"instant"}); }
   const r=el.getBoundingClientRect(), pad=6, H=innerHeight, W=innerWidth, laatste=TS===TOUR.length-1;
   const top=Math.max(r.top-pad,8), bot=Math.min(r.bottom+pad,H-8), cx=Math.min(Math.max(r.left+r.width/2,28),W-28);
   box.hidden=false;
@@ -2279,8 +2283,14 @@ function drawTour(){
     const qx=sx, qy=ey, ang=Math.atan2(ey-qy,ex-qx), k=12, kop=a=>`${ex-k*Math.cos(ang+a)},${ey-k*Math.sin(ang+a)}`;
     box.querySelector(".tour-pijl").innerHTML=`<path d="M${sx},${sy} Q${qx},${qy} ${ex},${ey}"/><path d="M${kop(.5)} L${ex},${ey} L${kop(-.5)}"/>`;
   }
+  // knoppen direct koppelen (werkt ook als een tik op de iPhone anders aankomt)
+  w.querySelectorAll("[data-tour]").forEach(k=>{ k.onclick=ev=>{ ev.stopPropagation(); tourNext(k.dataset.tour); }; });
   const b=w.querySelector(".btn-main"); if(b) b.focus({preventScroll:true});
 }
+// beweegt de pagina toch (iPhone), dan schuift de ring mee
+let tourRaf=0;
+if(window.addEventListener){ window.addEventListener("scroll",()=>{ if(TS>=0&&!tourRaf) tourRaf=setTimeout(()=>{ tourRaf=0; if(TS>=0) drawTour(); },40); },{passive:true});
+  document.addEventListener("touchmove",e=>{ if(TS>=0&&!e.target.closest(".tour-wolk")) e.preventDefault(); },{passive:false}); }
 if(window.addEventListener) window.addEventListener("resize",()=>{ if(TS>=0) drawTour(); });
 
 // ---------- 7. ZELFSTANDIG (als losse website): beginscherm-tip, backup, over ----------
