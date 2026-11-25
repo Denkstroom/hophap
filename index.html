@@ -529,7 +529,7 @@ h1{font-size:2.3rem}.sheet h2,.nieuw h2{font-size:1.9rem;line-height:1.05}
 .sheet-head h2{font-size:1.75rem}
 .sheet-head .tags{margin-top:6px}
 .emo{min-height:58px;padding:2px}.emo svg.ilt{width:52px;height:52px}
-.vz-strip{align-items:center;gap:12px;margin:6px 0 8px;padding:10px 14px 10px 10px;background:var(--ill-o);color:#173b40;border:2.5px solid #e8731a;font-size:var(--fs-m);box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.vz-strip{align-items:center;gap:12px;margin:6px 0 8px;padding:10px 14px 10px 10px;background:#f9c98f;color:#173b40;border:0;font-size:var(--fs-m);box-shadow:0 4px 14px rgba(0,0,0,.18)}
 .vz-strip b{color:#a4490c}
 .vz-ic{flex:none;width:46px;height:46px;border-radius:50%;background:#fff;overflow:hidden;display:block}.vz-ic svg{width:100%;height:100%;display:block}
 .ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -1062,7 +1062,7 @@ function icons(){document.querySelectorAll("i[data-lucide]").forEach(el=>{el.out
 //   lc     {product: vervanger} koolhydraatarm
 //   hidden verborgen kaarten                  own    eigen gerechten   setup  antwoorden vragenlijst
 const KEY="eetkaarten-v1";
-const VERSIE="1.5"; // ophogen bij elke update die online gaat
+const VERSIE="1.5.1"; // 1.5.1: pop-up nog één keer, nu met "boodschappenlijst uitzetten" // ophogen bij elke update die online gaat
 const OBJ=["skip","picks","bought","stock","plan","lunch","used","fav","subs","hidden","lc","vries","vq","hart","park"]; // vries = je vriezer, vq = vriezervraag al gesteld
 const parseOwn=v=>{try{const a=typeof v==="string"?JSON.parse(v):v; return Array.isArray(a)?a:[];}catch(e){return [];}};
 const FRESH=()=>({skip:{},wk:"",park:{},hart:{},vries:{},vq:{},picks:{},bought:{},stock:{},plan:{},lunch:{},used:{},fav:{},subs:{},hidden:{},lc:{},own:[],setup:null,filter:"ontbijt",tab:"vandaag"});
@@ -2174,7 +2174,7 @@ function drawSheet(){
 // Wie de app al gebruikte, ziet na een update één keer wat er nieuw is (per apparaat). Nieuwe gebruikers krijgen de uitleg.
 // Bij een volgende update: VERSIE ophogen en NIEUW vervangen.
 const NIEUW=[["hart","Een nieuw jasje.","Ja, ja, de app is nu echt in Denkstroom-stijl."],
-  ["menu","Minder knoppen, meer overzicht.","In het menu rechtsboven vind je alles terug."],
+  ["menu","Minder knoppen, meer overzicht.","In het menu rechtsboven vind je alles terug. Daar kun je nu ook je boodschappenlijst uitzetten."],
   ["snow","Je vriezer leeg eten.","Je vriezer staat nu bovenaan. Plan je iets in, dan herinnert HopHap je eraan om het op tijd uit de vriezer te halen."],
   ["plus","Ontbijt, snack en toetje.","Die kies je nu onderin, met plaatjes."]];
 function nieuwGezien(){ try{ return localStorage.getItem("hophap-nieuw")===VERSIE; }catch(e){ return true; } }
