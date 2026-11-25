@@ -524,6 +524,10 @@ h1{font-size:2.3rem}.sheet h2,.nieuw h2{font-size:1.9rem;line-height:1.05}
 .kz-ic.mi{width:52px;height:52px;overflow:hidden;box-shadow:none}.kz-ic.mi svg.ilt{width:100%;height:100%}
 .kz-ic.ill-p{background:var(--ill-p)}.kz-ic.ill-o{background:var(--ill-o)}
 .tags{flex-wrap:wrap;gap:4px}.tag{font-size:.72rem;padding:1px 8px 1px 6px}.tag.ti{padding:3px 6px}.tag svg.i{width:13px;height:13px}
+.sheet.met-tools .sheet-body{padding-top:50px}
+.sheet.met-tools .sheet-body>:first-child{padding-right:0} /* knoppen staan nu boven de kop */
+.sheet-head h2{font-size:1.75rem}
+.sheet-head .tags{margin-top:6px}
 .ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .ex-tile{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-m);padding:12px 8px 8px;text-align:center}
 .ex-tile.on{border:2.5px solid var(--accent);background:var(--accent-soft)}
@@ -621,24 +625,24 @@ const R = [
   i:[["50 g","havermout"],["150 g","magere kwark"],["100 ml","melk"],["naar keuze","fruit van het seizoen"]],
   s:["Doe 's avonds de havermout, kwark, melk en een snufje kaneel in een potje of bakje en roer het door elkaar.","Doe de deksel erop en zet het in de koelkast.","Doe 's ochtends fruit erop. Je kunt het zo opeten of meenemen."]},
 
- {id:"o-havermout",cat:"ontbijt",t:"Warme havermout met appel en kaneel",m:"2 min werk · 2 min magnetron",need:[["magnetron"]],k:"kaneel",
+ {id:"o-havermout",cat:"ontbijt",t:"Havermout met appel en kaneel",m:"2 min werk · 2 min magnetron",need:[["magnetron"]],k:"kaneel",
   i:[["50 g","havermout"],["200 ml","melk"],["1","appel"],["1 zak","walnoten"]],
   s:["Doe de havermout en melk in een grote kom. Rasp of snijd de appel erbij.","Zet het 2 minuten in de magnetron. Roer halverwege even door.","Strooi er kaneel en een paar walnoten over."],
   v:[{need:[["fornuis"]],m:"5 min werk · pannetje",s:["Doe de havermout en melk in een pannetje. Rasp of snijd de appel erbij.","Laat het 3 minuten zachtjes koken en blijf roeren.","Strooi er kaneel en een paar walnoten over."]}]},
  {id:"o-rogge",cat:"ontbijt",t:"Roggebrood met avocado en ei",m:"5 min werk",need:[["fornuis","magnetron"]],k:"zwarte peper, chilivlokken",
   i:[["1 pak","roggebrood"],["1","avocado"],["2","eieren"]],
   s:["Kook de eieren 8 minuten, of koop gekookte eitjes.","Prak de avocado met een snufje zout en peper op het roggebrood.","Snijd het ei in plakjes en leg het erop. Strooi er wat chilivlokken over als je wilt."]},
- {id:"o-cake",cat:"ontbijt",vries:1,t:"Ontbijtcake van havermout en banaan",m:"10 min werk · 35 min oven 180°",need:[["oven"]],k:"kaneel",
+ {id:"o-cake",cat:"ontbijt",vries:1,t:"Ontbijtcake met banaan",m:"10 min werk · 35 min oven 180°",need:[["oven"]],k:"kaneel",
   i:[["3","rijpe bananen"],["200 g","havermout"],["3","eieren"],["250 ml","melk"],["1 zakje","bakpoeder"],["1 zak","walnoten"]],
   s:["Prak de bananen in een kom. Klop de eieren en melk erdoor.","Roer de havermout, het bakpoeder, 2 theelepels kaneel en een handje walnoten erdoor.","Giet het in een cakevorm met bakpapier en zet hem 35 minuten in de oven op 180°. {wacht}","Laat hem afkoelen en snijd hem in plakken. Bewaar ze in de koelkast: ontbijt voor de hele week!"],
   n:"Plakken los invriezen: dan pak je er elke ochtend één. Even opwarmen maakt hem extra lekker."},
- {id:"o-hartig",cat:"ontbijt",vries:1,t:"Hartige ontbijtcake met boerenkool en kaas",m:"10 min werk · 40 min oven 180°",need:[["oven"]],k:"zwarte peper, nootmuskaat",
+ {id:"o-hartig",cat:"ontbijt",vries:1,t:"Hartige ontbijtcake met boerenkool",m:"10 min werk · 40 min oven 180°",need:[["oven"]],k:"zwarte peper, nootmuskaat",
   i:[["250 g","volkoren speltmeel"],["1 zakje","bakpoeder"],["3","eieren"],["250 ml","melk"],["1 bakje","hamblokjes"],["75 g","geraspte kaas"],["100 g","boerenkool (gesneden)"]],
   s:["Pak twee kommen. Klop in de ene kom de eieren, melk en 3 eetlepels olie door elkaar. Meng in de andere kom het speltmeel, bakpoeder, een snuf zout, peper en nootmuskaat.","Giet de natte kom bij de droge en spatel het vlot door elkaar. Klontjes mogen!","Spatel de hamblokjes, boerenkool en twee derde van de kaas erdoor. Giet het in een cakevorm met bakpapier en strooi de rest van de kaas erover.","Zet hem 40 minuten in de oven op 180°, tot er niks meer aan een prikker blijft plakken. {wacht}","Laat hem afkoelen en snijd hem in plakken. Vries ze los in: elke ochtend een plak, {mw:1 minuut in de magnetron.|oven:5 minuten in de oven.|pan:even opwarmen in een droge koekenpan.}"],
   n:"Met de boerenkool eet je bij je ontbijt al groente. Liever bacon? Dat kan ook: rauw erdoor."},
 
  // ontbijt: fuck-it
- {id:"o-pannenkoek",cat:"ontbijt",f:1,t:"Pimp je kant-en-klare pannenkoekjes",m:"2 min",need:[["magnetron","fornuis"]],k:"kaneel",
+ {id:"o-pannenkoek",cat:"ontbijt",f:1,t:"Pimp je pannenkoekjes",m:"2 min",need:[["magnetron","fornuis"]],k:"kaneel",
   i:[["1 pak","kant-en-klare pannenkoekjes"],["150 g","magere kwark"],["1 zak","bosvruchten (diepvries)"]],
   s:["{mw:Warm 2 pannenkoekjes 1 minuut op in de magnetron, met een handje bosvruchten erbij.|pan:Warm 2 pannenkoekjes op in een droge koekenpan. Warm een handje bosvruchten mee in een pannetje.}","Doe er een klodder kwark en een snufje kaneel op en vouw ze dubbel."]},
  {id:"o-tosti",cat:"ontbijt",f:1,t:"Tosti met stiekem groente",m:"6 min pan",need:[["fornuis"]],
@@ -667,7 +671,7 @@ const R = [
  {id:"l-wrap",cat:"lunch",t:"Wrap met kip en hummus",m:"3 min werk",k:"komijn of paprikapoeder",
   i:[["2","volkoren wraps"],["1 pak","gerookte kipfilet"],["1 bakje","hummus"],["1 zak","geraspte wortel"]],
   s:["Smeer hummus op de wrap en strooi er een snufje komijn of paprikapoeder over. Leg de kipfilet en geraspte wortel erop en rol hem op."]},
- {id:"l-couscous",cat:"lunch",t:"Volkoren couscoussalade met kip",m:"5 min werk",need:[["fornuis","magnetron"]],k:"komijn",
+ {id:"l-couscous",cat:"lunch",t:"Couscoussalade met kip",m:"5 min werk",need:[["fornuis","magnetron"]],k:"komijn",
   i:[["100 g","volkoren couscous"],["1 bakje","kipreepjes"],["½","komkommer"],["2","tomaten"],["1 bakje","hummus"]],
   s:["Doe de couscous in een kom met {heet} erover, tot hij net onder staat. Doe er een deksel op en wacht 5 minuten.","Snijd de komkommer en tomaat in blokjes en schep de kip erdoor.","Doe er een klodder hummus en een snufje komijn op. Morgen is het nog net zo lekker!"]},
 
@@ -729,17 +733,17 @@ const R = [
   i:[["160 g","volkoren penne"],["500 ml","passata"],["250 g","cherrytomaatjes"],["300 g","spinazie"],["300 g","kipfiletblokjes"],["1 blok","feta"]],
   s:["Doe de volkoren penne (ongekookt!), passata, 250 ml water, tomaatjes en kipblokjes in een ovenschaal. Doe er zout, flink wat zwarte peper, oregano en een snufje chilivlokken bij.","Leg de spinazie erop en het blok feta in het midden.","Doe er folie over en zet het 35 minuten in de oven. {wacht} Roer het daarna even door."],
   v:[{need:[["fornuis"]],m:"10 min werk · pan",s:["Kook de pasta zoals op het pak staat.","Bak ondertussen de kipblokjes. Doe de passata, tomaatjes, peper, oregano en chilivlokken erbij en laat het 5 minuten pruttelen.","Roer de spinazie erdoor tot hij slinkt. Schep de pasta erdoor en verkruimel de feta erover."]}]},
- {id:"tajine",cat:"avond",vries:1,t:"Marokkaanse kip met couscous uit de oven",m:"5 min werk · 35 min oven 200°",need:[["oven"],["fornuis","magnetron"]],
+ {id:"tajine",cat:"avond",vries:1,t:"Marokkaanse kip met couscous",m:"5 min werk · 35 min oven 200°",need:[["oven"],["fornuis","magnetron"]],
   i:[["300 g","kipdijfilet"],["± 300 g","wortelblokjes"],["1","voorgesneden ui"],["1 blik","kikkererwten"],["1 blik","tomatenblokjes"],["handje","rozijnen"],["1 potje","ras el hanout"],["120 g","volkoren couscous"]],
   s:["Doe alles behalve de couscous in een ovenschaal en roer het door elkaar.","Doe er folie op en zet het 35 minuten in de oven. {wacht}","Giet {heet} over de couscous, doe er een deksel op en wacht 5 minuten."],
   v:[{need:[["slowcooker"],["fornuis","magnetron"]],m:"5 min werk · 4 uur slowcooker (hoog)",s:["Doe alles behalve de couscous in de slowcooker en roer het door elkaar.","Doe de deksel erop en zet hem 4 uur op hoog of 6 uur op laag. {wacht}","Giet {heet} over de couscous, doe er een deksel op en wacht 5 minuten."]},
      {need:[["fornuis"]],m:"5 min werk · 30 min pan",s:["Doe alles behalve de couscous in een braadpan, met een scheut water erbij.","Doe de deksel erop en laat het 30 minuten zacht pruttelen. Roer af en toe.","Giet {heet} over de couscous, doe er een deksel op en wacht 5 minuten."]}]},
- {id:"stoof",cat:"avond",vries:1,warm:1,t:"Snel stoofpotje met rund en bonen",m:"5 min werk · 40 min oven 200°",need:[["oven"]],k:"tijm, laurier, paprikapoeder, mosterd",
+ {id:"stoof",cat:"avond",vries:1,warm:1,t:"Stoofpotje met rund en bonen",m:"5 min werk · 40 min oven 200°",need:[["oven"]],k:"tijm, laurier, paprikapoeder, mosterd",
   i:[["± 300 g","rundergehaktballetjes"],["400 g","krieltjes"],["300 g","wortelblokjes"],["1","voorgesneden ui"],["1 blik","bruine of witte bonen"],["1 blik","tomatenblokjes"],["1","bouillonblokje"]],
   s:["Doe alles in een ovenschaal (de bonen mét vocht) en verkruimel het bouillonblokje erover.","Doe de tijm, laurier, paprikapoeder en mosterd erbij en roer het door elkaar.","Doe er folie op en zet het 40 minuten in de oven. {wacht}"],
   v:[{need:[["slowcooker"]],m:"5 min werk · 6 uur slowcooker (laag)",s:["Doe alles in de slowcooker (de bonen mét vocht) en verkruimel het bouillonblokje erover.","Doe de tijm, laurier, paprikapoeder en mosterd erbij en roer het door elkaar.","Doe de deksel erop en zet hem 6 uur op laag. {wacht} Tip: hier kan ook echt stoofvlees in."]},
      {need:[["fornuis"]],m:"5 min werk · 40 min pan",s:["Doe alles in een braadpan (de bonen mét vocht) en verkruimel het bouillonblokje erover.","Doe de tijm, laurier, paprikapoeder en mosterd erbij en roer het door elkaar.","Doe de deksel erop en laat het 40 minuten zacht pruttelen. Roer af en toe."]}]},
- {id:"taart",cat:"avond",vries:1,t:"Hartige taart prei, perzik, ham",m:"5–7 min werk · 35 min oven 200°",need:[["oven"]],k:"zwarte peper, nootmuskaat",
+ {id:"taart",cat:"avond",vries:1,t:"Hartige taart met prei en ham",m:"5–7 min werk · 35 min oven 200°",need:[["oven"]],k:"zwarte peper, nootmuskaat",
   i:[["1 pak","filodeeg"],["1 bakje","hamblokjes"],["± 400 g","voorgesneden prei"],["1 blikje","perziken"],["3","eieren"],["3 el","magere kwark"],["50 g","geraspte kaas"]],
   s:["Leg 4 vellen filodeeg kriskras in een ovenschaal of bakvorm (± 20 cm), met een kwastje of scheutje olie ertussen.","Strooi de hamblokjes erop, dan de prei, en leg de halve perziken erbovenop.","Klop de eieren, kwark, kaas, peper en nootmuskaat door elkaar. Giet het over de taart en draai de schaal even rond, zodat alles zich verspreidt. Zet hem 35 minuten in de oven. {wacht}"],
   n:"Koud is hij ook lekker als lunch."},
@@ -748,22 +752,22 @@ const R = [
   s:["Doe de rijst, pompoen, spekjes en ui in een ovenschaal. Strooi er een snufje nootmuskaat en tijm over.","Giet er 500 ml hete bouillon over en doe er folie op.","Stop het 40 minuten in de oven. Niet roeren! {wacht} Daarna doe je de Parmezaan erdoor."],
   v:[{need:[["multicooker"]],m:"5 min werk · ± 30 min multicooker",s:["Doe de spekjes, ui, rijst en pompoen in de multicooker, met een snufje nootmuskaat en tijm.","Giet er 500 ml hete bouillon bij.","Zet hem op het programma witte rijst. Is hij klaar? Dan doe je de Parmezaan erdoor."]},
      {need:[["fornuis"]],m:"20 min roeren · pan",s:["Bak de spekjes en ui, doe de rijst erbij en laat die even meebakken.","Doe de pompoen erbij en giet er steeds een scheut bouillon bij (500 ml in totaal). Roer 20 minuten, met nootmuskaat en tijm.","Daarna doe je de Parmezaan erdoor."]}]},
- {id:"zalm",cat:"avond",t:"Zalm met krieltjes en sperziebonen",m:"5 min werk · 25 min oven 200°",need:[["oven"]],k:"zwarte peper, tijm",
+ {id:"zalm",cat:"avond",t:"Zalm met krieltjes en boontjes",m:"5 min werk · 25 min oven 200°",need:[["oven"]],k:"zwarte peper, tijm",
   i:[["2","zalmfilets"],["500 g","krieltjes"],["300 g","sperziebonen"],["1","citroen"]],
   s:["Leg de krieltjes en sperziebonen op de bakplaat. Doe er een scheutje olie, zout, peper en tijm over en schep het om. Zet het 10 minuten in de oven.","Leg de zalm ertussen, met een schijfje citroen erop.","Zet het nog 15 minuten in de oven. {wacht} Valt de zalm makkelijk uit elkaar? Dan is hij klaar!"],
   v:[{need:[["fornuis"]],m:"10 min werk · pan",s:["Bak de krieltjes 15 minuten in een pan met olie. Schep ze af en toe om.","Kook de sperziebonen 8 minuten.","Bak de zalm 4 minuten met het vel naar beneden, draai hem om en bak hem nog 2 minuten. Knijp er citroen over."]}],
   n:"Zalm is koud ook lekker. Schep je restjes door een salade!"},
- {id:"kabeljauw",cat:"avond",t:"Kabeljauw uit de oven met tomaat en olijven",m:"5 min werk · 25 min oven 200°",need:[["oven"],["multicooker","fornuis","magnetron"]],k:"oregano, zwarte peper",
+ {id:"kabeljauw",cat:"avond",t:"Kabeljauw met tomaat en olijven",m:"5 min werk · 25 min oven 200°",need:[["oven"],["multicooker","fornuis","magnetron"]],k:"oregano, zwarte peper",
   i:[["2","kabeljauwfilets"],["250 g","cherrytomaatjes"],["1 potje","olijven"],["1","voorgesneden ui"],["1","citroen"],["150 g","zilvervliesrijst"]],
   s:["Doe de tomaatjes, olijven en ui in een ovenschaal, met een scheutje olie, oregano en peper. Zet het 10 minuten in de oven.","Leg de kabeljauw erop en knijp er citroensap over. Zet het nog 15 minuten in de oven.","{rijst}"],
   v:[{need:[["fornuis"]],m:"10 min werk · pan",s:["{rijst}","Bak de tomaatjes, olijven en ui 5 minuten in een pan met olie, oregano en peper.","Leg de kabeljauw erop, doe de deksel erop en laat hem 8 minuten zacht garen. Knijp er citroensap over."]}]},
- {id:"gnocchi",cat:"avond",warm:1,t:"Gnocchi van de bakplaat met tomaat en mozzarella",m:"5 min werk · 25 min oven 200°",need:[["oven"]],k:"oregano, chilivlokken",
+ {id:"gnocchi",cat:"avond",warm:1,t:"Gnocchi met tomaat en mozzarella",m:"5 min werk · 25 min oven 200°",need:[["oven"]],k:"oregano, chilivlokken",
   i:[["500 g","gnocchi"],["250 g","cherrytomaatjes"],["1","courgette"],["1","rode paprika"],["1 bol","mozzarella light"],["1 potje","pesto"]],
   s:["Leg de gnocchi (rauw, zo uit het pak), tomaatjes en groente in stukken op de bakplaat. Doe er olie, zout, oregano en chilivlokken over en schep het om.","Zet het 20 minuten in de oven. {wacht}","Scheur de mozzarella erover en zet het nog 5 minuten in de oven. Doe er een klodder pesto op."]},
- {id:"paprika",cat:"avond",vries:1,t:"Gevulde paprika's met couscous, feta en nootjes",m:"10 min werk · 25 min oven 200°",need:[["oven"],["fornuis","magnetron"]],k:"komijn, oregano",
+ {id:"paprika",cat:"avond",vries:1,t:"Gevulde paprika's met feta",m:"10 min werk · 25 min oven 200°",need:[["oven"],["fornuis","magnetron"]],k:"komijn, oregano",
   i:[["2","rode paprika"],["100 g","volkoren couscous"],["1 blik","kikkererwten"],["250 g","cherrytomaatjes"],["1 blok","feta"],["1 zakje","pijnboompitten"]],
   s:["Doe de couscous in een kom met {heet} erover, tot hij net onder staat. Doe er een deksel op en wacht 5 minuten.","Halveer de paprika's en haal de zaadjes eruit. Schep de uitgelekte kikkererwten, gehalveerde tomaatjes, komijn en oregano door de couscous.","Vul de paprika's, verkruimel de feta erover en strooi de pijnboompitten erop: die geven een lekkere bite.","Zet ze 25 minuten in de oven. {wacht}"]},
- {id:"frittata",cat:"avond",vries:1,t:"Frittata uit de oven met groente en geitenkaas",m:"10 min werk · 25 min oven 200°",need:[["oven"]],k:"zwarte peper, oregano",
+ {id:"frittata",cat:"avond",vries:1,t:"Frittata met geitenkaas",m:"10 min werk · 25 min oven 200°",need:[["oven"]],k:"zwarte peper, oregano",
   i:[["6","eieren"],["1","courgette"],["1","rode paprika"],["handje","spinazie"],["1 bakje","zachte geitenkaas"],["1 pak","volkoren brood"]],
   s:["Snijd de courgette en paprika in blokjes en doe ze met de spinazie in een ingevette ovenschaal.","Klop de eieren los met zout, peper en oregano en giet ze over de groente. Verdeel de geitenkaas er in klodders over.","Zet hem 25 minuten in de oven, tot het ei stevig is. {wacht}","Snijd hem in punten. Lekker met een snee volkorenbrood."],
   n:"Koud is hij ook lekker als lunch."},
@@ -801,7 +805,7 @@ const R = [
   s:["Maak de marinade: meng 3 eetlepels ketjap met de grof gesneden ui en knoflook, een theelepel ketoembar, djahé en laos, een halve theelepel djinten, een theelepel sambal en het sap van een halve limoen. Suiker is niet nodig: de ketjap is al zoet.","Snijd de kip en hamlappen in blokjes van 1 cm en schep ze door de marinade. Zet het minstens een uur in de koelkast. Tip: doe dit 's ochtends, dan is het 's avonds extra lekker.","Haal de ui en knoflook eruit en leg het vlees met de sperziebonen op een bakplaat met bakpapier. Geen spiesjes rijgen! Zet het 10 à 12 minuten in de oven op de grillstand (of 200°). Niet te lang, anders wordt het droog.","Giet {heet} over de mihoen, wacht 3 minuten en doe de taugé de laatste minuut erbij. Maak de satésaus: warm 4 eetlepels pindakaas met 100 ml water, een eetlepel ketjap en wat sambal tot het glad is.","Maak de atjar: snijd de komkommer in dunne plakjes, met een scheutje azijn en een snufje zout."],
   v:[{need:[["fornuis"]],m:"15 min werk · 1 uur marineren · pan",s:["Maak de marinade: meng 3 eetlepels ketjap met de grof gesneden ui en knoflook, een theelepel ketoembar, djahé en laos, een halve theelepel djinten, een theelepel sambal en het sap van een halve limoen.","Snijd de kip en hamlappen in blokjes van 1 cm en schep ze door de marinade. Zet het minstens een uur in de koelkast.","Haal de ui en knoflook eruit en bak het vlees 6 à 8 minuten in een hete koekenpan, tot het gaar en een beetje geblakerd is.","{pan:Kook ondertussen de sperziebonen 8 minuten.|mw:Zet ondertussen de sperziebonen 8 minuten in de magnetron met een scheutje water.} Giet {heet} over de mihoen, wacht 3 minuten en doe de taugé de laatste minuut erbij. Maak de satésaus: warm 4 eetlepels pindakaas met 100 ml water, een eetlepel ketjap en wat sambal tot het glad is.","Maak de atjar: snijd de komkommer in dunne plakjes, met een scheutje azijn en een snufje zout."]}],
   n:"Hoe langer je marineert, hoe lekkerder. Een uur is minimaal!"},
- {id:"syrisch",cat:"avond",t:"Syrische kip met vermicellirijst",m:"10 min werk · 25 min oven 200°",need:[["oven"],["fornuis"]],k:"baharat",
+ {id:"syrisch",cat:"avond",t:"Syrische kip met rijst",m:"10 min werk · 25 min oven 200°",need:[["oven"],["fornuis"]],k:"baharat",
   i:[["400 g","kipdijfilet"],["1 zakje","baharat (7-kruidenmix)"],["1","rode ui"],["1","rode paprika"],["1","courgette"],["150 g","zilvervliesrijst"],["50 g","vermicelli"],["150 g","Griekse yoghurt (0%)"],["½","komkommer"],["1","citroen"]],
   s:["Snijd de kip, rode ui, paprika en courgette in stukken. Meng ze op de bakplaat met olie, 2 theelepels baharat en zout.","Zet het 25 minuten in de oven en schep halverwege om. {wacht}","Ondertussen: {rijst} Bak de vermicelli goudbruin in een pannetje met een scheutje olie (± 2 minuten, blijf erbij!) en schep hem door de rijst.","Meng de yoghurt met geraspte komkommer, citroensap en een snufje zout. Lekker erbij."],
   n:"Baharat ligt bij de wereldkeuken. Geen baharat? Komijn, kaneel en paprikapoeder samen komen in de buurt."},
@@ -830,7 +834,7 @@ const R = [
   i:[["1","appel"],["handje","rozijnen"],["1 zak","walnoten"],["150 g","magere kwark"]],
   s:["Snijd de appel in partjes en leg ze in een schaaltje. Strooi er rozijnen, een paar walnoten en kaneel over.","Zet het 20 minuten in de oven. Hij kan mooi mee met je avondeten.","Doe er een klodder kwark op."],
   v:[{need:[["magnetron"]],m:"2 min werk · 4 min magnetron",s:["Snijd de appel in partjes en doe ze in een kommetje. Strooi er rozijnen, walnoten en kaneel over.","Doe er een bord op en zet het 4 minuten in de magnetron.","Doe er een klodder kwark op."]}]},
- {id:"t-yoghurt",th:["jasmijnthee","Jasmijn Dragonpearls"],cat:"toetje",t:"Griekse yoghurt met fruit en honing",m:"1 min",k:"kaneel",
+ {id:"t-yoghurt",th:["jasmijnthee","Jasmijn Dragonpearls"],cat:"toetje",t:"Yoghurt met fruit en honing",m:"1 min",k:"kaneel",
   i:[["150 g","Griekse yoghurt (0%)"],["naar keuze","fruit van het seizoen"],["1 pot","honing"]],
   s:["Doe de yoghurt in een kom met fruit en een straaltje honing erop. Een snufje kaneel erover, als je wilt."]},
  {id:"t-mousse",th:["zwarte thee","Jin Jun Mei"],cat:"toetje",t:"Chocomousse van kwark",m:"2 min",k:"kaneel",
@@ -1531,11 +1535,11 @@ function cardLc(r){
   return r.i.some(([,nm])=>!conflicts(nm).length&&lcOpts(nm).length&&S.lc[nm.toLowerCase()]!=="=")?"kan":"";
 }
 // Labeltjes onder de titel: allergie in oranje (let op!), de rest rustig grijs
-function cardTags(r,w,lc){
+function cardTags(r,w,lc,vol){
   const t=[];
   if(w.length) t.push(`<span class="tag warn">${ic("alert")}${esc(w.join(", "))}</span>`);
-  if(lc) t.push(`<span class="tag ti${lc==="on"?" on":""}" title="kan low carb" aria-label="kan low carb">${ic("swap")}</span>`);
-  if(r.vries) t.push(`<span class="tag ti" title="vriezerproof" aria-label="vriezerproof">${ic("snow")}</span>`);
+  if(lc) t.push(vol?`<span class="tag${lc==="on"?" on":""}">${ic("swap")}Kan met minder koolhydraten</span>`:`<span class="tag ti${lc==="on"?" on":""}" title="kan met minder koolhydraten" aria-label="kan met minder koolhydraten">${ic("swap")}</span>`);
+  if(r.vries) t.push(vol?`<span class="tag">${ic("snow")}Kan in de vriezer</span>`:`<span class="tag ti" title="kan in de vriezer" aria-label="kan in de vriezer">${ic("snow")}</span>`);
   return t.length?`<span class="tags">${t.join("")}</span>`:"";
 }
 const flabel='<span class="fl">fuck-it</span>';
@@ -1646,7 +1650,7 @@ function sheetWrap(label,inner,foot,tools){
   const old=$(".sheet-body"), key=(SH?"r:"+SH.id:"")+(KZ?"|"+KZ.slot+KZ.iso+KZ.view:"")+"|"+label, same=old&&$("#sheet-root").dataset.key===key, st=same?old.scrollTop:0;
   const vast=!!(KZ&&!SH)||!!(SH&&SH.ctx);
   $("#sheet-root").dataset.key=key;
-  $("#sheet-root").innerHTML=`<div class="sheet-bg" id="sb"><div class="sheet${old?" stil":""}${vast?" vast":""}" tabindex="-1" role="dialog" aria-modal="true" aria-label="${esc(label)}">
+  $("#sheet-root").innerHTML=`<div class="sheet-bg" id="sb"><div class="sheet${old?" stil":""}${vast?" vast":""}${tools?" met-tools":""}" tabindex="-1" role="dialog" aria-modal="true" aria-label="${esc(label)}">
     <div class="sheet-tools">${tools||""}<button class="sheet-x" data-close="1" aria-label="Sluiten">${ic("x")}</button></div>
     <div class="sheet-body">${inner}</div>${foot?`<div class="sheet-foot">${foot}</div>`:""}</div></div>`;
   if(old) $(".sheet-body").scrollTop=st; else $(".sheet").focus({preventScroll:true});
@@ -2115,7 +2119,7 @@ function drawSheet(){
   const {id,ctx}=SH, r=byId[id]; if(!r){closeSheet();return;}
   const v=ver(r)||r, f=fac(r), n=S.picks[id]||0;
   const voor=r.cat==="avond"&&!r.f?`Voor ${por()} ${por()>1?"personen":"persoon"}${rest()?", plus lunch voor morgen":""}`:por()>1?`Voor ${por()} personen`:"";
-  const kop=`<div class="sheet-head">${tile(r)}<div><h2>${esc(r.t)}${r.f?flabel:""}</h2><p class="muted small">${CATS[r.cat]} · ${esc(v.m)}</p>${cardTags(r,cardWarn(r),cardLc(r))}</div></div>`;
+  const kop=`<div class="sheet-head">${tile(r)}<div><h2>${esc(r.t)}${r.f?flabel:""}</h2><p class="muted small">${CATS[r.cat]} · ${esc(v.m)}</p>${cardTags(r,cardWarn(r),cardLc(r),1)}</div></div>`;
   const recept=`${r.i.length?`<div class="stack tight"><h3>Boodschappen</h3>${voor?`<p class="muted small">${voor}</p>`:""}
       <ul class="ing">${r.i.map(([q,nm])=>ingRow(q,nm,f)).join("")}</ul>
       ${r.k?`<p class="kruiden">🌿 Uit je kruidenkast: ${esc(r.k)}</p>`:""}${kastPaprika(r)?`<p class="note warn-note">⚠ Let op: laat paprikapoeder, chilivlokken en sambal uit je kruidenkast weg. Neem zwarte peper, komijn of gember.</p>`:""}</div>`:""}
