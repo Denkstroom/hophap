@@ -562,6 +562,10 @@ html.tour-aan,html.tour-aan body{overflow:hidden;overscroll-behavior:none}
 .bigopt .pic svg.i{width:28px;height:28px}
 .bigopt .pic{width:44px;height:44px;border-radius:12px;background:var(--accent-soft);color:var(--fg);display:grid;place-items:center;flex:none} /* zoals Ta-daa: vlak zonder lijn, licht icoontje */
 .bigopt .aan{margin-left:auto;font-weight:800;color:var(--accent)}
+
+/* 2026-11-25: knoppen gevuld zonder lijntje (zoals Ta-daa); pijltje in het menu */
+.btn-ghost,.toggle,.add,.kop-btn,.brand .icon-btn.kop-mand,.icon-btn.kop-mand,.ex-plus,.subbtn.plain,.ook-pil,.mini{border-color:transparent;background:var(--accent-soft);color:var(--fg)}
+.bigopt .pijl{margin-left:auto;color:var(--muted);font-size:26px;line-height:1;padding-left:6px}
 </style>
 </head>
 <body>
@@ -1046,7 +1050,7 @@ const picCls=r=>{const k=illKey(r); return k?` tile-ill ill-${ILLU[k][0]}`:r.ev?
 const tile=r=>`<span class="tile cat-${r.cat}${picCls(r)}" aria-hidden="true">${picIn(r)}</span>`;
 
 // Icoontjes (Lucide, ISC-licentie) zitten in de app zelf: werkt ook met slecht bereik
-const IC={menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',kop:'<path d="M4 9h13v4a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6Z"/><path d="M17 10.5h1a2.5 2.5 0 0 1 0 5h-1.4"/><path d="M8 3.5v2.5M12 3.5v2.5"/>',tas:'<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>',zap:'<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>',hart:'<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',share:'<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="m16 6-4-4-4 4"/><path d="M12 2v13"/>',
+const IC={meer:'<circle cx="5" cy="12" r="1.9" fill="currentColor"/><circle cx="12" cy="12" r="1.9" fill="currentColor"/><circle cx="19" cy="12" r="1.9" fill="currentColor"/>',menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',kop:'<path d="M4 9h13v4a6 6 0 0 1-6 6h-1a6 6 0 0 1-6-6Z"/><path d="M17 10.5h1a2.5 2.5 0 0 1 0 5h-1.4"/><path d="M8 3.5v2.5M12 3.5v2.5"/>',tas:'<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>',zap:'<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>',hart:'<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',share:'<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="m16 6-4-4-4 4"/><path d="M12 2v13"/>',
  trash:'<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
  alert:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
  swap:'<path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>',
@@ -1629,7 +1633,7 @@ function renderVandaag(){
   const d0=dayAt(0), d6=dayAt(6), kort=d=>d.toLocaleDateString("nl-NL",{day:"numeric",month:"short"}).replace(".","");
   $("#v-vandaag").innerHTML=`
     <header class="brand"><span class="logo kop-logo lg-hh" role="img" aria-label="HopHap">${LOGO}</span>${SITE&&!isApp()?`<button class="kop-let" data-bewaar="1" aria-label="Belangrijk: zet HopHap op je beginscherm">!</button>`:""}<span class="range">${d0.getMonth()===d6.getMonth()?d0.getDate():kort(d0)} – ${kort(d6)}</span>
-      <button class="kop-btn" data-tab="vriezer">${ic("snow")}Vriezer${(()=>{const n=vzFree().length;return n?`<span class="kop-n" aria-label="${n} in je vriezer">${n}</span>`:"";})()}</button><span id="kop-mand"></span><button class="icon-btn" data-meer="1" aria-label="Meer: alle gerechten en instellingen">${ic("menu")}</button></header>
+      <button class="kop-btn" data-tab="vriezer">${ic("snow")}Vriezer${(()=>{const n=vzFree().length;return n?`<span class="kop-n" aria-label="${n} in je vriezer">${n}</span>`:"";})()}</button><span id="kop-mand"></span><button class="icon-btn" data-meer="1" aria-label="Meer: alle gerechten en instellingen">${ic("meer")}</button></header>
     ${parkHTML()}${vzVraagHTML()}
     <div class="week-head" aria-hidden="true"><span class="wk-datum">${d0.getMonth()===d6.getMonth()?d0.getDate():kort(d0)}–${kort(d6)}</span><span>lunch</span><span>avond</span></div>
     ${hasAvond||TS>=0?"":`<div class="hint-card" role="note"><b>Begin hier!</b><p class="small">Tik op een vakje en kies wat je wilt eten. Plan zoveel dagen als je wilt.</p></div>`}
@@ -1850,7 +1854,7 @@ function openVzPlan(k){
 // Meer: alles wat je niet elke dag nodig hebt
 function openMeer(){
   KZ=null; SH=null; EX=null;
-  const opt=(attr,icn,t,sub,aan)=>`<button class="bigopt" ${attr}><span class="pic" aria-hidden="true">${ic(icn)}</span><span><b>${t}</b><br><span class="muted small">${sub}</span></span>${aan||""}</button>`;
+  const opt=(attr,icn,t,sub,aan)=>`<button class="bigopt" ${attr}><span class="pic" aria-hidden="true">${ic(icn)}</span><span><b>${t}</b><br><span class="muted small">${sub}</span></span>${aan||`<span class="pijl" aria-hidden="true">›</span>`}</button>`;
   sheetWrap("Meer",`<h2>Meer</h2><div class="stack tight">
     ${opt('data-tab="kaarten"',"layers","Alle gerechten","Rondkijken en je favorieten een hartje geven.")}
     ${opt('data-own="menu"',"plus","Eigen gerecht","Zet je eigen recept erbij.")}
