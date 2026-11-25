@@ -529,6 +529,9 @@ h1{font-size:2.3rem}.sheet h2,.nieuw h2{font-size:1.9rem;line-height:1.05}
 .sheet-head h2{font-size:1.75rem}
 .sheet-head .tags{margin-top:6px}
 .emo{min-height:58px;padding:2px}.emo svg.ilt{width:52px;height:52px}
+.vz-strip{align-items:center;gap:12px;margin:6px 0 8px;padding:10px 14px 10px 10px;background:var(--ill-o);color:#173b40;border:2.5px solid #e8731a;font-size:var(--fs-m);box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.vz-strip b{color:#a4490c}
+.vz-ic{flex:none;width:46px;height:46px;border-radius:50%;background:#fff;overflow:hidden;display:block}.vz-ic svg{width:100%;height:100%;display:block}
 .ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .ex-tile{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-m);padding:12px 8px 8px;text-align:center}
 .ex-tile.on{border:2.5px solid var(--accent);background:var(--accent-soft)}
@@ -1569,7 +1572,7 @@ function ontdooiHTML(){
   const m=isoOf(dayAt(1)), l=vzOf(S.lunch[m]), a=vzOf(S.plan[m]); // alleen wat echt moet ontdooien
   const nm=[l,a].filter(moetOntdooien).map(e=>sn(byId[e.id]).toLowerCase());
   if(!nm.length) return "";
-  return `<li class="vz-strip" role="note">${ic("snow")}<span>Leg je <b>${esc(nm.join(" en je "))}</b> in je koelkast voor morgen.</span></li>`;
+  return `<li class="vz-strip" role="note"><span class="vz-ic">${mini("bakje")}</span><span><b>Vanavond doen:</b> leg je ${esc(nm.join(" en je "))} uit de vriezer in de koelkast, voor morgen.</span></li>`;
 }
 // Gerecht in huis maar zonder dag (weggehaald terwijl de boodschappen al gehaald waren): niet vergeten!
 function parkHTML(){
@@ -1819,7 +1822,7 @@ function renderVriezer(){
     <button class="terug" data-tab="vandaag">${ic("calendar")}Terug naar je week</button>
     <h1>Je vriezer</h1>
     <p class="muted">Dit ligt er nu in. Plan het in, dan zegt HopHap op tijd dat je het eruit haalt.</p>
-    ${ont.length?`<div class="vz-strip" role="note">${ic("snow")}<span>Haal vanavond je <b>${esc(ont.map(g=>sn(byId[g.e.id]).toLowerCase()).join(" en je "))}</b> uit de vriezer en leg het in de koelkast.</span></div>`:""}
+    ${ont.length?`<div class="vz-strip" role="note"><span class="vz-ic">${mini("bakje")}</span><span><b>Vanavond doen:</b> leg je ${esc(ont.map(g=>sn(byId[g.e.id]).toLowerCase()).join(" en je "))} uit de vriezer in de koelkast, voor morgen.</span></div>`:""}
     ${gepland.length?`<h2>Ingepland</h2><div class="vz-lijst">${gepland.map(g=>{const r=byId[g.e.id];return `<div class="kz-rij kz-2"><span class="kz-info">${tile(r)}<span><b>${esc(sn(r))}</b><small class="cap">${esc(dagNaam(g.iso))}, ${g.s}</small></span></span></div>`;}).join("")}</div>`:""}
     <h2>Ligt erin</h2>
     <div class="vz-lijst">${vzs.length?rj.map(e=>{const n=vzLeft(e);return rij(byId[e.id],`<span class="${n<=5?"oud":""}">restje, nog ${n} ${n===1?"dag":"dagen"} goed</span>`,e.k,false);}).join("")
