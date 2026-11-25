@@ -246,8 +246,8 @@ label.btn{cursor:pointer}
 
 /* ---------- 7. Tabblad Kaarten ---------- */
 .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
-.chip{flex:none;border:1.5px solid var(--line-strong);background:var(--surface);border-radius:999px;padding:8px 14px 8px 10px;font-weight:700;min-height:42px;display:inline-flex;align-items:center;gap:8px}
-.chip .dot{width:14px;height:14px;border-radius:50%}
+.chip{flex:none;border:0;background:var(--accent-soft);color:var(--fg);border-radius:999px;padding:8px 14px 8px 10px;font-weight:700;min-height:42px;display:inline-flex;align-items:center;gap:8px}
+.chip .dot{width:14px;height:14px;border-radius:50%;box-shadow:0 0 0 2px var(--surface)}
 .chip[aria-pressed="true"]{border-color:var(--fg);background:var(--fg);color:var(--bg)}
 .card{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r);padding:12px;display:flex;gap:14px;align-items:center}
 .card-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;text-align:left;background:none;border:0;padding:0}
@@ -362,8 +362,8 @@ nav.tabs .in{display:flex;width:100%;max-width:560px}
 .tour-wolk .setup-nav{margin-top:6px}
 @media (prefers-reduced-motion:reduce){.tour-gat{transition:none}}
 .qf{display:flex;flex-wrap:wrap;gap:6px;margin-top:-16px}
-.qchip{border:1.5px solid var(--line-strong);background:transparent;border-radius:999px;padding:4px 12px;min-height:36px;font-weight:700;font-size:var(--fs-s);color:var(--muted)}
-.qchip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--fg)}
+.qchip{border:0;background:var(--accent-soft);border-radius:999px;padding:4px 12px;min-height:36px;font-weight:700;font-size:var(--fs-s);color:var(--fg)}
+.qchip[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
 .qchip.pressed{background:var(--press)}
 .ook{margin-top:8px}
 .warn-note{background:var(--warn-bg);color:var(--fg)}
