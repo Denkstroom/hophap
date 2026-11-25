@@ -566,6 +566,11 @@ html.tour-aan,html.tour-aan body{overflow:hidden;overscroll-behavior:none}
 /* 2026-11-25: knoppen gevuld zonder lijntje (zoals Ta-daa); pijltje in het menu */
 .btn-ghost,.toggle,.add,.kop-btn,.brand .icon-btn.kop-mand,.icon-btn.kop-mand,.ex-plus,.subbtn.plain,.ook-pil,.mini{border-color:transparent;background:var(--accent-soft);color:var(--fg)}
 .bigopt .pijl{margin-left:auto;color:var(--muted);font-size:26px;line-height:1;padding-left:6px}
+
+/* 2026-11-25: Lunch/Avondeten zijn tabjes, dus een schuifbalk (zoals Ta-daa); filters blijven losse knopjes */
+.chips.seg{background:var(--line);border-radius:14px;padding:3px;gap:0;overflow:visible}
+.chips.seg .chip{flex:1;justify-content:center;background:transparent;color:var(--muted);border-radius:11px;min-height:40px;padding:6px 10px}
+.chips.seg .chip[aria-pressed="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 3px rgba(0,0,0,.1)}
 </style>
 </head>
 <body>
@@ -1898,7 +1903,7 @@ function renderKaarten(){
     <button class="terug" data-tab="vandaag">${ic("calendar")}Terug naar je week</button>
     <div class="hrow"><h1>Gerechten</h1><button class="kop-btn" data-own="menu">${ic("plus")}Eigen gerecht</button></div>
     <p class="muted">${S.filter==="avond"||S.filter==="lunch"?"Tik op <b>+</b> en HopHap zet het in je week. Vaker tikken = vaker eten.":(LIJST()?"Tik op <b>+</b> en het komt elke week op je boodschappenlijst. Vaker tikken = vaker per week.":"Tik op <b>+</b> om het vast te kiezen. Vaker tikken = vaker per week.")}</p>
-    <div class="chips" role="group" aria-label="Soort">
+    <div class="chips seg" role="group" aria-label="Soort">
       ${Object.entries(CATS).filter(([k])=>k==="lunch"||k==="avond").map(([k,v])=>`<button class="chip" data-filter="${k}" aria-pressed="${S.filter===k}"><span class="dot cat-${k}"></span>${v}</button>`).join("")}
     </div>
     ${qfs.length&&dagSoort?`<div class="qf" role="group" aria-label="Filter">${qfs.map(q=>`<button class="qchip" data-qf="${q}" aria-pressed="${QON.has(q)}">${QF[q][0]}</button>`).join("")}</div>`:""}
