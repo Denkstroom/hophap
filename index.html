@@ -536,6 +536,9 @@ h1{font-size:2.3rem}.sheet h2,.nieuw h2{font-size:1.9rem;line-height:1.05}
 .ev-plus .ev-tx{display:flex!important;flex-direction:column;gap:2px;flex:1!important;text-align:left}
 html.tour-aan,html.tour-aan body{overflow:hidden;overscroll-behavior:none}
 #tour{touch-action:none}.tour-wolk{touch-action:pan-y}
+.kop-let{margin-left:10px;width:40px;height:40px;border-radius:50%;border:0;background:#e8731a;color:#fff;font-weight:900;font-size:1.4rem;line-height:1;display:grid;place-items:center;box-shadow:0 3px 10px rgba(232,115,26,.45);flex:none;animation:let-tik 4s ease-in-out 1s 3}
+@keyframes let-tik{0%,86%,100%{transform:none}90%{transform:rotate(-12deg) scale(1.08)}95%{transform:rotate(10deg) scale(1.08)}}
+@media (prefers-reduced-motion:reduce){.kop-let{animation:none}}
 .ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .ex-tile{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-m);padding:12px 8px 8px;text-align:center}
 .ex-tile.on{border:2.5px solid var(--accent);background:var(--accent-soft)}
@@ -1624,11 +1627,11 @@ function renderVandaag(){
   }
   const d0=dayAt(0), d6=dayAt(6), kort=d=>d.toLocaleDateString("nl-NL",{day:"numeric",month:"short"}).replace(".","");
   $("#v-vandaag").innerHTML=`
-    <header class="brand"><span class="logo kop-logo lg-hh" role="img" aria-label="HopHap">${LOGO}</span><span class="range">${d0.getMonth()===d6.getMonth()?d0.getDate():kort(d0)} – ${kort(d6)}</span>
+    <header class="brand"><span class="logo kop-logo lg-hh" role="img" aria-label="HopHap">${LOGO}</span>${SITE&&!isApp()?`<button class="kop-let" data-bewaar="1" aria-label="Belangrijk: zet HopHap op je beginscherm">!</button>`:""}<span class="range">${d0.getMonth()===d6.getMonth()?d0.getDate():kort(d0)} – ${kort(d6)}</span>
       <button class="kop-btn" data-tab="vriezer">${ic("snow")}Vriezer${(()=>{const n=vzFree().length;return n?`<span class="kop-n" aria-label="${n} in je vriezer">${n}</span>`:"";})()}</button><span id="kop-mand"></span><button class="icon-btn" data-meer="1" aria-label="Meer: alle gerechten en instellingen">${ic("menu")}</button></header>
-    ${parkHTML()}${vzVraagHTML()}${hintHTML()}
+    ${parkHTML()}${vzVraagHTML()}
     <div class="week-head" aria-hidden="true"><span class="wk-datum">${d0.getMonth()===d6.getMonth()?d0.getDate():kort(d0)}–${kort(d6)}</span><span>lunch</span><span>avond</span></div>
-    ${hasAvond?"":`<div class="hint-card" role="note"><b>Begin hier!</b><p class="small">Tik op een vakje en kies wat je wilt eten. Plan zoveel dagen als je wilt.</p></div>`}
+    ${hasAvond||TS>=0?"":`<div class="hint-card" role="note"><b>Begin hier!</b><p class="small">Tik op een vakje en kies wat je wilt eten. Plan zoveel dagen als je wilt.</p></div>`}
     <ul class="week">${hasAvond?rows:rows.replace('class="slot" data-slot="l|'+isoOf(dayAt(0))+'"','class="slot glow" data-slot="l|'+isoOf(dayAt(0))+'"')}</ul>
     ${ookHTML()}`;
 }
@@ -2253,8 +2256,8 @@ TOUR[1].doel=".ookd"; TOUR[1].kop="2. Ontbijt, snack en toetje"; TOUR[1].tekst=(
 TOUR[2].doel=".kop-btn"; TOUR[2].kop="3. Je vriezer"; TOUR[2].tekst="Hier zie je wat er in je vriezer ligt. Plan het in, dan zegt HopHap op tijd dat je het eruit haalt. Alle gerechten en je instellingen vind je rechtsboven, onder het menu.";
 let TS=-1;
 function tourSlot(aan){ const h=document.documentElement; if(h&&h.classList) h.classList.toggle("tour-aan",aan); const b=$(".brand"); if(aan&&b&&b.classList) b.classList.remove("kop-weg"); }
-function startTour(){ closeSheet(); S.tab="vandaag"; render(); try{ scrollTo({top:0,behavior:"instant"}); }catch(e){ scrollTo(0,0); } TS=0; tourSlot(true); drawTour(); }
-function tourNext(v){ if(v==="klaar"){ TS=-1; tourSlot(false); S.tour=1; save(); $("#tour").hidden=true; $("#tour").innerHTML=""; toast("Veel kook- en eetplezier!"); return; } TS++; drawTour(); }
+function startTour(){ closeSheet(); S.tab="vandaag"; TS=0; render(); try{ scrollTo({top:0,behavior:"instant"}); }catch(e){ scrollTo(0,0); } TS=0; tourSlot(true); drawTour(); }
+function tourNext(v){ if(v==="klaar"){ TS=-1; tourSlot(false); S.tour=1; save(); $("#tour").hidden=true; $("#tour").innerHTML=""; render(); toast("Veel kook- en eetplezier!"); return; } TS++; drawTour(); }
 function drawTour(){
   const st=TOUR[TS], el=document.querySelector(st.doel), box=$("#tour"); if(!el||!el.getBoundingClientRect){ tourNext("klaar"); return; }
   // alleen scrollen als het doel buiten beeld staat (anders verspringt het scherm)
@@ -2297,7 +2300,7 @@ if(window.addEventListener) window.addEventListener("resize",()=>{ if(TS>=0) dra
 const SITE=!window.claude;
 const isApp=()=>{try{return matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;}catch(e){return false;}};
 const isIOS=()=>/iPhone|iPad|iPod/.test(navigator.userAgent||"")||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
-let HINT=false; try{HINT=SITE&&!isApp()&&!localStorage.getItem("hophap-hint");}catch(e){}
+let HINT=false; try{HINT=SITE&&!isApp()&&!localStorage.getItem("hophap-hint")&&!localStorage.getItem("hophap-safari");}catch(e){} // koos je bewust voor Safari? dan niet nog eens vragen
 // iPhone/iPad in Safari: een app op het beginscherm krijgt een eigen, aparte opslag. Wat je in Safari invult, ziet die niet.
 // Daarom eerst "zet me op je beginscherm", nog vóór de vragenlijst. (Android en computer delen de opslag wel: daar niet nodig.)
 const needGate=()=>{try{return SITE&&isIOS()&&!isApp()&&!localStorage.getItem("hophap-safari");}catch(e){return false;}};
@@ -2419,6 +2422,18 @@ async function deel(id){
   try{ if(navigator.share){ await navigator.share({title:r.t,text:tekst}); return; } }catch(e){ return; }
   toast("Delen lukt hier niet");
 }
+function openBewaar(){
+  KZ=null; SH=null; EX=null;
+  const stap=(n,icoon,tekst)=>`<li class="gate-stap"><span class="gate-nr">${n}</span><span class="gate-ic">${icoon}</span><span>${tekst}</span></li>`;
+  const ios=isIOS();
+  sheetWrap("Zet HopHap op je beginscherm",`<div><h2>Zet HopHap op je beginscherm</h2>
+    <p class="muted">${ios?"Je gebruikt HopHap nu in Safari. Open je HopHap een week niet, dan wist Safari je planning. Ook als je je geschiedenis wist, ben je alles kwijt. Op je beginscherm blijft alles bewaard.":"Je gebruikt HopHap nu in de browser. Wis je je geschiedenis, of raakt je telefoon vol, dan kan je planning weg zijn. Op je beginscherm blijft alles bewaard."}</p></div>
+    <ol class="gate">${ios?stap(1,ic("share"),"Tik op <b>Deel</b>. Zie je die knop niet? Tik dan eerst op <b>···</b>."):stap(1,"⋮","Tik rechtsboven op <b>⋮</b>.")}
+      ${stap(2,ic("plus"),ios?"Kies <b>Zet op beginscherm</b>.":"Kies <b>App installeren</b> of <b>Toevoegen aan startscherm</b>.")}
+      ${stap(3,`<span class="logo lg-hh lg-stap">${LOGO}</span>`,"Open HopHap vanaf je beginscherm.")}</ol>
+    ${ios?`<p class="note"><b>Let op:</b> je planning gaat niet vanzelf mee naar de app op je beginscherm. Maak dus eerst een backup: menu → Mijn instellingen → Backup maken. Zet die daarna in de app terug: menu → Mijn instellingen → Backup terugzetten.</p>`:`<p class="note">Je planning gaat vanzelf mee naar de app op je beginscherm.</p>`}`,
+    `<div class="row foot-row"><button class="btn btn-main" data-close="1">Oké, ik doe het</button></div>`);
+}
 function hintHTML(){
   if(!HINT) return "";
   return `<div class="hint-card" role="note"><b>Zet HopHap op je beginscherm</b>
@@ -2492,7 +2507,7 @@ function render(){
 document.addEventListener("click",e=>{
   if(TS>=0&&e.target.closest("#tour")&&!e.target.closest(".tour-wolk")){ tourNext("klaar"); return; }
   if(e.target.closest("#toast-undo")){const u=toast.undo; $("#toast").hidden=true; toast.undo=null; if(u) u(); return;}
-  const el=e.target.closest("[data-exadd],[data-exmin],[data-exrec],[data-exown],[data-exklaar],[data-extra],[data-vzplan],[data-meer],[data-lijst],[data-rest],[data-ev],[data-park],[data-tips],[data-bestel],[data-haal],[data-rv],[data-wnieuw],[data-nieuwtour],[data-tab],[data-kzf],[data-kz],[data-kzr],[data-kzopen],[data-hart],[data-thuis],[data-vz],[data-deel],[data-skip],[data-add],[data-min],[data-open],[data-filter],[data-slot],[data-set],[data-close],[data-sub],[data-unsub],[data-own],[data-copy],[data-edit],[data-del],[data-hide],[data-unhide],[data-setup],[data-sun],[data-backup],[data-about],[data-hint],[data-lc],[data-unlc],[data-qf],[data-tour],[data-weg],[data-gate]");
+  const el=e.target.closest("[data-bewaar],[data-exadd],[data-exmin],[data-exrec],[data-exown],[data-exklaar],[data-extra],[data-vzplan],[data-meer],[data-lijst],[data-rest],[data-ev],[data-park],[data-tips],[data-bestel],[data-haal],[data-rv],[data-wnieuw],[data-nieuwtour],[data-tab],[data-kzf],[data-kz],[data-kzr],[data-kzopen],[data-hart],[data-thuis],[data-vz],[data-deel],[data-skip],[data-add],[data-min],[data-open],[data-filter],[data-slot],[data-set],[data-close],[data-sub],[data-unsub],[data-own],[data-copy],[data-edit],[data-del],[data-hide],[data-unhide],[data-setup],[data-sun],[data-backup],[data-about],[data-hint],[data-lc],[data-unlc],[data-qf],[data-tour],[data-weg],[data-gate]");
   if(!el){ if(e.target.id==="sb") closeSheet(); return; }
   const d=el.dataset;
   if(d.extra){ EXO=null; openExtra(d.extra); return; }
@@ -2504,6 +2519,7 @@ document.addEventListener("click",e=>{
   if(d.exklaar){ EX=null; EXO=null; closeSheet(); return; }
   if(d.vzplan){ openVzPlan(d.vzplan); return; }
   if(d.meer){ openMeer(); return; }
+  if(d.bewaar){ openBewaar(); return; }
   if(d.lijst){ const aan=!LIJST(); S.setup={...U(),lijst:aan?1:0}; save(); render(); openMeer(); toast(aan?"Je boodschappenlijst staat weer aan!":"Boodschappenlijst uit. Je eigen lijstje dus!"); return; }
   if(d.sun!==undefined){
     if(d.sun==="x") closeSetup();
@@ -2520,7 +2536,7 @@ document.addEventListener("click",e=>{
   else if(d.filter){S.filter=d.filter;save();render();}
   else if(d.slot){const [s,iso]=d.slot.split("|");tapSlot(s,iso);}
   else if(d.set){const [s,iso,id,m]=d.set.split("|");setSlot(s,iso,id,m==="erbij");}
-  else if(d.gate){ try{localStorage.setItem("hophap-safari","1");}catch(e){} openSetup(true); }
+  else if(d.gate){ try{localStorage.setItem("hophap-safari","1");}catch(e){} HINT=false; openSetup(true); }
   else if(d.thuis){ const [s,iso]=d.thuis.split("|"); nietThuis(s,iso); }
   else if(d.vz){ const y=isoOf(dayAt(-1)), id=vzVraagId(); S.vq[y]=1;
     if(d.vz==="ja"&&id){ S.vries[Date.now().toString(36)]={id,d:y}; toast(`In je vriezer! Nog ${VDAGEN-1} dagen goed.`); }
