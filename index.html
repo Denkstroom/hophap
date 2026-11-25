@@ -161,9 +161,9 @@ label.btn{cursor:pointer}
 .cat-toetje{background:var(--g-toetje);color:var(--ink-avond)}
 /* label achter een titel: "fuck-it" */
 /* label "nieuw": sticker linksboven over de hoek (2 weken). Kleur nog te kiezen: --nw-bg */
-:root{--nw-bg:#ffd23f;--nw-tx:#16142e}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--nw-bg:#ffe07a}}
-:root[data-theme="dark"]{--nw-bg:#ffe07a}
+:root{--nw-bg:#e8731a;--nw-tx:#ffffff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--nw-bg:#f08a3c;--nw-tx:#10262a}}
+:root[data-theme="dark"]{--nw-bg:#f08a3c;--nw-tx:#10262a}
 .card,.kz-rij{position:relative}
 .nw-st{position:absolute;top:-10px;left:-6px;z-index:2;background:var(--nw-bg);color:var(--nw-tx);font-weight:800;font-size:.74rem;line-height:1;padding:5px 10px;border-radius:9px;transform:rotate(-7deg);box-shadow:0 2px 0 rgba(0,0,0,.28);pointer-events:none}
 .hrow{display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -229,8 +229,8 @@ label.btn{cursor:pointer}
 .sheet-deel{width:44px;height:44px;border-radius:50%;border:0;background:var(--surface);color:var(--fg);display:grid;place-items:center;box-shadow:0 1px 4px rgba(0,0,0,.12)}
 .sheet:has(.sheet-deel) .sheet-body>:first-child{padding-right:100px}
 .sheet:has(.sheet-hart) .sheet-body>:first-child{padding-right:152px}
-.sheet-hart.on{color:#d6336c}.sheet-hart.on svg{fill:currentColor}
-.hartje{display:inline-block;width:16px;height:16px;margin-left:6px;vertical-align:-1px;color:#d6336c}.hartje svg{width:16px;height:16px;fill:currentColor}
+.sheet-hart.on{color:#e8731a}.sheet-hart.on svg{fill:currentColor}
+.hartje{display:inline-block;width:16px;height:16px;margin-left:6px;vertical-align:-1px;color:#e8731a}.hartje svg{width:16px;height:16px;fill:currentColor}
 .nieuw-bg{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.45);display:grid;place-items:center;padding:16px}
 .nieuw{background:var(--surface);color:var(--fg);border-radius:26px;padding:30px 24px 18px;width:100%;max-width:360px;max-height:calc(100dvh - 32px);overflow-y:auto;display:flex;flex-direction:column;gap:18px}
 .nieuw .logo{margin:0 auto;width:52px;height:52px}
@@ -528,6 +528,7 @@ h1{font-size:2.3rem}.sheet h2,.nieuw h2{font-size:1.9rem;line-height:1.05}
 .sheet.met-tools .sheet-body>:first-child{padding-right:0} /* knoppen staan nu boven de kop */
 .sheet-head h2{font-size:1.75rem}
 .sheet-head .tags{margin-top:6px}
+.emo{min-height:58px;padding:2px}.emo svg.ilt{width:52px;height:52px}
 .ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .ex-tile{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r-m);padding:12px 8px 8px;text-align:center}
 .ex-tile.on{border:2.5px solid var(--accent);background:var(--accent-soft)}
@@ -1475,7 +1476,7 @@ const TIPS={haal:["Lunch halen",["Haal bij de kantine, supermarkt of bakker een 
 function openTips(k){
   if(!KZ) return; const [t,l]=TIPS[k], iso=KZ.iso;
   sheetWrap(t,`<button class="kz-terug" data-kz="puf">‹ Weinig energie</button>
-    <div class="sheet-head"><span class="tile uit" aria-hidden="true">${k==="haal"?ic("tas"):doodle("🛵")}</span><div><h2>${t}</h2><p class="muted small">geen boodschappen nodig</p></div></div>
+    <div class="sheet-head"><span class="tile tile-ill ill-o" aria-hidden="true">${mini(k==="haal"?"zak":"bestel")}</span><div><h2>${t}</h2><p class="muted small">geen boodschappen nodig</p></div></div>
     <div class="stack tight"><h3>Zo maak je het toch voedzaam</h3><ul class="tips">${l.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`,
     `<div class="row foot-row"><button class="btn btn-main" data-${k==="haal"?"haal":"bestel"}="${iso}">Kies voor ${dagNaam(iso)}</button></div>`);
 }
@@ -1590,7 +1591,8 @@ function vzVraagHTML(){
 const MINI={"bakje":`<path d="M18 46h84v46a6 6 0 0 1-6 6H24a6 6 0 0 1-6-6z" fill="#e3f0ef" transform="translate(3,3)"/><path d="M18 46h84v46a6 6 0 0 1-6 6H24a6 6 0 0 1-6-6z" fill="none" stroke="#173b40" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M12 34h96v14H12z" fill="#9cc9c8" transform="translate(3,3)"/><path d="M12 34h96v14H12z" fill="none" stroke="#173b40" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/><rect x="34" y="60" width="52" height="22" rx="3" fill="#fbf7f0" stroke="#173b40" stroke-width="2.4"/><path d="M42 71h30" fill="none" stroke="#173b40" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M92 16v16M84 20l16 8M84 28l16-8" fill="none" stroke="#9cc9c8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`,"mand":`<path d="M34 56c0-34 52-34 52 0" fill="none" stroke="#173b40" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 56h92l-12 42H26z" fill="#e2a24e" transform="translate(3,3)"/><path d="M14 56h92l-12 42H26z" fill="none" stroke="#173b40" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M30 66h60M34 78h52M38 90h44" fill="none" stroke="#173b40" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M46 56l-4 42M60 56v42M74 56l4 42" fill="none" stroke="#173b40" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M70 56l14-22" stroke="#e8731a" stroke-width="7" stroke-linecap="round"/>`,"tas":`<path d="M48 40l-6-24M60 40l2-26" stroke="#9fc77a" stroke-width="6" stroke-linecap="round"/><path d="M72 40l10-22" stroke="#e8731a" stroke-width="7" stroke-linecap="round"/><path d="M26 40h68l6 60H20z" fill="#d9b07a" transform="translate(3,3)"/><path d="M26 40h68l6 60H20z" fill="none" stroke="#173b40" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M26 52h68" fill="none" stroke="#173b40" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M52 74h16M60 66v16" fill="none" stroke="#173b40" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`,"batterij":`<path d="M18 40h76a6 6 0 0 1 6 6v28a6 6 0 0 1-6 6H18a6 6 0 0 1-6-6V46a6 6 0 0 1 6-6z" fill="#fbf7f0" transform="translate(3,3)"/><path d="M18 40h76a6 6 0 0 1 6 6v28a6 6 0 0 1-6 6H18a6 6 0 0 1-6-6V46a6 6 0 0 1 6-6z" fill="none" stroke="#173b40" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M100 52h8v16h-8z" fill="#fbf7f0" transform="translate(3,3)"/><path d="M100 52h8v16h-8z" fill="none" stroke="#173b40" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><rect x="20" y="48" width="14" height="24" rx="3" fill="#d9472b" stroke="#173b40" stroke-width="2"/><path d="M50 58q5 4 10 0M70 58q5 4 10 0" fill="none" stroke="#173b40" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M58 68q7-4 14 0" fill="none" stroke="#173b40" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M86 22h10l-10 10h10" fill="none" stroke="#9cc9c8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`,"deur":`<path d="M32 16h56v88H32z" fill="#e3f0ef" transform="translate(3,3)"/><path d="M32 16h56v88H32z" fill="none" stroke="#173b40" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M32 16l36 10v86l-36-8z" fill="#e2a24e" transform="translate(3,3)"/><path d="M32 16l36 10v86l-36-8z" fill="none" stroke="#173b40" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="60" cy="64" r="3.6" fill="#173b40"/><path d="M94 50h14M100 44l8 6-8 6" fill="none" stroke="#e8731a" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>`,"zak":`<path d="M44 34l30-14 6 20z" fill="#f2dcae" stroke="#173b40" stroke-width="2.6"/><path d="M48 32l26-10" stroke="#9fc77a" stroke-width="3"/><path d="M30 38h60l4 62H26z" fill="#d9b07a" transform="translate(3,3)"/><path d="M30 38h60l4 62H26z" fill="none" stroke="#173b40" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M30 50q30 8 60 0" fill="none" stroke="#173b40" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M60 38v-6" fill="none" stroke="#173b40" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`,"bestel":`<path d="M36 46c0-26 48-26 48 0" fill="none" stroke="#173b40" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 44h76l-10 56H32z" fill="#fbf7f0" transform="translate(3,3)"/><path d="M22 44h76l-10 56H32z" fill="none" stroke="#173b40" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M26 64h68l-2 12H28z" fill="#9cc9c8"/><path d="M26 64h68M28 76h64" fill="none" stroke="#173b40" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M82 14l-18 40M92 18l-24 38" fill="none" stroke="#e8731a" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>`};
 const mini=k=>`<svg class="ilt" viewBox="0 0 120 120" aria-hidden="true"><g filter="url(#hh-wiebel)">${MINI[k]}</g></svg>`;
 const EVILL={pizza:"f-pizza",stoof:"stoof",pasta:"pasta",friet:"f-friet",ijs:"t-ijs",vis:"f-vis",croissant:"o-croissant",vlees:"syrisch",pannenkoek:"o-pannenkoek"};
-const illKey=r=>ILLU[r.id]?r.id:r.ev?(EVILL[r.pic]||null):null; // eigen vriezer-eten: tekening van een gerecht dat erop lijkt, anders het vriezerbakje
+const EMOILL={"🍲":"stoof","🍝":"spaghetti","🍗":"syrisch","🥘":"tajine","🥧":"taart","🍛":"viscurry","🌮":"burrito","🍕":"f-pizza","🐟":"kabeljauw","🫒":"puttanesca","🥑":"o-rogge","🍞":"o-cake","🫐":"t-bes","🫛":"s-edamame","🍐":"t-peer","🥐":"o-croissant","🫑":"paprika","🦐":"garnalen","🍋":"zalm","🍢":"sate","🥦":"l-supersalade","🥗":"l-caesar","🥪":"o-tosti","🌯":"l-wrap","🍳":"o-spek","🥣":"o-kwark","🫙":"o-oats","🥞":"o-pannenkoek","🍜":"l-noedels","🥔":"l-caesar","🎃":"risotto","🍪":"s-thee","🍨":"t-ijs","🍎":"t-appel","🥜":"s-noot","🧀":"s-brie","🍟":"f-friet","🫓":"l-falafel"};
+const illKey=r=>ILLU[r.id]?r.id:r.ev?(EVILL[r.pic]||null):(r.own&&EMOILL[r.pic])||null; // eigen vriezer-eten: tekening van een gerecht dat erop lijkt, anders het vriezerbakje
 const uitCell=`<span class="tile tile-ill ill-p" aria-hidden="true">${mini("deur")}</span><span class="t muted">niet thuis</span>`;
 const bestelCell=`<span class="tile tile-ill ill-o" aria-hidden="true">${mini("bestel")}</span><span class="t muted">bestellen</span>`;
 const haalCell=`<span class="tile tile-ill ill-o" aria-hidden="true">${mini("zak")}</span><span class="t muted">lunch halen</span>`;
@@ -1917,7 +1919,7 @@ function openForm(base,editId){
     <label class="field"><b>Naam</b><input type="text" id="f-t" value="${esc(editId?b.t:base?b.t+" (mijn versie)":"")}" placeholder="bv. Kip uit de oven" required></label>
     <div class="field"><b>Soort</b><div class="opt-grid">${Object.entries(CATS).map(([k,l])=>radio("f-cat",k,l,b.cat===k)).join("")}</div>
       <label class="opt sm"><input type="checkbox" id="f-f" ${b.f?"checked":""}><span>Het is een fuck-it (voor als je geen puf hebt)</span></label></div>
-    <div class="field"><b>Plaatje</b><div class="emoji-grid">${EMOJI.map(e=>`<label class="emo"><input type="radio" name="f-pic" value="${e}" ${(b.pic||PIC[b.id]||CATPIC[b.cat])===e?"checked":""} aria-label="${E2D[e]||"plaatje"}"><span>${doodle(e)}</span></label>`).join("")}</div></div>
+    <div class="field"><b>Plaatje</b><div class="emoji-grid">${EMOJI.map(e=>`<label class="emo"><input type="radio" name="f-pic" value="${e}" ${(b.pic||PIC[b.id]||CATPIC[b.cat])===e?"checked":""} aria-label="${E2D[e]||"plaatje"}"><span>${EMOILL[e]?`<svg class="ilt" viewBox="0 0 120 120" aria-hidden="true"><g filter="url(#hh-wiebel)">${ILLU[EMOILL[e]][1]}</g></svg>`:doodle(e)}</span></label>`).join("")}</div></div>
     <div class="field"><b>Waarmee maak je het?</b><div class="opt-grid">${radio("f-dev","","Geen apparaat",!dev)}${myAp.map(a=>radio("f-dev",a,APS[a],dev===a)).join("")}</div></div>
     <div class="field"><b>Hoeveel werk?</b><div class="opt-grid three">${["2","5","10"].map(w=>radio("f-w",w,w+" min",work===w)).join("")}</div>
       <label class="field"><span class="muted small">Tijd in het apparaat (mag leeg)</span><input type="text" id="f-tijd" value="${esc(rest)}" placeholder="bv. 30 min oven 200°"></label></div>
@@ -2234,7 +2236,7 @@ function closeSetup(){const el=$("#setup"); el.hidden=true; el.innerHTML=""; SU=
 // Rondleiding (eerste keer, na de vragenlijst). Een donkere laag met een gat rond het echte onderdeel en een tekstwolkje met pijltje.
 const TOUR=[
   {doel:'nav [data-tab="kaarten"]',kop:"1. Kies wat je wilt eten",tekst:"Kies hier een gerecht en tik op + om het op je lijst te zetten. Twee keer tikken is twee keer eten.",
-   extra:()=>`<div class="tour-fk"><span class="tile cat-avond" aria-hidden="true">${doodle("pizza")}</span><p class="small">Fuck-it dagen zijn gewoon onderdeel van het leven. Daarom zijn er <span class="fl">fuck-it</span> gerechten: snel, makkelijk en net iets gezonder dan ongezond.</p></div>`},
+   extra:()=>`<div class="tour-fk">${tile(byId["f-pizza"])}<p class="small">Fuck-it dagen zijn gewoon onderdeel van het leven. Daarom zijn er <span class="fl">fuck-it</span> gerechten: snel, makkelijk en net iets gezonder dan ongezond.</p></div>`},
   {doel:".day.today",kop:"2. Je week vult zich vanzelf",tekst:()=>rest()?"Je dagen worden automatisch gevuld. Je restje van vandaag is je lunch van morgen. Tik op een vakje om te wisselen.":"Je dagen worden automatisch gevuld. Tik op een vakje om te wisselen."},
   {doel:'nav [data-tab="lijst"]',kop:"3. Je boodschappenlijst maakt zichzelf",tekst:"Alles wat je kiest staat hier. Vink af wat je hebt."}];
 // Rondleiding (vanaf 1.2): wijst naar de week, ontbijt/snack/toetje en de knop Gerechten
@@ -2309,29 +2311,36 @@ function svgImg(svg,kleur){
   const s=svg.replace('<svg class="doo"',`<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" fill="none" stroke="${kleur}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"`);
   return new Promise(res=>{const im=new Image(); im.onload=()=>res(im); im.onerror=()=>res(null); im.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(s);});
 }
+// volledige tekening (met wiebel-filter) als los plaatje, voor het deelplaatje
+function tekImg(inner,bg){
+  const f='<defs><filter id="w"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></defs>';
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="480" height="480" viewBox="0 0 120 120">${f}${bg?`<rect width="120" height="120" fill="${bg}"/>`:""}<g filter="url(#w)" stroke-linecap="round" stroke-linejoin="round">${inner}</g></svg>`;
+  return new Promise(res=>{const im=new Image(); im.onload=()=>res(im); im.onerror=()=>res(null); im.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);});
+}
 function deelTitel(t){const i=t.indexOf(" met "); return i>8?[t.slice(0,i),t.slice(i+1)]:[t,""];}
 async function deelkaart(r){
   if(!r) return null;
   try{ await document.fonts.load('800 40px "Baloo 2"'); await document.fonts.load('500 40px "Baloo 2"'); }catch(e){}
   const dk=isDark(), W=1080, H=1350, P=72, F='"Baloo 2",system-ui,sans-serif';
-  const K=dk?{ink:"#f0efea",sub:"#d6d2ff",panel:"rgba(255,255,255,0.08)",h2:"#c9c0ff",pill:"rgba(184,173,255,0.2)",tileInk:"#16142e",cta:"#b8adff",ctaInk:"#16142e"}
-            :{ink:"#16142e",sub:"#2c2860",panel:"#ffffff",h2:"#16142e",pill:"rgba(255,255,255,0.65)",tileInk:"#ffb3dd",cta:"#16142e",ctaInk:"#ffffff"};
-  const [tileIm,logoIm]=await Promise.all([svgImg(doodle(r.pic||PIC[r.id]||CATPIC[r.cat]),K.tileInk),svgImg(doodle("konijn"),"#0f5560")]);
+  const K=dk?{bg:"#0f2a2f",ink:"#f5efe4",sub:"#a9bebd",panel:"#173a40",h2:"#9cc9c8",pill:"#24494f",cta:"#f08a3c",ctaInk:"#10262a"}
+            :{bg:"#faf6ef",ink:"#173b40",sub:"#5d6968",panel:"#ffffff",h2:"#0f5560",pill:"#d7ebe9",cta:"#0f5560",ctaInk:"#ffffff"};
+  const k=illKey(r), tbg=k&&ILLU[k][0]==="o"?"#fde8d2":"#d7ebe9";
+  const lg=LOGO.match(/<rect[\s\S]*<\/g>/)[0].replace(/^<rect[^>]*>/,"").replace(/^<g[^>]*>/,"").replace(/<\/g>$/,"");
+  const [tileIm,logoIm]=await Promise.all([k?tekImg(ILLU[k][1],tbg):r.ev?tekImg(MINI.bakje,tbg):svgImg(doodle(r.pic||PIC[r.id]||CATPIC[r.cat]),"#173b40"),tekImg(lg,"#9cc9c8")]);
   const c=document.createElement("canvas"); c.width=W; c.height=H; const x=c.getContext("2d");
   const grad=(x0,y0,x1,y1,st)=>{const g=x.createLinearGradient(x0,y0,x1,y1); st.forEach(([o,k])=>g.addColorStop(o,k)); return g;};
-  const verloop=grad(0,0,W*0.6,H,[[0,"#a6e3ff"],[0.5,"#b8adff"],[1,"#ffb3dd"]]);
+
   const rr=(X,Y,w,h,rad)=>{x.beginPath(); if(x.roundRect) x.roundRect(X,Y,w,h,rad); else x.rect(X,Y,w,h);};
   // achtergrond
-  if(dk){ x.fillStyle=verloop; x.fillRect(0,0,W,H); x.fillStyle=grad(0,0,0,H,[[0,"#1f1d40"],[1,"#16142e"]]); rr(12,12,W-24,H-24,40); x.fill(); }
-  else { x.fillStyle=verloop; x.fillRect(0,0,W,H); }
+  x.fillStyle=K.bg; x.fillRect(0,0,W,H);
   const wrap=(t,max)=>{const w=String(t).split(" "),l=[];let s="";for(const v of w){const n=s?s+" "+v:v; if(x.measureText(n).width>max&&s){l.push(s);s=v;}else s=n;} if(s) l.push(s); return l;};
   const font=(wt,px)=>{x.font=`${wt} ${px}px ${F}`;};
   // tekst precies in het midden van een knopje/label: meet de echte letterhoogte (Baloo heeft veel ruimte boven de letters)
   const midText=(t,X,cy)=>{const b=x.textBaseline; x.textBaseline="alphabetic"; const m=x.measureText(t); x.fillText(t,X,cy+(m.actualBoundingBoxAscent-m.actualBoundingBoxDescent)/2); x.textBaseline=b;};
   // kop: tegel in het midden, titel (gesplitst bij 'met'), tijden als pilletjes
   let y=64; const T=168;
-  x.fillStyle=dk?verloop:"#16142e"; x.beginPath(); x.arc(W/2,y+T/2,T/2,0,Math.PI*2); x.fill();
-  if(tileIm) x.drawImage(tileIm,W/2-T*0.32,y+T*0.18,T*0.64,T*0.64);
+  x.save(); x.beginPath(); x.arc(W/2,y+T/2,T/2,0,Math.PI*2); x.fillStyle=tbg; x.fill(); x.clip();
+  if(tileIm) x.drawImage(tileIm,W/2-T/2,y,T,T); x.restore();
   y+=T+22;
   const [groot,klein]=deelTitel(r.t); x.textAlign="center"; x.textBaseline="top"; x.fillStyle=K.ink;
   font(800,68); for(const l of wrap(groot,W-2*P)){ x.fillText(l,W/2,y); y+=72; }
@@ -2369,7 +2378,7 @@ async function deelkaart(r){
   // voet
   x.textAlign="center"; let fy=H-P-footH+60;
   const L=46; font(700,32); const tl="Recept uit HopHap, de gratis eetplanner", tw=x.measureText(tl).width, lx=W/2-(tw+L+14)/2;
-  x.fillStyle=grad(lx,fy,lx+L,fy+L,[[0,"#cef0ff"],[0.4,"#95b6ff"],[0.7,"#c4beff"],[1,"#dfb8ff"]]); rr(lx,fy,L,L,14); x.fill(); if(logoIm) x.drawImage(logoIm,lx+5,fy+5,L-10,L-10);
+  x.save(); rr(lx,fy,L,L,14); x.clip(); if(logoIm) x.drawImage(logoIm,lx,fy,L,L); x.restore();
   x.fillStyle=K.ink; x.textAlign="left"; midText(tl,lx+L+14,fy+L/2); x.textAlign="center"; fy+=L+20;
   font(800,34); const cta="Zelf je week plannen? → denkstroom.github.io/hophap", cw=x.measureText(cta).width+64;
   x.fillStyle=K.cta; rr(W/2-cw/2,fy,cw,72,36); x.fill(); x.fillStyle=K.ctaInk; midText(cta,W/2,fy+36);
@@ -2437,7 +2446,7 @@ function openAbout(){
     <h3>Let op bij allergieën</h3>
     <p>De vervangers zijn suggesties. Check zelf altijd de verpakking. HopHap is geen medisch of voedingsadvies.</p>
     <h3>Rechten</h3>
-    <p class="small">© 2026 Denkstroom. Alle rechten voorbehouden: je mag HopHap gebruiken, maar niet kopiëren of verkopen. Lettertype Baloo 2 (SIL Open Font License). Een deel van de icoontjes komt van Lucide (ISC-licentie).</p>
+    <p class="small">© 2026 Denkstroom. Alle rechten voorbehouden: je mag HopHap gebruiken, maar niet kopiëren of verkopen. Lettertypes Baloo 2 en Caveat (SIL Open Font License). Een deel van de icoontjes komt van Lucide (ISC-licentie).</p>
 </div>`);
 }
 if(SITE&&"serviceWorker" in navigator&&location.protocol==="https:"){ try{navigator.serviceWorker.register("sw.js").catch(()=>{});}catch(e){} }
