@@ -1,7 +1,7 @@
 {
  "name": "HopHap",
  "short_name": "HopHap",
- "description": "Snel, gezond en lekker eten plannen.",
+ "description": "Snel en lekker eten plannen: gezond waar het kan, gezonder waar het moet.",
  "lang": "nl",
  "start_url": "./",
  "scope": "./",

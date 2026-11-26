@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="HopHap: snel, gezond en lekker eten plannen.">
+<meta name="description" content="HopHap: snel en lekker eten plannen: gezond waar het kan, gezonder waar het moet.">
 <meta name="theme-color" content="#faf6ef" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0f2a2f" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -835,7 +835,7 @@ const R = [
  {id:"f-pizza",cat:"avond",f:1,t:"Pimp je diepvriespizza",m:"2 min werk · oven volgens pak",need:[["oven"]],k:"chilivlokken of oregano",
   i:[["1","diepvriespizza"],["handje","spinazie"],["1","eieren"]],
   s:["Leg spinazie op de pizza en breek een ei in het midden. Strooi er chilivlokken of oregano over.","Zet hem in de oven zoals op de verpakking staat."],
-  n:"Met de spinazie en het ei eet je er meteen groente en eiwit bij: zo wordt je pizza een complete maaltijd."},
+  n:"Met de spinazie en het ei eet je er meteen groente en eiwit bij. Nog steeds pizza, maar dan een betere."},
  {id:"f-wrap",cat:"avond",f:1,t:"Quesadilla",m:"3 min werk · 6 min pan",need:[["fornuis"]],k:"paprikapoeder of chilivlokken",
   i:[["2","volkoren wraps"],["1 pak","gerookte kipfilet"],["1 klein blik","mais"],["75 g","geraspte kaas"]],
   s:["Leg kaas, kip en mais op de helft van een wrap, met een snufje paprikapoeder of chilivlokken. Vouw hem dubbel.","Bak hem in een droge koekenpan 3 minuten per kant, tot hij krokant is en de kaas smelt.","Snijd hem in punten. Heb je nog een restje Mexicaanse mix? Die kan er ook in!"],
@@ -1692,7 +1692,7 @@ function kzLijst(slot,iso,view){
   if(view==="puf") return allR().filter(x=>x.cat===cat&&x.f&&avail(x)&&x.id!==cur);
   return [];
 }
-const KZV={huis:["Al in huis","Deze koos je al, dus de boodschappen heb je. Kies welke je deze dag eet."],nieuw:["Nog halen","Kies er een en de boodschappen komen op je lijst."],puf:["Weinig energie","Snel, makkelijk en niemand die het ziet."],vz:["Uit je vriezer","Restjes: oudste eerst, dan is niks zonde."]};
+const KZV={huis:["Al in huis","Deze koos je al, dus de boodschappen heb je. Kies welke je deze dag eet."],nieuw:["Nog halen","Kies er een en de boodschappen komen op je lijst."],puf:["Weinig energie","Snel en makkelijk. Niet gezond, wel een stukje gezonder gemaakt."],vz:["Uit je vriezer","Restjes: oudste eerst, dan is niks zonde."]};
 // Eigen vriezer-eten toevoegen (vanuit het keuzescherm, dus KZ onthoudt de dag)
 let EVQ=1;
 function openEvNieuw(){
@@ -2257,7 +2257,7 @@ function closeSetup(){const el=$("#setup"); el.hidden=true; el.innerHTML=""; SU=
 // Rondleiding (eerste keer, na de vragenlijst). Een donkere laag met een gat rond het echte onderdeel en een tekstwolkje met pijltje.
 const TOUR=[
   {doel:'nav [data-tab="kaarten"]',kop:"1. Kies wat je wilt eten",tekst:"Kies hier een gerecht en tik op + om het op je lijst te zetten. Twee keer tikken is twee keer eten.",
-   extra:()=>`<div class="tour-fk">${tile(byId["f-pizza"])}<p class="small">Fuck-it dagen zijn gewoon onderdeel van het leven. Daarom zijn er <span class="fl">fuck-it</span> gerechten: snel, makkelijk en net iets gezonder dan ongezond.</p></div>`},
+   extra:()=>`<div class="tour-fk">${tile(byId["f-pizza"])}<p class="small"><span class="fl">Fuck-it</span> gerechten zijn niet gezond, wel mínder ongezond. Denk aan pizza, friet of noedels, met een slim extraatje.</p></div>`},
   {doel:".day.today",kop:"2. Je week vult zich vanzelf",tekst:()=>rest()?"Je dagen worden automatisch gevuld. Je restje van vandaag is je lunch van morgen. Tik op een vakje om te wisselen.":"Je dagen worden automatisch gevuld. Tik op een vakje om te wisselen."},
   {doel:'nav [data-tab="lijst"]',kop:"3. Je boodschappenlijst maakt zichzelf",tekst:"Alles wat je kiest staat hier. Vink af wat je hebt."}];
 // Rondleiding (vanaf 1.2): wijst naar de week, ontbijt/snack/toetje en de knop Gerechten
@@ -2478,7 +2478,7 @@ function restore(file){
 function openAbout(){
   sheetWrap("Over HopHap",`<div class="stack about">
     <h2>Over HopHap</h2>
-    <p>HopHap helpt je snel, gezond en lekker eten plannen. Gemaakt door Denkstroom.</p>
+    <p>HopHap helpt je snel en lekker eten plannen: gezond waar het kan, gezonder waar het moet. Gemaakt door Denkstroom.</p>
     <h3>Privacy</h3>
     <ul><li>Alles wat je invult (je week, je lijst, allergieën en eigen recepten) blijft ${SITE?"op dit apparaat":"in je Claude-account"}. HopHap stuurt niks naar de maker.</li>
       <li>Geen account, geen reclame, geen tracking en geen cookies.</li>
